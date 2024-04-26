@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/25 16:33:28 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/26 13:36:43 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ int main(int ac, char **av, char **env) {
 		manager.createServer(av[1], env);
 
 	} catch (std::exception &e) {
-		std::cout << e.what() << std::endl;
+		std::cout << RED << "error :" << e.what() << RESET << std::endl;
 	}
 	
 

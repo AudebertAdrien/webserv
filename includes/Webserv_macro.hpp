@@ -6,11 +6,14 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:31:28 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/25 16:35:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/26 13:24:19 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
-#define	RED "\e[31m"
-#define RESET "\e[0m"
+#define	RED		"\e[31m"
+#define	GREEN	"\e[32m"
+#define	YELLOW	"\e[93m"
+#define	BLUE	"\e[34m"
+#define RESET	"\e[0m"
