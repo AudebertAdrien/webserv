@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/26 14:09:35 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/26 17:47:27 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,16 +24,14 @@ ServerManager::~ServerManager() {
 
 void	ServerManager::createServer(const std::string &configuration_file_path, char **env) {
 	std::string	config_string = ft::getStringFromFile(configuration_file_path);
-	std::cout << YELLOW << "getStringFromLine : \n" << RESET << std::endl;
 
 	std::string config_block;
 	std::vector<std::string> server_strings;
-
 	if (!splitConfigString(config_string, config_block, server_strings)) {
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
-	std::cout << BLUE << "config_block : \n" << RESET << config_block << std::endl;
-
+	
+	//std::cout << BLUE << "config_block : \n" << RESET << config_block << std::endl;
 	std::vector<std::string>::iterator it;
 	for (it = server_strings.begin(); it != server_strings.end(); it++) {
 		std::cout << GREEN << *it << RESET << std::endl;
@@ -45,6 +43,13 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 
 		if (!splitServerString(server_strings[i], server_block, location_block)) {
 			throw (std::invalid_argument("Failed to split server string"));
+		}
+
+		std::cout << RED << server_block << RESET << std::endl;
+
+		std::vector<std::string>::iterator it;
+		for (it = location_block.begin(); it != location_block.end(); it++) {
+			std::cout << YELLOW << *it << RESET << std::endl;
 		}
 	}
 }
@@ -60,13 +65,13 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 
 	std::string line;
 	while (std::getline(iss, line)) {
-		if (line == "location {") { 
+		if (line == "	location {") { 
 			inside_location_block = true;
 			location_ss.str("");
 			location_ss.clear();
 			location_ss << line << std::endl;
 		}
-		else if (inside_location_block && line == "}") {
+		else if (inside_location_block && line == "	}") {
 			inside_location_block = false;
 			location_ss << line << std::endl;
 			location_block.push_back(location_ss.str());
@@ -77,7 +82,8 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 		}
 		else {
 			if (!line.empty())
-				server_block += line += '\n';	
+				server_block += line + "\n";	
+			//std::cout << RED << line << RESET << std::endl;
 		}
 	}
 	return (true);
