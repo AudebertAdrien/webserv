@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/26 13:36:43 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/29 16:58:02 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 #include <cerrno>
 #include <sstream>
 
-#include "ServerManager.hpp"
+#include "server_manager.hpp"
 
 #include "Webserv_macro.hpp"
 
