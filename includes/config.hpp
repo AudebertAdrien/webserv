@@ -13,10 +13,12 @@
 #ifndef CONFIG_HPP
 # define CONFIG_HPP
 
+#include <iostream>
+
 class Config
 {
 	public:
-		Config(config_block?, env ?);
+		Config(std::string config_block, char **env);
         ~Config();
 		std::string	getSoftwareName() const;
 		std::string	getSoftwareVers() const;

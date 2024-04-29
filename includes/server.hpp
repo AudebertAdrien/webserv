@@ -14,25 +14,23 @@
 # define SERVER_HPP
 
 #include <iostream>
-#include <map>
-#include "Connection.hpp"
-#include "Server.hpp"
-#include "Location.hpp"
-#include "ServerManager.hpp"
-#include "Config.hpp"
-#include "Response.hpp"
+//#include <map>
+//#include "Connection.hpp"
+#include "location.hpp"
+#include "server_manager.hpp"
+#include "config.hpp"
+//#include "Response.hpp"
 
 class Config;
-class Connection;
-class Server;
+//class Connection;
 class Location;
 class ServerManager;
-class Response;
+//class Response;
 
 class Server
 {
 	public:
-		Server(ServerManager, server_block, location_block, config);
+		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, std::string config);
         ~Server();
 		void    run();
 		
@@ -40,16 +38,16 @@ class Server
 		
 	private:
         ServerManager   _manager;
+		Config  _config;
+		std::vector<Location>    _location;
         std::string _serveur_name;
         std::string _host;
         int _port;
         int _fd;
-        int _request_uri_limit_size;
-        int _limit_client_body_size;
-        std::string _default_error_page;
-        Config  _config;
-        std::vector<Location>    _location;
-        std::map<int, Connection>    _connections;
+        //int _request_uri_limit_size;
+        //int _limit_client_body_size;
+        //std::string _default_error_page;
+        /*std::map<int, Connection>    _connections;
         queue<Response>	_responses;
 		bool	hasException(int client_fd);
 		void	closeConnection(int	client_fd);
@@ -70,7 +68,7 @@ class Server
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
 		bool	hasNewConnection();
-		void	acceptNewConnection();
+		void	acceptNewConnection();*/
 
 };
 

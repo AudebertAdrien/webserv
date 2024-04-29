@@ -14,32 +14,33 @@
 # define LOCATION_HPP
 
 #include <iostream>
-#include <map>
+#include <vector>
+//#include <map>
 
 class Location
 {
 	public:
-		Location(location_block ?);
+		Location(std::string location);
         ~Location();
-			getUri() const;
+		//	getUri() const;
 		std::string	getRootPath() const;
-			getAllowMethod() const;
-		std::string	getAuthBasicRealm() const;
-        map<std::string , std::string> getAurhBasicFile() const;
-            getIndex() const;
-            getCgi() const;
-        bool    getAutoindex() const;
+		std::vector<std::string>	getAllowMethod() const;
+		//std::string	getAuthBasicRealm() const;
+        //std::map<std::string , std::string> getAurhBasicFile() const;
+        //    getIndex() const;
+        //    getCgi() const;
+        //bool    getAutoindex() const;
 
 		
 	private:
-		_uri;
+		//_uri;
         std::string _root_path;
-        allow_method;
-        std::string _auth_basic_realm;
-        std::map<std::string , std::string> _auth_basic_file;
-        _index;
-        _cgi;
-        bool    _autoindex;
+        std::vector<std::string>    _allow_method;
+        //std::string _auth_basic_realm;
+        //std::map<std::string , std::string> _auth_basic_file;
+        //_index;
+        //_cgi;
+        //bool    _autoindex;
 
 
 };

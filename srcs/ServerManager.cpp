@@ -31,7 +31,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
-	//std::cout << BLUE << "config_block : \n" << RESET << config_block << std::endl;
+	std::cout << BLUE << "config_block : \n" << RESET << config_block << std::endl;
 	std::vector<std::string>::iterator it;
 	for (it = server_strings.begin(); it != server_strings.end(); it++) {
 		std::cout << GREEN << *it << RESET << std::endl;
