@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/29 18:54:39 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/29 18:57:31 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	}
 	*/
 }
-
 
 bool	ServerManager::splitServerString(std::string &server_strings, std::string &server_block, std::vector<std::string> &location_block) {
 	std::cout << YELLOW << "splitServerString" << RESET << std::endl;
