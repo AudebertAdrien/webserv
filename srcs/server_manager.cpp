@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   server_manager.cpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/22 12:49:55 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/22 12:49:57 by tlorne           ###   ########.fr       */
+/*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
+/*   Updated: 2024/04/29 17:10:12 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
-#include "server.hpp"
 #include "libft.hpp"
 #include "Webserv_macro.hpp"
 
@@ -50,10 +49,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 
 		std::vector<std::string>::iterator it;
 		for (it = location_block.begin(); it != location_block.end(); it++) {
-			
 			std::cout << YELLOW << *it << RESET << std::endl;
 		}
-		_servers.push_back(Server(this, server_block, location_block, config_block));
 	}
 }
 
@@ -124,4 +121,3 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	}
 	return (true);
 }
-

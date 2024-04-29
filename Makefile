@@ -6,7 +6,7 @@
 #    By: motoko <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/02 14:26:47 by motoko            #+#    #+#              #
-#    Updated: 2024/04/25 14:08:30 by motoko           ###   ########.fr        #
+#    Updated: 2024/04/29 17:55:55 by motoko           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,7 +19,8 @@ VPATH			:= $(SRCS_DIR):
 
 SRCS			:= main.cpp				\
 				   libft.cpp			\
-				   server_manager.cpp
+				   server_manager.cpp	\
+				   server.cpp
 
 CC				:= c++
 CFLAGS			:= -Wall -Wextra

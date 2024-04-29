@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/22 12:50:18 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/04/29 17:59:32 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,35 +16,32 @@
 #include <iostream>
 //#include <map>
 //#include "Connection.hpp"
-#include "location.hpp"
+//#include "location.hpp"
 #include "server_manager.hpp"
-#include "config.hpp"
+//#include "config.hpp"
 //#include "Response.hpp"
 
-class Config;
+//class Config;
 //class Connection;
-class Location;
-//class ServerManager;
+//class Location;
+class ServerManager;
 //class Response;
 
-class Server
-{
+class Server {
 	public:
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, std::string config);
-        ~Server();
-		void    run();
-		void    completeVectorLocation(std::vector<std::string> location_block)
-		
+		~Server();
+		//void    completeVectorLocation(std::vector<std::string> location_block);
+		//void    run();
 
-		
 	private:
-        ServerManager   _manager;
-		Config  _config;
-		std::vector<Location>    _location;
-        std::string _serveur_name;
-        std::string _host;
-        int _port;
-        int _fd;
+		//ServerManager   _manager;
+		//Config  _config;
+		//std::vector<Location>    _location;
+		std::string _serveur_name;
+		std::string _host;
+		int _port;
+		int _fd;
         //int _request_uri_limit_size;
         //int _limit_client_body_size;
         //std::string _default_error_page;
@@ -70,7 +67,6 @@ class Server
 		void	createResponse(int status_code);
 		bool	hasNewConnection();
 		void	acceptNewConnection();*/
-
 };
 
 #endif
