@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/29 17:14:05 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/29 18:47:06 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,21 @@
 # define SERVER_MANAGER_HPP
 
 #include <iostream>
-//#include <map>
 #include <vector>
 #include <sstream>
-//#include "connection.hpp"
-#include "server.hpp"
-#include "location.hpp"
+//#include <map>
+
 #include "config.hpp"
+#include "server.hpp"
+//#include "location.hpp"
+//#include "connection.hpp"
 //#include "Response.hpp"
+
+#include "libft.hpp"
 
 class Config;
 //class Connection;
-class Location;
+//class Location;
 //class Response;
 
 class ServerManager {
@@ -51,7 +54,7 @@ class ServerManager {
 
 	private:
 		//std::vector<Server>  _servers;
-		//Config  _config;
+		Config  _config;
 		//int _max_fd;
 		/*fd_set  _read_set;
 		  fd_set  _read_copy_set;

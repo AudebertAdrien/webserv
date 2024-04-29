@@ -6,12 +6,11 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/29 17:10:12 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/29 18:54:39 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
-#include "libft.hpp"
 #include "Webserv_macro.hpp"
 
 ServerManager::ServerManager() {
@@ -31,7 +30,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
-	std::cout << BLUE << "config_block : \n" << RESET << config_block << std::endl;
+	_config = Config(config_block, env);
+	/*
 	std::vector<std::string>::iterator it;
 	for (it = server_strings.begin(); it != server_strings.end(); it++) {
 		std::cout << GREEN << *it << RESET << std::endl;
@@ -52,6 +52,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			std::cout << YELLOW << *it << RESET << std::endl;
 		}
 	}
+	*/
 }
 
 
