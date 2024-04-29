@@ -24,7 +24,7 @@
 class Config;
 //class Connection;
 class Location;
-class ServerManager;
+//class ServerManager;
 //class Response;
 
 class Server
@@ -33,6 +33,7 @@ class Server
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, std::string config);
         ~Server();
 		void    run();
+		void    completeVectorLocation(std::vector<std::string> location_block)
 		
 
 		

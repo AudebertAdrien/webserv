@@ -19,7 +19,7 @@ VPATH			:= $(SRCS_DIR):
 
 SRCS			:= main.cpp				\
 				   libft.cpp			\
-				   ServerManager.cpp
+				   server_manager.cpp
 
 CC				:= c++
 CFLAGS			:= -Wall -Wextra

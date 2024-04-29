@@ -19,7 +19,7 @@
 #include <cerrno>
 #include <sstream>
 
-#include "ServerManager.hpp"
+#include "server_manager.hpp"
 
 #include "Webserv_macro.hpp"
 

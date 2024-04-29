@@ -18,13 +18,14 @@
 #include <vector>
 #include <sstream>
 //#include "connection.hpp"
-#include "server.hpp"
+//#include "server.hpp"
 #include "location.hpp"
 #include "config.hpp"
 //#include "Response.hpp"
 
-class Config;
+//class Config;
 //class Connection;
+class Server;
 class Location;
 //class Response;
 
