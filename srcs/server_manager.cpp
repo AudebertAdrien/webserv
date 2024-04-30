@@ -51,6 +51,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		for (it = location_block.begin(); it != location_block.end(); it++) {
 			std::cout << YELLOW << *it << RESET << std::endl;
 		}
+		//push back dans le vector dans _servers avec const param de serveur;
 	}
 }
 

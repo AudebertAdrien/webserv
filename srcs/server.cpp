@@ -14,7 +14,10 @@
 
 /*void    Server::completeVectorLocation(std::vector<std::string> location_block)
 {
-
+    std::vector<std::string>::iterator it;
+	for (it = location_block.begin(); it != location_block.end(); it++) {
+    this->_location.push_back(Location(*it))
+    }
 }*/
 
 Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, std::string config)
