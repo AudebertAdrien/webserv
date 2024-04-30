@@ -22,6 +22,7 @@ SRCS			:= main.cpp				\
 				   server_manager.cpp	\
 				   config.cpp			\
 				   server.cpp			\
+				   location.cpp
 
 CC				:= c++
 CFLAGS			:= -Wall -Wextra

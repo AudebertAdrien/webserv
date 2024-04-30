@@ -14,30 +14,34 @@
 # define SERVER_HPP
 
 #include <iostream>
+#include <vector>
+#include <sstream>
 //#include <map>
 //#include "Connection.hpp"
-//#include "location.hpp"
+#include "location.hpp"
 #include "server_manager.hpp"
-//#include "config.hpp"
+#include "config.hpp"
 //#include "Response.hpp"
 
 //class Config;
 //class Connection;
-//class Location;
+class Location;
 class ServerManager;
 //class Response;
 
 class Server {
 	public:
-		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, std::string config);
+		Server();
+		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
 		~Server();
-		//void    completeVectorLocation(std::vector<std::string> location_block);
+		void    completeVectorLocation(std::vector<std::string> location_block);
 		//void    run();
 
 	private:
-		//ServerManager   _manager;
-		//Config  _config;
-		//std::vector<Location>    _location;
+		//ServerManager	_manager;
+		Config  _config;
+		//Location	_test;
+		std::vector<Location>    _location;
 		std::string _serveur_name;
 		std::string _host;
 		int _port;

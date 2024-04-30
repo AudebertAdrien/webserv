@@ -31,7 +31,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	}
 	
 	_config = Config(config_block, env);
-	/*
+	
 	std::vector<std::string>::iterator it;
 	for (it = server_strings.begin(); it != server_strings.end(); it++) {
 		std::cout << GREEN << *it << RESET << std::endl;
@@ -51,9 +51,9 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		for (it = location_block.begin(); it != location_block.end(); it++) {
 			std::cout << YELLOW << *it << RESET << std::endl;
 		}
+		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
-	*/
 }
 
 bool	ServerManager::splitServerString(std::string &server_strings, std::string &server_block, std::vector<std::string> &location_block) {

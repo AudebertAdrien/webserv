@@ -11,12 +11,18 @@
 /* ************************************************************************** */
 
 
-#include "../includes/location.hpp"
+#include "location.hpp"
+#include "Webserv_macro.hpp"
+
+Location::Location()
+{
+    std::cout << "Constructor Location default called" << std::endl;
+}
 
 Location::Location(std::string  location)
 {
-    std::cout << "Constructor Location called" << std::endl;
-    std::vector<std::string>    lines;
+    std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
+    /*std::vector<std::string>    lines;
     std::istringstream iss(location);
     std::string line;
 
@@ -44,7 +50,7 @@ Location::Location(std::string  location)
             //comparer le fw avec ce qui est possible 
         }
         
-    }
+    }*/
 
 
 

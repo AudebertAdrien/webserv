@@ -20,15 +20,16 @@
 
 #include "config.hpp"
 #include "server.hpp"
-//#include "location.hpp"
+#include "location.hpp"
 //#include "connection.hpp"
 //#include "Response.hpp"
 
 #include "libft.hpp"
 
 class Config;
+class Server;
 //class Connection;
-//class Location;
+class Location;
 //class Response;
 
 class ServerManager {
@@ -53,7 +54,7 @@ class ServerManager {
 
 
 	private:
-		//std::vector<Server>  _servers;
+		std::vector<Server>  _servers;
 		Config  _config;
 		//int _max_fd;
 		/*fd_set  _read_set;

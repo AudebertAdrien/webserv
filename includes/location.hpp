@@ -22,6 +22,7 @@
 class Location
 {
 	public:
+        Location();
 		Location(std::string location);
         ~Location();
 		//	getUri() const;
