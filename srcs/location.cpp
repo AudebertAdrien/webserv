@@ -6,20 +6,19 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/22 12:50:31 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/04/30 14:40:20 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 #include "location.hpp"
-#include "Webserv_macro.hpp"
+#include "webserv_macro.hpp"
 
-Location::Location()
-{
+Location::Location() {
     std::cout << "Constructor Location default called" << std::endl;
 }
 
-Location::Location(std::string  location)
+Location::Location(std::string location)
 {
     std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
     /*std::vector<std::string>    lines;
@@ -51,9 +50,6 @@ Location::Location(std::string  location)
         }
         
     }*/
-
-
-
 }
 
 Location::~Location()

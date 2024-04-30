@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/29 16:58:02 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 14:14:15 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 
 #include "server_manager.hpp"
 
-#include "Webserv_macro.hpp"
+#include "webserv_macro.hpp"
 
 //#define PORT 8080
 //#define BUFFER_SIZE 1024

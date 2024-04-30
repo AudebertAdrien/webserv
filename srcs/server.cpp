@@ -6,12 +6,12 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/29 17:53:15 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 14:23:36 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
-#include "Webserv_macro.hpp"
+#include "webserv_macro.hpp"
 
 void    Server::completeVectorLocation(std::vector<std::string> location_block)
 {
@@ -29,12 +29,13 @@ Server::Server()
 
 Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  config)
 {
-    std::cout << "Server with paran constructor" << std::endl;
+    std::cout << "Server with params constructor" << std::endl;
 
-    std::cout << RED << "server_block : \n" << RESET << server_block << std::endl;
+    //std::cout << RED << "server_block : \n" << RESET << server_block << std::endl;
 
     //std::cout << BLUE << "config_block : \n" << RESET << config << std::endl;
 
+	/*
     std::vector<std::string>::iterator it = location_block.begin();
     std::cout << GREEN << "location_block : \n" << RESET  << std::endl;
     while ( it != location_block.end())
@@ -49,6 +50,7 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
     // une fonction pour transorfer vector string location en vecteur location;
     std::cout << BLUE << "#######################Beg test LOCATION #########################"  << RESET << std::endl;
     completeVectorLocation(location_block);
+	*/
 
     // idem avec config.
 }

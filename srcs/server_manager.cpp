@@ -6,12 +6,12 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/29 18:57:31 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 16:58:57 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
-#include "Webserv_macro.hpp"
+#include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
 	std::cout << "ServerManager default constructor" << std::endl;
@@ -32,10 +32,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	
 	_config = Config(config_block, env);
 	
-	std::vector<std::string>::iterator it;
-	for (it = server_strings.begin(); it != server_strings.end(); it++) {
-		std::cout << GREEN << *it << RESET << std::endl;
-	}
+	ft::display_vector(server_strings);
 
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
@@ -47,10 +44,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 
 		std::cout << RED << server_block << RESET << std::endl;
 
-		std::vector<std::string>::iterator it;
-		for (it = location_block.begin(); it != location_block.end(); it++) {
-			std::cout << YELLOW << *it << RESET << std::endl;
-		}
+		ft::display_vector(location_block);
+
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
