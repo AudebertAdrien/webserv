@@ -17,7 +17,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
-//#include <map>
+#include <map>
 
 class Location
 {
@@ -28,6 +28,9 @@ class Location
 		//	getUri() const;
 		std::string	getRootPath() const;
 		std::vector<std::string>	getAllowMethod() const;
+		void	fullFillLocation(std::vector<std::string> lines);
+		void	handleFirstLine(std::string line);
+		void	handleBody(std::string line);
 		//std::string	getAuthBasicRealm() const;
         //std::map<std::string , std::string> getAurhBasicFile() const;
         //    getIndex() const;
@@ -37,10 +40,12 @@ class Location
 		
 	private:
 		//_uri;
+        std::string _opt_modif;
+        std::string _loc_match_uri;
         std::string _root_path;
         std::vector<std::string>    _allow_method;
         //std::string _auth_basic_realm;
-        //std::map<std::string , std::string> _auth_basic_file;
+        std::map<std::string , std::string> _body_file;
         //_index;
         //_cgi;
         //bool    _autoindex;

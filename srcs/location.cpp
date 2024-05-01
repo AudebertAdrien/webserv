@@ -21,8 +21,15 @@ Location::Location()
 
 Location::Location(std::string  location)
 {
+    std::cout << BLUE << "########## YOUR PART ###########" << RESET << std::endl;
     std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
-    /*std::vector<std::string>    lines;
+
+    std::cout << "show string" << std::endl;
+    std::cout << location << std::endl;
+    std::cout << "end string" << std::endl <<std::endl;
+
+
+    std::vector<std::string>    lines;
     std::istringstream iss(location);
     std::string line;
 
@@ -32,28 +39,8 @@ Location::Location(std::string  location)
         // Traitement de chaque ligne ici
         std::cout << "Ligne : " << line << std::endl;
     }
-
-    std::vector<std::string>::iterator it;
-
-    for(it = lines.begin(), it != lines.end(), it++)
-    {
-        std::istringstream iss(*it); // Crée un flux d'entrée à partir de la chaîne
-        std::string firstWord;
-        iss >> firstWord;
-        if (firstWord == "location" || firstWord =="}")
-        {
-            //si fw == location, checker suite pour verif que tout est ok
-            continue;
-        }
-        else
-        {
-            //comparer le fw avec ce qui est possible 
-        }
-        
-    }*/
-
-
-
+    fullFillLocation(lines);
+    std::cout << BLUE << "########## END ###########" << RESET << std::endl;
 }
 
 Location::~Location()
@@ -61,3 +48,66 @@ Location::~Location()
     std::cout << "Destructor Location called" << std::endl;
 }
 
+static int  isOpt(std::string word)
+{
+    std::string opt[] = {"=", "~", "~*", "^~"};
+
+    for (int i = 0; i < 4; i++)
+    {
+        if (word == opt[i])
+            return (1);
+    }
+    return (0);
+}
+
+void    Location::handleFirstLine(std::string line)
+{
+    std::istringstream iss(line);
+    std::string word;
+
+    int i = 0;
+    int opt = 0;
+    while (iss >> word)
+    {
+        if (word == "location")
+            continue;
+        else if (isOpt(word))
+        {
+            this->_opt_modif = word;
+            opt = 1;
+        }
+        else if ((i == 2 && opt == 1) || (i == 1 && opt == 0))
+            this->_loc_match_uri = word;
+        else
+            std::cout << "Config file not available, format of a location block not accepted"<< std::endl;//trow error
+    }
+
+}
+
+void    Location::handleBody(std::string line)
+{
+    std::istringstream iss(line);
+    std::string key;
+    std::string value;
+    std::string error;
+
+    iss >> key;
+    iss >> value;
+    if (iss >> error)
+         std::cout << "Config file not available, format of a location block not accepted"<< std::endl;//trow error
+    else
+        this->_body_file[key] = value;
+}
+
+void    Location::fullFillLocation(std::vector<std::string> lines)
+{
+    size_t  i = 0;
+    while (i != lines.size())
+    {
+        if (i = 0)
+            handleFirstLine(lines[0]);
+        else
+            handleBody(lines[i]);
+        i++;
+    }
+}

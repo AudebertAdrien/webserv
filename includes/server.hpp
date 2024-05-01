@@ -38,7 +38,7 @@ class Server {
 		//void    run();
 
 	private:
-		//ServerManager	_manager;
+		ServerManager*	_manager;
 		Config  _config;
 		//Location	_test;
 		std::vector<Location>    _location;

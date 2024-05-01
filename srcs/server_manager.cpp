@@ -33,9 +33,9 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	_config = Config(config_block, env);
 	
 	std::vector<std::string>::iterator it;
-	for (it = server_strings.begin(); it != server_strings.end(); it++) {
+	/*for (it = server_strings.begin(); it != server_strings.end(); it++) {
 		std::cout << GREEN << *it << RESET << std::endl;
-	}
+	}*/
 
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
@@ -45,12 +45,12 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			throw (std::invalid_argument("Failed to split server string"));
 		}
 
-		std::cout << RED << server_block << RESET << std::endl;
+		//std::cout << RED << server_block << RESET << std::endl;
 
 		std::vector<std::string>::iterator it;
-		for (it = location_block.begin(); it != location_block.end(); it++) {
+		/*for (it = location_block.begin(); it != location_block.end(); it++) {
 			std::cout << YELLOW << *it << RESET << std::endl;
-		}
+		}*/
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
