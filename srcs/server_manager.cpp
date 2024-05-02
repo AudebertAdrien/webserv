@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/30 17:31:51 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 16:34:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,10 +43,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			throw (std::invalid_argument("Failed to split server string"));
 		}
 
-		//std::cout << RED << server_block << RESET << std::endl;
-
 		ft::display_vector(location_block);
-
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
@@ -84,7 +81,6 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 		else {
 			if (!line.empty())
 				server_block += line + "\n";	
-			//std::cout << RED << line << RESET << std::endl;
 		}
 	}
 	return (true);

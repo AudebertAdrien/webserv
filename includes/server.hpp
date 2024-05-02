@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/30 17:33:16 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 15:14:26 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,8 +38,8 @@ class Server {
 		//void    run();
 
 	private:
+		Config  		_config;
 		ServerManager*	_manager;
-		Config  _config;
 		//Location	_test;
 		std::vector<Location>    _location;
 		std::string _serveur_name;
