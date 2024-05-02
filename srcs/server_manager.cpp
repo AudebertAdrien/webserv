@@ -65,8 +65,12 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 	bool inside_location_block = false;
 
 	std::string line;
-	while (std::getline(iss, line)) {
-		if (line == "	location {") { 
+	while (std::getline(iss, line)) 
+	{
+		std::istringstream iss2(line);
+    	std::string fw;
+		iss2 >> fw;
+		if (line == "	location {" || fw == "location") { 
 			inside_location_block = true;
 			location_ss.str("");
 			location_ss.clear();

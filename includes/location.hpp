@@ -31,6 +31,10 @@ class Location
 		void	fullFillLocation(std::vector<std::string> lines);
 		void	handleFirstLine(std::string line);
 		void	handleBody(std::string line);
+        std::vector<std::string>    getInfo(std::string key);
+        // Useless fonction, just to show location
+        void    showLocation();
+        // to erease 
 		//std::string	getAuthBasicRealm() const;
         //std::map<std::string , std::string> getAurhBasicFile() const;
         //    getIndex() const;
@@ -45,7 +49,8 @@ class Location
         std::string _root_path;
         std::vector<std::string>    _allow_method;
         //std::string _auth_basic_realm;
-        std::map<std::string , std::string> _body_file;
+        std::multimap<std::string , std::string> _body_file;
+        int _is_multi;
         //_index;
         //_cgi;
         //bool    _autoindex;
