@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/02 16:31:33 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 16:34:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	
 	_config = Config(config_block, env);
 	
-	/*
 	ft::display_vector(server_strings);
 
 	for (size_t i = 0; i < server_strings.size(); i++) {
@@ -48,7 +47,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
-	*/
 }
 
 bool	ServerManager::splitServerString(std::string &server_strings, std::string &server_block, std::vector<std::string> &location_block) {
