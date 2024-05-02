@@ -6,11 +6,12 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/30 14:23:36 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 17:31:18 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include "server_manager.hpp"
 #include "webserv_macro.hpp"
 
 void    Server::completeVectorLocation(std::vector<std::string> location_block)
@@ -18,7 +19,7 @@ void    Server::completeVectorLocation(std::vector<std::string> location_block)
     std::vector<std::string>::iterator it;
 	for (it = location_block.begin(); it != location_block.end(); it++) {
         std::cout << BLUE << "!!!!!!!!!OK!!!!!!!!!" << RESET << std::endl;
-    this->_location.push_back(Location(*it));
+    	this->_location.push_back(Location(*it));
     }
 }
 

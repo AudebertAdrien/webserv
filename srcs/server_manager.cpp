@@ -6,11 +6,12 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/30 16:58:57 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 17:31:51 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
+#include "server.hpp"
 #include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/29 17:59:32 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 17:33:16 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 //#include <map>
 //#include "Connection.hpp"
 #include "location.hpp"
-#include "server_manager.hpp"
+//#include "server_manager.hpp"
 #include "config.hpp"
 //#include "Response.hpp"
 
@@ -39,7 +39,7 @@ class Server {
 
 	private:
 		//ServerManager	_manager;
-		Config  _config;
+		Config  		_config;
 		//Location	_test;
 		std::vector<Location>    _location;
 		std::string _serveur_name;

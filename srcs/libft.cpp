@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:04:02 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/30 16:57:29 by motoko           ###   ########.fr       */
+/*   Updated: 2024/04/30 17:16:03 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ namespace ft {
 
 		std::vector<std::string>::const_iterator it;
 		for (it = ctn.begin(); it != ctn.end(); it++) {
-			std::cout << BLUE << "!!!!!!!!!OK!!!!!!!!!" << RESET << std::endl;
+			std::cout << BLUE << *it << RESET << std::endl;
 
 		}
 	}
