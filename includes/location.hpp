@@ -31,7 +31,13 @@ class Location
 		void	fullFillLocation(std::vector<std::string> lines);
 		void	handleFirstLine(std::string line);
 		void	handleBody(std::string line);
+
+        //####### GETTER ########
+
         std::vector<std::string>    getInfo(std::string key);
+        std::string getOpt() const;
+        std::string getLocMatcUhri() const;
+        int getIsMulti() const;
         // Useless fonction, just to show location
         void    showLocation();
         // to erease 

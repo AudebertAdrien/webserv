@@ -61,6 +61,7 @@ Location::Location(std::string  location)
 Location::~Location()
 {
     std::cout << "Destructor Location called" << std::endl;
+    this->_body_file.clear();
 }
 
 static void showMap(std::multimap<std::string , std::string> map)
@@ -185,4 +186,19 @@ void    Location::fullFillLocation(std::vector<std::string> lines)
             handleBody(lines[i]);
         i++;
     }
+}
+
+std::string Location::getOpt() const
+{
+    return (this->_opt_modif);
+}
+
+std::string Location::getLocMatcUhri() const
+{
+    return (this->_loc_match_uri);
+}
+
+int Location::getIsMulti() const
+{
+    return (this->_is_multi);
 }
