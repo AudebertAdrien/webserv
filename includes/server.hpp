@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:14:26 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 17:17:00 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,10 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <cstring>
+#include <netinet/in.h> 
+#include <sys/socket.h>
+
 //#include <map>
 //#include "Connection.hpp"
 #include "location.hpp"

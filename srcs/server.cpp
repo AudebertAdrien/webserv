@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:22:45 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 17:55:11 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,27 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
     std::cout << "Server with params constructor" << std::endl;
 
     this->_config = config;
+	if (_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP) == -1 ) {
+		std::cerr << "Socket creation failed: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	int opt = 1;
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
+		perror("setsockopt");
+		exit(EXIT_FAILURE);
+	}
+
+	ft::bzero(&server_addr, sizeof(struct sockaddr_in));
+	server_addr.sin_family = AF_INET;
+    server_addr.sin_addr.s_addr = INADDR_ANY;
+    server_addr.sin_port = htons(PORT);
+    if (bind(server_fd, (struct sockaddr *)&address, sizeof(address)) == -1) {
+        perror("bind");
+        return EXIT_FAILURE;
+    }
+
+
     //parse serveur block pour obtenir serveur_name, host, port, fd.
 
     // une fonction pour transorfer vector string location en vecteur location;
