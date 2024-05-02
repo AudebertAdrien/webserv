@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:13:08 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 15:27:39 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Location::Location(std::string location)
     {
         lines.push_back(line);
         // Traitement de chaque ligne ici
-        std::cout << "Ligne : " << line << std::endl;
+        std::cout << "Loca Ligne : " << line << std::endl;
     }
     fullFillLocation(lines);
 
