@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/02 16:34:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 19:26:41 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		}
 
 		ft::display_vector(location_block);
-		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
+		//this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
+		Server(*this, server_block, location_block, this->_config);
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
 }
