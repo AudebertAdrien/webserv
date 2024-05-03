@@ -16,6 +16,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <sys/select.h> // Pour select
+#include <unistd.h> 
 //#include <map>
 
 #include "config.hpp"
@@ -56,10 +58,10 @@ class ServerManager {
 	private:
 		std::vector<Server>  _servers;
 		Config  _config;
-		//int _max_fd;
-		/*fd_set  _read_set;
-		  fd_set  _read_copy_set;
-		  fd_set  _write_set;
+		int _max_fd;
+		fd_set  _read_set;
+		fd_set  _read_copy_set;
+		/*  fd_set  _write_set;
 		  fd_set  _write_copy_set;
 		  fd_set  _error_set;
 		  fd_set  _error_copy_set;*/

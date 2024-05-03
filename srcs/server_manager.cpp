@@ -16,6 +16,7 @@
 
 ServerManager::ServerManager() {
 	std::cout << "ServerManager default constructor" << std::endl;
+	//FD_ZERO(&this->_read_set);
 }
 
 ServerManager::~ServerManager() {
@@ -120,27 +121,106 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	return (true);
 }
 
+
+void printFdSet(fd_set &fds, int max_fd) {
+    std::cout << "Descripteurs de fichiers présents dans l'ensemble :" << std::endl;
+    for (int i = 0; i < max_fd; ++i) {
+		//std::cout << "ok" << std::endl;
+        if (FD_ISSET(i, &fds)) {
+            std::cout << " - " << i << std::endl;
+        }
+    }
+}
+
 void	ServerManager::runServer()
 {
 	std::cout << "######################### RUN SERVERS ########################" << std::endl;
-
+	
+	this->_max_fd = 0;
+	std::cout << "max_fd = " << this->_max_fd << std::endl;
+	FD_ZERO(&this->_read_set);
+	printFdSet(this->_read_set, this->_max_fd + 1);
 	std::vector<Server>::iterator	it = this->_servers.begin();
-
+	this->_max_fd = 0;
 	std::cout << "server listen on port :" << std::endl;
 	while (it != this->_servers.end())
 	{
-		std::cout << it->getPort() << std::endl;		
+		std::cout << "######################################3ok" << std::endl;
+		int	server_fd = it->getFd();
+		std::cout <<  "server fd vaut " <<server_fd << std::endl;
+		FD_SET(server_fd, &this->_read_set);
+		//FD_SET(8080, &this->_read_set);
+		//printFdSet(this->_read_set, this->_max_fd + 1);
+		if (server_fd > this->_max_fd)
+			this->_max_fd = server_fd;
+		//printFdSet(this->_read_set, this->_max_fd + 1);
 		it++;
 	}
-	
-	it = this->_servers.begin();
+	std::cout << "max_fd = " << this->_max_fd << std::endl;
+	printFdSet(this->_read_set, this->_max_fd + 1);
+	//this->_read_copy_set = this->_read_set;
+	//printFdSet(this->_read_copy_set, this->_max_fd + 1);
+	//this->_max_fd++;
+	//*/
+	/*it = this->_servers.begin();
 	while (true)
 	{
+		it = this->_servers.begin();
+		std::cout << "######################### in the boucle ########################" << std::endl;
 		while (it != this->_servers.end())
 		{
+			std::cout << "######################### ICI ########################" << std::endl;
 			it->run();
-			std::cout << "######################### ICI 2########################" << std::endl;
+			std::cout << "######################### ICI 3 ########################" << std::endl;
 			it++;
 		}
 	}
+	*/
+
+	timeval timeout;
+	timeout.tv_sec = 5;
+	timeout.tv_usec = 0;
+//*/
+
+	while (true)
+	{
+		
+		timeout.tv_sec = 5;
+		timeout.tv_usec = 0;
+		//it = this->_servers.begin();
+		printFdSet(this->_read_set, this->_max_fd + 1);
+
+		std::cout << "######################### in the boucle ########################" << std::endl;
+		this->_read_copy_set = this->_read_set;
+		std::cout << "######################### copy ########################" << std::endl;
+		printFdSet(this->_read_copy_set, this->_max_fd + 1);
+
+		int	act = select(this->_max_fd + 1, &this->_read_copy_set, NULL, NULL, &timeout);
+		std::cout << "act vaut : " << act << std::endl;
+
+		if (act == -1)
+		{
+			std::cout << RED << "act vaut : " << act << RESET << std::endl;
+			std::cerr << "Error in select" << std::endl;
+		}
+		else if (act == 0)
+		{
+			std::cout << YELLOW << "act vaut : " << act << RESET << std::endl;
+			continue ;
+		}
+		std::cout << GREEN << "act vaut : " << act << RESET << std::endl;
+		it = this->_servers.begin();
+		while (it != this->_servers.end())
+		{
+			std::cout << "######################### ICI ########################" << std::endl;
+			int	server_fd = it->getFd();
+			if (FD_ISSET(server_fd, &this->_read_copy_set))
+			{
+				std::cout << "######################### ICI 3 ########################" << std::endl;
+				it->run();
+			}
+			it++;
+		}
+	}
+	//*/
 }

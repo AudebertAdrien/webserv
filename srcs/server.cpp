@@ -153,8 +153,14 @@ int	Server::getPort()
 	return (this->_port);
 }
 
+int	Server::getFd()
+{
+	return(this->_fd);
+}
+
 void	Server::run()
 {
+	std::cout << "######################### RUN 2 for " << this->_port << std::endl;
 	//while (true)
 	//{
 		int	client_socket; 
@@ -165,7 +171,7 @@ void	Server::run()
 			exit(EXIT_FAILURE);
 		}
 
-		std::cout << "######################### ICI ########################" << std::endl;
+		std::cout << "######################### RUN 21 ########################" << std::endl;
 
 		struct timeval timeout;
 		timeout.tv_sec = TIMEOUT_SEC;
@@ -174,7 +180,8 @@ void	Server::run()
 			std::cerr << "Failed to set receive timeout" << std::endl;
 			exit(EXIT_FAILURE);
 		}
-
+		
+		std::cout << "######################### RUN 22 ########################" << std::endl;
 		//close(_fd);
 
 		std::string header = "HTTP/1.1 200 OK\r\n";
@@ -188,6 +195,8 @@ void	Server::run()
 			exit(EXIT_FAILURE);
 		}
 
+		std::cout << "######################### RUN 23 ########################" << std::endl;
+
 		int bytes_received = 0;
 		while (!bytes_received) {
 			char buffer[1024];
@@ -200,7 +209,11 @@ void	Server::run()
 			}
 		}
 
-    	 close(client_socket);
+		std::cout << "######################### RUN 24 ########################" << std::endl;
+
+    	close(client_socket);
+
+		std::cout << "######################### RUN 25 ########################" << std::endl;
 
 	//}
 }

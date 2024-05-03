@@ -44,8 +44,10 @@ class Server {
 		~Server();
 		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
+		void	handleConnection();
 		void	completeServer(std::string server_block);
 		int	getPort();
+		int	getFd();
 
 	private:
 		Config  		_config;
