@@ -118,3 +118,8 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	}
 	return (true);
 }
+
+void	ServerManager::runServer()
+{
+	std::cout << "Run server" << std::endl;
+}

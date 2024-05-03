@@ -47,7 +47,7 @@ class ServerManager {
 		  fdIsset(int fd, setType);
 		  fdCopy(setType);*/
 		//void    exitServer();
-		//void    runServer();
+		void    runServer();
 		void	createServer(const std::string &configuration_file_path, char **env);
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
 		bool	splitServerString(std::string &server_string, std::string &server_block, std::vector<std::string> &location_string);

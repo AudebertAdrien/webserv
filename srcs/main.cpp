@@ -27,7 +27,8 @@
 //#define BUFFER_SIZE 1024
 //#define TIMEOUT_SEC 5
 
-int main(int ac, char **av, char **env) {
+int main(int ac, char **av, char **env) 
+{
 	ServerManager	manager;
 
 	if (ac > 2) {
