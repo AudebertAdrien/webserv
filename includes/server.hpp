@@ -43,7 +43,7 @@ class Server {
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
 		~Server();
 		void    completeVectorLocation(std::vector<std::string> location_block);
-		//void    run();
+		void    run();
 
 	private:
 		Config  		_config;
@@ -55,6 +55,8 @@ class Server {
 		std::string _host;
 		int _port;
 		int _fd;
+		struct sockaddr_in server_addr;
+
 
 		//Location	_test;
         //int _request_uri_limit_size;

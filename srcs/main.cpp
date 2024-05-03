@@ -37,6 +37,7 @@ int main(int ac, char **av, char **env)
 
 	try {
 		manager.createServer(av[1], env);
+		manager.runServer();
 
 	} catch (std::exception &e) {
 		std::cout << RED << "error :" << e.what() << RESET << std::endl;

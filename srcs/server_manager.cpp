@@ -122,5 +122,13 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 
 void	ServerManager::runServer()
 {
-	std::cout << "Run server" << std::endl;
+	std::cout << "######################### RUN SERVERS ########################" << std::endl;
+
+	std::vector<Server>::iterator	it = this->_servers.begin();
+
+	while (it != this->_servers.end())
+	{
+		it->run();
+		it++;
+	}
 }
