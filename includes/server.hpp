@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:14:26 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 19:55:44 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,17 @@
 # define SERVER_HPP
 
 #include <iostream>
-#include <vector>
 #include <sstream>
+#include <cstring>
+#include <unistd.h>
+#include <netinet/in.h> 
+#include <fcntl.h>
+#include <sys/socket.h>
+#include <cerrno>
+
+#include <vector>
 //#include <map>
+//
 //#include "Connection.hpp"
 #include "location.hpp"
 //#include "server_manager.hpp"
@@ -40,12 +48,15 @@ class Server {
 	private:
 		Config  		_config;
 		ServerManager*	_manager;
-		//Location	_test;
+
 		std::vector<Location>    _location;
+
 		std::string _serveur_name;
 		std::string _host;
 		int _port;
 		int _fd;
+
+		//Location	_test;
         //int _request_uri_limit_size;
         //int _limit_client_body_size;
         //std::string _default_error_page;
@@ -58,6 +69,7 @@ class Server {
 		void	hasRequest(int client_fd);
 		Request	recvRequest(int client_fd);
 		void	solveRequest(Request request);
+
 		void	executeAutoindex();
 		void	executeGet(Request request);
 		void	executeHead(Request request);
@@ -66,6 +78,7 @@ class Server {
 		void	executeDelete(Request request);
 		void	executeOptions(Request request);
 		void	executeTrace(Request request);
+
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
