@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 19:53:09 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/02 20:21:59 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,12 +66,10 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 		exit(EXIT_FAILURE);
 	}
  
-	/*
 	if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
-	*/
 
 	int	client_socket; 
 
