@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 18:49:32 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 19:04:41 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,6 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 #define TIMEOUT_SEC 5
-
-int indexes = 0;
 
 Server::Server()
 {
@@ -48,12 +46,11 @@ void	Server::completeServer(std::string server_block)
 	iss >> word;
 	word.resize(word.size() - 1);
 	this->_port = atoi(word.c_str());
-	std::cout << this->_port << std::endl;
 }
 
 Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  config)
 {
-    std::cout << RED << "Server with params constructor : " << indexes++ << RESET << std::endl;
+    std::cout << "Server with params constructor" << std::endl;
 
     this->_config = config;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -87,7 +84,6 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 	}
  
 	int flags = fcntl(_fd, F_GETFL, 0);
-    std::cout << RED << "FLAGS==" << flags << RESET << std::endl;
     if (flags == -1) {
         std::cerr << "Failed to get socket flags\n";
         close(_fd);
@@ -122,7 +118,7 @@ void	Server::run()
 			exit(EXIT_FAILURE);
 		}
 
-		std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << "port1 : " << this->_port << "########################" << std::endl;
+		std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
 		std::cout << "client_socket: " << client_socket << std::endl; 
 
 		struct timeval timeout;

@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/03 19:00:20 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 19:03:54 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,12 @@ void	ServerManager::runServer()
 	FD_ZERO(&(this->_read_set));
 	while (it != this->_servers.end())
 	{
+		std::cout << it->getPort() << std::endl;		
 		FD_SET(it->getFd(), &(this->_read_set));
 		if (this->_max_fd < it->getFd())
 			this->_max_fd = it->getFd();
 		it++;
 	}
-
-
-	std::cout << RED << "HELLO" << RESET << std::endl;
 
 	int cnt;
 
@@ -86,11 +84,10 @@ void	ServerManager::runServer()
 			std::cout << "Timeout occurred\n";
 			continue;
 		}
-		std::cout << RED << "cnt: " << cnt << RESET << std::endl;
 
 		for (std::vector<Server>::iterator it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET(it->getFd(), &_read_copy_set)) {
-				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << "### port : " << it->getPort() << "########################" << std::endl;
+				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << "########################" << std::endl;
 				it->run();
 			}
 		}
