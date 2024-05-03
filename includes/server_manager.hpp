@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/30 17:32:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 18:52:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,18 +47,20 @@ class ServerManager {
 		  fdIsset(int fd, setType);
 		  fdCopy(setType);*/
 		//void    exitServer();
-		//void    runServer();
+		void    runServer();
 		void	createServer(const std::string &configuration_file_path, char **env);
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
 		bool	splitServerString(std::string &server_string, std::string &server_block, std::vector<std::string> &location_string);
 
 
 	private:
-		std::vector<Server>  _servers;
-		Config  _config;
-		//int _max_fd;
-		/*fd_set  _read_set;
-		  fd_set  _read_copy_set;
+		std::vector<Server>	_servers;
+		Config  			_config;
+		int 				_max_fd;
+
+		fd_set  			_read_set;
+		fd_set  			_read_copy_set;
+		/*
 		  fd_set  _write_set;
 		  fd_set  _write_copy_set;
 		  fd_set  _error_set;

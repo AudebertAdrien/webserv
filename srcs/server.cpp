@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 20:21:59 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 18:49:32 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,17 @@
 #define BUFFER_SIZE 1024
 #define TIMEOUT_SEC 5
 
+int indexes = 0;
+
+Server::Server()
+{
+    //std::cout << "Server default constructor" << std::endl;
+}
+
+Server::~Server() {
+	//std::cout << "Server destructor" << std::endl;
+}
+
 void    Server::completeVectorLocation(std::vector<std::string> location_block)
 {
     std::vector<std::string>::iterator it;
@@ -26,14 +37,23 @@ void    Server::completeVectorLocation(std::vector<std::string> location_block)
     }
 }
 
-Server::Server()
+void	Server::completeServer(std::string server_block)
 {
-    std::cout << "Server default constructor" << std::endl;
+	std::istringstream iss(server_block);
+    std::string word;
+
+	iss >> word;
+	while (word != "listen")
+		iss >> word;
+	iss >> word;
+	word.resize(word.size() - 1);
+	this->_port = atoi(word.c_str());
+	std::cout << this->_port << std::endl;
 }
 
 Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  config)
 {
-    std::cout << "Server with params constructor" << std::endl;
+    std::cout << RED << "Server with params constructor : " << indexes++ << RESET << std::endl;
 
     this->_config = config;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -47,16 +67,16 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 		exit(EXIT_FAILURE);
 	}
 
-	struct sockaddr_in server_addr;
+	completeServer(server_block);
 
 	//ft::bzero(&server_addr, sizeof(struct sockaddr_in));
-	server_addr.sin_family          = AF_INET;
-	server_addr.sin_port            = htons(PORT);
-	server_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
+	_server_addr.sin_family          = AF_INET;
+	_server_addr.sin_port            = htons(this->_port);
+	_server_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
     //server_addr.sin_addr.s_addr = INADDR_ANY;
 	//server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
-	if (bind(_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+	if (bind(_fd, (struct sockaddr *)&_server_addr, sizeof(_server_addr)) == -1) {
 		std::cerr << "Bind failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
@@ -66,65 +86,76 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 		exit(EXIT_FAILURE);
 	}
  
-	if (fcntl(_fd, F_SETFL, O_NONBLOCK) == -1) {
+	int flags = fcntl(_fd, F_GETFL, 0);
+    std::cout << RED << "FLAGS==" << flags << RESET << std::endl;
+    if (flags == -1) {
+        std::cerr << "Failed to get socket flags\n";
+        close(_fd);
+		exit(EXIT_FAILURE);
+    }
+
+	if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+        close(_fd);
 		exit(EXIT_FAILURE);
 	}
+}
 
-	int	client_socket; 
+int	Server::getPort()
+{
+	return (this->_port);
+}
 
-	socklen_t addrlen = sizeof(server_addr);
-	if ((client_socket = accept(_fd, (struct sockaddr *)&server_addr, (socklen_t*)&addrlen)) == -1) {
-		std::cerr << "Accept failed: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
+int	Server::getFd()
+{
+	return (this->_fd);
+}
 
-	struct timeval timeout;
-	timeout.tv_sec = TIMEOUT_SEC;
-	timeout.tv_usec = 0;
-	if (setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
-		std::cerr << "Failed to set receive timeout" << std::endl;
-		exit(EXIT_FAILURE);
-	}
+void	Server::run()
+{
+		int	client_socket; 
 
-	close(_fd);
+		socklen_t addrlen = sizeof(_server_addr);
 
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = "Hello from server!!! Here Adrien\n";
-	std::ostringstream oss;
-	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-	std::string response = oss.str();
-
-	if (send(client_socket, response.c_str(), response.length(), 0) == -1) {
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
-		exit(EXIT_FAILURE);
-	}
-
-	int bytes_received = 0;
-	while (!bytes_received) {
-		char buffer[1024];
-		bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
-		if (bytes_received == -1) {
-			std::cerr << "Error in receiving data" << std::endl;
-		} else {
-			buffer[bytes_received] = '\0';
-			std::cout << "Received " << bytes_received << " bytes: " << buffer << std::endl;
+		if ((client_socket = accept(_fd, (struct sockaddr *)&_server_addr, (socklen_t*)&addrlen)) == -1) {
+			std::cerr << "Accept failed: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
 		}
-	}
 
-     close(client_socket);
+		std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << "port1 : " << this->_port << "########################" << std::endl;
+		std::cout << "client_socket: " << client_socket << std::endl; 
 
-    //parse serveur block pour obtenir serveur_name, host, port, fd.
+		struct timeval timeout;
+		timeout.tv_sec = TIMEOUT_SEC;
+		timeout.tv_usec = 0;
 
-    // une fonction pour transorfer vector string location en vecteur location;
-    //std::cout << BLUE << "#######################Beg test LOCATION #########################"  << RESET << std::endl;
-    //completeVectorLocation(location_block);
+		if (setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
+			std::cerr << "Failed to set receive timeout" << std::endl;
+			exit(EXIT_FAILURE);
+		}
 
-    // idem avec config.
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+
+		if (send(client_socket, response.c_str(), response.length(), 0) == -1) {
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		int bytes_received = 0;
+		while (!bytes_received) {
+			char buffer[1024];
+			bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
+			if (bytes_received == -1) {
+				std::cerr << "Error in receiving data ######" << std::endl;
+			} else {
+				buffer[bytes_received] = '\0';
+				std::cout << "Received " << bytes_received << " bytes: " << buffer << std::endl;
+			}
+		}
+
+		close(client_socket);
 }
-
-
-Server::~Server() {
-	std::cout << "Server destructor" << std::endl;
-}
-

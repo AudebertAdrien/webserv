@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 20:12:30 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 17:19:05 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,10 @@ class Server {
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
 		~Server();
 		void    completeVectorLocation(std::vector<std::string> location_block);
-		//void    run();
+		void    run();
+		void	completeServer(std::string server_block);
+		int		getPort();
+		int		getFd();
 
 	private:
 		Config  		_config;
@@ -55,6 +58,8 @@ class Server {
 		std::string _host;
 		int _port;
 		int _fd;
+		struct sockaddr_in _server_addr;
+
 
 		//Location	_test;
         //int _request_uri_limit_size;
