@@ -44,8 +44,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		}
 
 		ft::display_vector(location_block);
-		//this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
-		Server(*this, server_block, location_block, this->_config);
+		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
+		//Server(*this, server_block, location_block, this->_config);
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
 }
@@ -126,9 +126,21 @@ void	ServerManager::runServer()
 
 	std::vector<Server>::iterator	it = this->_servers.begin();
 
+	std::cout << "server listen on port :" << std::endl;
 	while (it != this->_servers.end())
 	{
-		it->run();
+		std::cout << it->getPort() << std::endl;		
 		it++;
+	}
+	
+	it = this->_servers.begin();
+	while (true)
+	{
+		while (it != this->_servers.end())
+		{
+			it->run();
+			std::cout << "######################### ICI 2########################" << std::endl;
+			it++;
+		}
 	}
 }
