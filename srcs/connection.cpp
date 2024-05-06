@@ -10,4 +10,34 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "connection.hpp"
+#include "webserv_macro.hpp"
 
+Connection::Connection(int client_fd, std::string client_ip, int client_port)
+{
+    std::cout << "Connection, constructeur called" << std::endl;
+
+    this->_fd = client_fd;
+    this->_client_ip = client_ip;
+    this->_client_port = client_port;
+}
+
+Connection::~Connection()
+{
+    std::cout << "Connection, destructeur called" << std::endl;
+}
+
+int Connection::getFd() const
+{
+    return (this->_fd);
+}
+
+std::string	Connection::getClientIp() const
+{
+	return (this->_client_ip);
+}
+
+int	Connection::getClientPort() const
+{
+	return (this->_client_port);
+}

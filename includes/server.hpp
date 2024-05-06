@@ -21,11 +21,12 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <cerrno>
+#include <arpa/inet.h>
 
 #include <vector>
 //#include <map>
 
-//#include "connection.hpp"
+#include "connection.hpp"
 #include "location.hpp"
 //#include "server_manager.hpp"
 #include "config.hpp"
@@ -48,6 +49,9 @@ class Server {
 		void	completeServer(std::string server_block);
 		int		getPort();
 		int		getFd();
+		bool	hasNewConnection();
+		void	acceptNewConnection();
+		void	addConnection(int client_fd, std::string client_ip, int client_port);
 
 	private:
 		Config  		_config;
@@ -60,6 +64,7 @@ class Server {
 		int _port;
 		int _fd;
 		struct sockaddr_in _server_addr;
+		std::map<int, Connection>    _connections;
 
 
 		//Location	_test;
@@ -67,7 +72,7 @@ class Server {
         //int _limit_client_body_size;
         //std::string _default_error_page;
         /*
-		std::map<int, Connection>    _connections;
+		
         queue<Response>	_responses;
 
 		bool	hasException(int client_fd);
@@ -90,8 +95,7 @@ class Server {
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
-		bool	hasNewConnection();
-		void	acceptNewConnection();*/
+		;*/
 };
 
 #endif
