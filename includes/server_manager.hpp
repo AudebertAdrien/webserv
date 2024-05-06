@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/30 17:32:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 18:52:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,9 +61,9 @@ class ServerManager {
 		int _max_fd;
 		fd_set  _read_set;
 		fd_set  _read_copy_set;
-		/*  fd_set  _write_set;
-		  fd_set  _write_copy_set;
-		  fd_set  _error_set;
+		fd_set  _write_set;
+		fd_set  _write_copy_set;
+		/*  fd_set  _error_set;
 		  fd_set  _error_copy_set;*/
 		/*
 		   bool    isValidConfigBlock(config_block);

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 19:55:44 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 17:19:05 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,12 +24,12 @@
 
 #include <vector>
 //#include <map>
-//
-//#include "Connection.hpp"
+
+//#include "connection.hpp"
 #include "location.hpp"
 //#include "server_manager.hpp"
 #include "config.hpp"
-//#include "Response.hpp"
+//#include "response.hpp"
 
 //class Config;
 //class Connection;
@@ -46,8 +46,8 @@ class Server {
 		void    run();
 		void	handleConnection();
 		void	completeServer(std::string server_block);
-		int	getPort();
-		int	getFd();
+		int		getPort();
+		int		getFd();
 
 	private:
 		Config  		_config;
@@ -59,15 +59,17 @@ class Server {
 		std::string _host;
 		int _port;
 		int _fd;
-		struct sockaddr_in server_addr;
+		struct sockaddr_in _server_addr;
 
 
 		//Location	_test;
         //int _request_uri_limit_size;
         //int _limit_client_body_size;
         //std::string _default_error_page;
-        /*std::map<int, Connection>    _connections;
+        /*
+		std::map<int, Connection>    _connections;
         queue<Response>	_responses;
+
 		bool	hasException(int client_fd);
 		void	closeConnection(int	client_fd);
 		bool	isSendable(int	client_fd) ?;
