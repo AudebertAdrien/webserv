@@ -6,7 +6,7 @@
 #    By: motoko <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/02 14:26:47 by motoko            #+#    #+#              #
-#    Updated: 2024/04/29 18:46:44 by motoko           ###   ########.fr        #
+#    Updated: 2024/05/06 16:19:09 by motoko           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,8 @@ SRCS			:= main.cpp				\
 				   server_manager.cpp	\
 				   config.cpp			\
 				   server.cpp			\
-				   location.cpp
+				   location.cpp			\
+				   connection.cpp
 
 CC				:= c++
 CFLAGS			:= -Wall -Wextra

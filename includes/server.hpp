@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 17:19:05 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/06 16:24:14 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,19 +23,19 @@
 #include <cerrno>
 
 #include <vector>
-//#include <map>
+#include <map>
 
-//#include "connection.hpp"
 #include "location.hpp"
-//#include "server_manager.hpp"
-#include "config.hpp"
+#include "connection.hpp"
+#include "server_manager.hpp"
+//#include "config.hpp"
 //#include "response.hpp"
 
-//class Config;
-//class Connection;
 class Location;
+class Connection;
 class ServerManager;
 //class Response;
+//class Config;
 
 class Server {
 	public:
@@ -44,6 +44,7 @@ class Server {
 		~Server();
 		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
+		void	runRecvAndSolve(Connection &connection);
 		void	completeServer(std::string server_block);
 		int		getPort();
 		int		getFd();
@@ -54,19 +55,22 @@ class Server {
 
 		std::vector<Location>    _location;
 
-		std::string _serveur_name;
-		std::string _host;
-		int _port;
-		int _fd;
-		struct sockaddr_in _server_addr;
+		std::string 		_serveur_name;
+		std::string 		_host;
+		int 				_port;
+		int 				_fd;
+		struct sockaddr_in	_server_addr;
 
+		std::map<int, Connection>    _connections;
+
+		bool	hasNewConnection();
+		void	acceptNewConnection();
 
 		//Location	_test;
         //int _request_uri_limit_size;
         //int _limit_client_body_size;
         //std::string _default_error_page;
         /*
-		std::map<int, Connection>    _connections;
         queue<Response>	_responses;
 
 		bool	hasException(int client_fd);
@@ -89,9 +93,8 @@ class Server {
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
-		bool	hasNewConnection();
-		void	acceptNewConnection();*/
-};
+		*/
+		};
 
 #endif
 

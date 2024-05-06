@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 19:04:41 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/06 16:34:19 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ void	Server::completeServer(std::string server_block)
 
 Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  config)
 {
-    std::cout << "Server with params constructor" << std::endl;
+    //std::cout << "Server with params constructor" << std::endl;
 
     this->_config = config;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -107,51 +107,78 @@ int	Server::getFd()
 	return (this->_fd);
 }
 
+/*
+void	recvRequest(Connection &connection) {
+
+}
+*/
+
+void	Server::runRecvAndSolve(Connection &connection) {
+	std::cout << "runRecvAndSolve" << std::endl;
+
+	/*
+	try {
+		recvRequest(connection, connection.get_request());
+	} catch (std::exception &e) {
+		std::cerr << "recvRequest error!!!" << std::endl;
+	}
+	std::string header = "HTTP/1.1 200 OK\r\n";
+	std::string body = "Hello from server!!! Here Adrien\n";
+	std::ostringstream oss;
+	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+	std::string response = oss.str();
+
+	if (send(client_fd, response.c_str(), response.length(), 0) == -1) {
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	int bytes_received = 0;
+	while (!bytes_received) {
+		char buffer[1024];
+		bytes_received = recv(client_fd, buffer, sizeof(buffer), 0);
+		if (bytes_received == -1) {
+			std::cerr << "Error in receiving data ######" << std::endl;
+		} else {
+			buffer[bytes_received] = '\0';
+			std::cout << "Received " << bytes_received << " bytes: " << buffer << std::endl;
+		}
+	}
+	*/
+}
+
 void	Server::run()
 {
-		int	client_socket; 
+		int	client_fd; 
 
 		socklen_t addrlen = sizeof(_server_addr);
 
-		if ((client_socket = accept(_fd, (struct sockaddr *)&_server_addr, (socklen_t*)&addrlen)) == -1) {
+		if ((client_fd = accept(_fd, (struct sockaddr *)&_server_addr, (socklen_t*)&addrlen)) == -1) {
 			std::cerr << "Accept failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
 
 		std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
-		std::cout << "client_socket: " << client_socket << std::endl; 
+		std::cout << "client_fd: " << client_fd << std::endl; 
 
 		struct timeval timeout;
 		timeout.tv_sec = TIMEOUT_SEC;
 		timeout.tv_usec = 0;
 
-		if (setsockopt(client_socket, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
+		if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
 			std::cerr << "Failed to set receive timeout" << std::endl;
 			exit(EXIT_FAILURE);
 		}
 
-		std::string header = "HTTP/1.1 200 OK\r\n";
-		std::string body = "Hello from server!!! Here Adrien\n";
-		std::ostringstream oss;
-		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-		std::string response = oss.str();
+		/*
+		std::map<int, Connection>::iterator it = _connections.begin();
+		while (it != _connections.end())
+		{
+			std::map<int, Connection>::iterator it2 = it;
+			int fd = it2->first;
 
-		if (send(client_socket, response.c_str(), response.length(), 0) == -1) {
-			std::cerr << "Send failed: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
+			runRecvAndSolve(it2);
+			it++;
 		}
-
-		int bytes_received = 0;
-		while (!bytes_received) {
-			char buffer[1024];
-			bytes_received = recv(client_socket, buffer, sizeof(buffer), 0);
-			if (bytes_received == -1) {
-				std::cerr << "Error in receiving data ######" << std::endl;
-			} else {
-				buffer[bytes_received] = '\0';
-				std::cout << "Received " << bytes_received << " bytes: " << buffer << std::endl;
-			}
-		}
-
-		close(client_socket);
+		*/
 }
