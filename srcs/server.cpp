@@ -91,12 +91,12 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 		exit(EXIT_FAILURE);
     }
 
-	if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+	/* if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
         close(_fd);
 		exit(EXIT_FAILURE);
-	}
-}
+	}*/
+} 
 
 int	Server::getPort()
 {
