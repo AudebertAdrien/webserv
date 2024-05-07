@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 15:54:34 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 17:18:15 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,10 +183,7 @@ void	Server::acceptNewConnection() {
 
 }
 
-static int i = 0;
 void	Server::run() {
-	std::cout << "i" << i << std::endl;
-	i++;
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
@@ -197,6 +194,7 @@ void	Server::run() {
 		int fd = it2->first;
 
 		runRecvAndSolve(*(it2->second));
+		close(fd);
 		it++;
 	}
 }
