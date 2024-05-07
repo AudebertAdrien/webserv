@@ -189,7 +189,9 @@ void	Server::run() {
 	//check connection possible
 	std::cout << "size : " << this->_manager->getServer().size() << std::endl;
 	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
-		std::cout << "ok" << std::endl;
+	{
+		std::cout << "too many connection, old connection must be closed" << std::endl;
+	}
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
