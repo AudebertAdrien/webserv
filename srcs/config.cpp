@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:05 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 16:34:08 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 16:56:25 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 #include "webserv_macro.hpp"
 
 Config::Config() {
-	std::cout << "Config default constructor" << std::endl;
+	//std::cout << "Config default constructor" << std::endl;
 }
 
 Config::Config(std::string config_block, char **env) {
-	std::cout << "Config with params" << std::endl;
+	//std::cout << "Config with params" << std::endl;
 	std::istringstream	iss(config_block);
 	std::string	line;
 
@@ -30,8 +30,6 @@ Config::Config(std::string config_block, char **env) {
 			key = line.substr(0, pos);
 			value = line.substr(pos + 1);
 		}
-		std::cout << "key : " << key << std::endl;
-		std::cout << "value : " << value << std::endl;
 
 		key.erase(0, key.find_first_not_of(" \t"));
 		key.erase(key.find_last_not_of(" \t") + 1);
@@ -47,15 +45,10 @@ Config::Config(std::string config_block, char **env) {
 		if (key == "cgi_version")
 			_cgi_version = value;
 	}
-
-	std::cout << RED << "_software_name: " << getSoftwareName() << RESET << std::endl;	
-	std::cout << RED << "_software_version: " << getSoftwareVers() << RESET << std::endl;	
-	std::cout << RED << "_http_version: " << getHttpVers() << RESET << std::endl;	
-	std::cout << RED << "_cgi_version: " << getCgiVers() << RESET << std::endl;	
 }
 
 Config::~Config() {
-	std::cout << "Config destructor" << std::endl;
+	//std::cout << "Config destructor" << std::endl;
 }
 
 std::string Config::getSoftwareName() const {

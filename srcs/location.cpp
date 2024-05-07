@@ -6,27 +6,28 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:27:39 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/03 16:58:01 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #include "location.hpp"
 #include "webserv_macro.hpp"
 
 Location::Location() {
-    std::cout << "Constructor Location default called" << std::endl;
+    //std::cout << "Constructor Location default called" << std::endl;
 }
 
 Location::Location(std::string location)
 {
     this->_is_multi = 0;
+	/*
     std::cout << BLUE << "########## YOUR PART ###########" << RESET << std::endl;
     std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
 
     std::cout << YELLOW << "show string" << std::endl;
     std::cout << location << std::endl;
     std::cout << "end string" << RESET << std::endl <<std::endl;
+	*/
 
 
     std::vector<std::string>    lines;
@@ -45,7 +46,7 @@ Location::Location(std::string location)
     showLocation();
     // to erease
 
-    std::cout << YELLOW << "GET ROOT" << std::endl;
+    //std::cout << YELLOW << "GET ROOT" << std::endl;
     std::vector<std::string>    root = getInfo("root");
     size_t i = 0;
     while (i < root.size())
@@ -53,13 +54,13 @@ Location::Location(std::string location)
         std::cout << "root : " << root[i] << std::endl;
         i++;
     }
-    std::cout << "END TEST ROOT"<< YELLOW << std::endl;
-    std::cout << BLUE << "########## END ###########" << RESET << std::endl;
+    //std::cout << "END TEST ROOT"<< YELLOW << std::endl;
+    //std::cout << BLUE << "########## END ###########" << RESET << std::endl;
 }
 
 Location::~Location()
 {
-    std::cout << "Destructor Location called" << std::endl;
+    //std::cout << "Destructor Location called" << std::endl;
     this->_body_file.clear();
 }
 
@@ -76,10 +77,12 @@ static void showMap(std::multimap<std::string , std::string> map)
 
 void    Location::showLocation()
 {
+	/*
     std::cout << GREEN << std::endl <<"Show what we get" << std::endl;
     std::cout <<"opt : " <<this->_opt_modif << std::endl;
     std::cout <<"Uri match : " <<this->_loc_match_uri << std::endl;
     std::cout << "Map : " << std::endl;
+	*/
     showMap(this->_body_file);
 }
 

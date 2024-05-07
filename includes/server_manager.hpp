@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/30 17:32:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:01:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
+#include <sys/select.h> // Pour select
+#include <unistd.h> 
 //#include <map>
 
 #include "config.hpp"
@@ -47,21 +49,22 @@ class ServerManager {
 		  fdIsset(int fd, setType);
 		  fdCopy(setType);*/
 		//void    exitServer();
-		//void    runServer();
+		void    runServer();
 		void	createServer(const std::string &configuration_file_path, char **env);
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
 		bool	splitServerString(std::string &server_string, std::string &server_block, std::vector<std::string> &location_string);
 
 
 	private:
-		std::vector<Server>  _servers;
-		Config  _config;
-		//int _max_fd;
-		/*fd_set  _read_set;
-		  fd_set  _read_copy_set;
-		  fd_set  _write_set;
-		  fd_set  _write_copy_set;
-		  fd_set  _error_set;
+		std::vector<Server>	_servers;
+		Config				_config;
+
+		int 	_max_fd;
+		fd_set  _read_set;
+		fd_set  _read_copy_set;
+		fd_set  _write_set;
+		fd_set  _write_copy_set;
+		/*  fd_set  _error_set;
 		  fd_set  _error_copy_set;*/
 		/*
 		   bool    isValidConfigBlock(config_block);

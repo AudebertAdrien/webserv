@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/02 19:26:41 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/06 17:03:30 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,11 @@
 #include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
-	std::cout << "ServerManager default constructor" << std::endl;
+	//std::cout << "ServerManager default constructor" << std::endl;
 }
 
 ServerManager::~ServerManager() {
-	std::cout << "ServerManager destructor" << std::endl;
+	//std::cout << "ServerManager destructor" << std::endl;
 }
 
 void	ServerManager::createServer(const std::string &configuration_file_path, char **env) {
@@ -33,8 +33,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	
 	_config = Config(config_block, env);
 	
-	ft::display_vector(server_strings);
-
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
 		std::vector<std::string> location_block;
@@ -43,16 +41,58 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			throw (std::invalid_argument("Failed to split server string"));
 		}
 
-		ft::display_vector(location_block);
-		//this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
-		Server(*this, server_block, location_block, this->_config);
+		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
+		//Server(*this, server_block, location_block, this->_config);
 		//push back dans le vector dans _servers avec const param de serveur;
 	}
 }
 
-bool	ServerManager::splitServerString(std::string &server_strings, std::string &server_block, std::vector<std::string> &location_block) {
-	std::cout << YELLOW << "splitServerString" << RESET << std::endl;
+void	ServerManager::runServer()
+{
+	std::cout << "######################### RUN SERVERS ########################" << std::endl;
 
+	std::vector<Server>::iterator	it = this->_servers.begin();
+
+	std::cout << "server listen on port :" << std::endl;
+
+	FD_ZERO(&(this->_read_set));
+	while (it != this->_servers.end())
+	{
+		std::cout << it->getPort() << std::endl;		
+		FD_SET(it->getFd(), &(this->_read_set));
+		if (this->_max_fd < it->getFd())
+			this->_max_fd = it->getFd();
+		it++;
+	}
+
+	int cnt;
+
+	struct timeval timeout;
+
+	while(true) {
+		timeout.tv_sec = 5;
+		timeout.tv_usec = 0;
+
+		_read_copy_set = this->_read_set;
+		if ((cnt = select(this->_max_fd + 1, &_read_copy_set, NULL, NULL, &timeout)) == -1) {
+			std::cerr << "Select failed: " << strerror(errno) << std::endl;
+			exit(EXIT_FAILURE);
+		}
+		else if (cnt == 0) {
+			std::cout << "Timeout occurred\n";
+			continue;
+		}
+
+		for (std::vector<Server>::iterator it = _servers.begin() ; it != _servers.end() ; ++it) {
+			if (FD_ISSET(it->getFd(), &_read_copy_set)) {
+				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << "########################" << std::endl;
+				it->run();
+			}
+		}
+	}
+}
+
+bool	ServerManager::splitServerString(std::string &server_strings, std::string &server_block, std::vector<std::string> &location_block) {
 	std::istringstream	iss(server_strings);
 	std::stringstream	location_ss;
 
@@ -88,8 +128,6 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 }
 
 bool	ServerManager::splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_strings) {
-	std::cout << YELLOW << "splitConfigString" << RESET << std::endl;
-
 	std::istringstream	iss(config_string);
 	std::stringstream	server_ss;
 
@@ -119,3 +157,4 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	}
 	return (true);
 }
+
