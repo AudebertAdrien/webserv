@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 17:19:05 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:51:12 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,56 +24,62 @@
 #include <arpa/inet.h>
 
 #include <vector>
-//#include <map>
+#include <map>
 
-#include "connection.hpp"
 #include "location.hpp"
-//#include "server_manager.hpp"
-#include "config.hpp"
+#include "connection.hpp"
+#include "server_manager.hpp"
+#include "request.hpp"
+//#include "config.hpp"
 //#include "response.hpp"
 
-//class Config;
-//class Connection;
 class Location;
+class Connection;
 class ServerManager;
+//class Request
 //class Response;
+//class Config;
 
 class Server {
 	public:
 		Server();
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
 		~Server();
+
 		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
-		void	handleConnection();
+		void	runRecvAndSolve(Connection &connection);
+		void	recvRequest(Connection &connection);
 		void	completeServer(std::string server_block);
 		int		getPort();
 		int		getFd();
+
 		bool	hasNewConnection();
 		void	acceptNewConnection();
+
 		void	addConnection(int client_fd, std::string client_ip, int client_port);
 
 	private:
 		Config  		_config;
-		ServerManager*	_manager;
+		ServerManager	*_manager;
 
 		std::vector<Location>    _location;
 
-		std::string _serveur_name;
-		std::string _host;
-		int _port;
-		int _fd;
-		int	_nb_servers;
-		struct sockaddr_in _server_addr;
-		std::map<int, Connection>    _connections;
+		std::string 		_serveur_name;
+		std::string 		_host;
+		int 				_port;
+		int 				_fd;
+		struct sockaddr_in	_server_addr;
 
+		std::map<int, Connection *>    _connections;
+
+		//void	handleConnection();
 
 		//Location	_test;
         //int _request_uri_limit_size;
         //int _limit_client_body_size;
         //std::string _default_error_page;
         /*
-		
         queue<Response>	_responses;
 
 		bool	hasException(int client_fd);
@@ -81,7 +87,6 @@ class Server {
 		bool	isSendable(int	client_fd) ?;
 		void	sendResponse(Response response);
 		void	hasRequest(int client_fd);
-		Request	recvRequest(int client_fd);
 		void	solveRequest(Request request);
 
 		void	executeAutoindex();

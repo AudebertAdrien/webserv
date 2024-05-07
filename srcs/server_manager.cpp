@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/03 19:03:54 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/06 17:03:30 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	
 	_config = Config(config_block, env);
 	
-	//ft::display_vector(server_strings);
-
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
 		std::vector<std::string> location_block;
@@ -44,7 +42,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			throw (std::invalid_argument("Failed to split server string"));
 		}
 
-		//ft::display_vector(location_block);
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//Server(*this, server_block, location_block, this->_config);
 		//push back dans le vector dans _servers avec const param de serveur;
@@ -53,7 +50,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 
 void	ServerManager::resetMaxFd()
 {
-	for (int i = 0; i < 1024; ++i)
+	for (int i = 0; i < FD_SETSIZE; ++i)
 	{
 		if (FD_ISSET(i, &this->_read_set) && i > this->_max_fd) 
 		{
@@ -98,26 +95,28 @@ void	ServerManager::runServer()
 	{
 		std::cout << it->getPort() << std::endl;		
 		FD_SET(it->getFd(), &(this->_read_set));
-		FD_SET(it->getFd(), &(this->_write_set));
+		//FD_SET(it->getFd(), &(this->_write_set));
 		nb++;
 		//if (this->_max_fd < it->getFd())
 		//	this->_max_fd = it->getFd();
+		if (this->_max_fd < it->getFd())
+			this->_max_fd = it->getFd();
 		it++;
 	}
 	this->_nb_servers = nb;
 	std::cout << RED << "######################### nb serveur max vaut via nb : " << this->_nb_servers << " et via size " << this->_servers.size() << RESET <<std::endl;
-	resetMaxFd();
+	//resetMaxFd();
 	std::cout << RED << "######################### fd max vaut : " << this->_max_fd << RESET <<std::endl;
 	int cnt;
 
 	struct timeval timeout;
+
 	while(true) {
 		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;
 
-		this->_read_copy_set = this->_read_set;
-		this->_write_copy_set = this->_write_set;
-		if ((cnt = select(this->_max_fd + 1, &_read_copy_set, &_write_copy_set, NULL, &timeout)) == -1) {
+		_read_copy_set = this->_read_set;
+		if ((cnt = select(this->_max_fd + 1, &_read_copy_set, NULL, NULL, &timeout)) == -1) {
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
@@ -127,9 +126,8 @@ void	ServerManager::runServer()
 		}
 
 		for (std::vector<Server>::iterator it = _servers.begin() ; it != _servers.end() ; ++it) {
-			if (FD_ISSET(it->getFd(), &_read_copy_set) || FD_ISSET(it->getFd(), &_write_copy_set)) 
-			{
-				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << " ########################" << std::endl;
+			if (FD_ISSET(it->getFd(), &_read_copy_set)) {
+				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << "########################" << std::endl;
 				it->run();
 			}
 		}
@@ -201,3 +199,4 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	}
 	return (true);
 }
+

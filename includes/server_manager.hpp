@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 18:52:34 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:01:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,10 +60,11 @@ class ServerManager {
 
 
 	private:
-		std::vector<Server>  _servers;
-		Config  _config;
-		int _max_fd;
+		std::vector<Server>	_servers;
+		Config				_config;
+
 		int	_nb_servers;
+		int 	_max_fd;
 		fd_set  _read_set;
 		fd_set  _read_copy_set;
 		fd_set  _write_set;
