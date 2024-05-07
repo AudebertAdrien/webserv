@@ -15,9 +15,9 @@
 
 #include <iostream>
 #include <map>
-#include "Connection.hpp"
-#include "Server.hpp"
-#include "Location.hpp"
+#include "connection.hpp"
+#include "server.hpp"
+#include "location.hpp"
 
 class Connection;
 class Server;

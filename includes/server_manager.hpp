@@ -42,7 +42,7 @@ class ServerManager {
 		//Config  getConfig() const;
 		int getMaxFd() const;
 		fd_set	getFdSet() const;
-		std::vector<Server>	getServer();
+		std::vector<Server *>	getServer();
 		int	getNbServers() const ;
 		//void    setConfig(Config config);
 		//void    setMaxFd(int fd);
@@ -60,8 +60,8 @@ class ServerManager {
 
 
 	private:
-		std::vector<Server>	_servers;
-		Config				_config;
+		std::vector<Server *>	_servers;
+		Config				*_config;
 
 		int	_nb_servers;
 		int 	_max_fd;

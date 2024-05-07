@@ -31,7 +31,7 @@ void    Server::completeVectorLocation(std::vector<std::string> location_block)
 {
     std::vector<std::string>::iterator it;
 	for (it = location_block.begin(); it != location_block.end(); it++) {
-        this->_location.push_back(Location(*it));
+        this->_location.push_back(new Location(*it));
     }
 }
 
@@ -48,11 +48,11 @@ void	Server::completeServer(std::string server_block)
 	this->_port = atoi(word.c_str());
 }
 
-Server::Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  config)
+Server::Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config  &config)
 {
     //std::cout << "Server with params constructor" << std::endl;
 
-    this->_config = config;
+    this->_config = &config;
 	this->_manager = &manager;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
 		std::cerr << "Socket creation failed: " << strerror(errno) << std::endl;
@@ -185,6 +185,11 @@ void	Server::acceptNewConnection() {
 }
 
 void	Server::run() {
+
+	//check connection possible
+	std::cout << "size : " << this->_manager->getServer().size() << std::endl;
+	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
+		std::cout << "ok" << std::endl;
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();

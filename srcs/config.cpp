@@ -14,7 +14,7 @@
 #include "webserv_macro.hpp"
 
 Config::Config() {
-	//std::cout << "Config default constructor" << std::endl;
+	std::cout << "Config default constructor" << std::endl;
 }
 
 Config::Config(std::string config_block, char **env) {
@@ -48,7 +48,7 @@ Config::Config(std::string config_block, char **env) {
 }
 
 Config::~Config() {
-	//std::cout << "Config destructor" << std::endl;
+	std::cout << "Config destructor" << std::endl;
 }
 
 std::string Config::getSoftwareName() const {

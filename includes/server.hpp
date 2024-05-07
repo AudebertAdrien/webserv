@@ -43,7 +43,7 @@ class ServerManager;
 class Server {
 	public:
 		Server();
-		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
+		Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config &config);
 		~Server();
 
 		void    completeVectorLocation(std::vector<std::string> location_block);
@@ -60,10 +60,10 @@ class Server {
 		void	addConnection(int client_fd, std::string client_ip, int client_port);
 
 	private:
-		Config  		_config;
+		Config  		*_config;
 		ServerManager	*_manager;
 
-		std::vector<Location>    _location;
+		std::vector<Location *>    _location;
 
 		std::string 		_serveur_name;
 		std::string 		_host;
