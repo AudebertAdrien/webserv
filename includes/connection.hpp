@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 15:19:09 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:39:54 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 class Connection
 {
 	public:
+		Connection();
 		Connection(int client_fd, std::string client_ip, int client_port);
         ~Connection();
 
@@ -26,14 +27,12 @@ class Connection
 		timeval	getLastRequest() const;
 		std::string getClientIp() const;
 		int getClientPort() const;
-
 		
 	private:
-		int _fd;
-        timeval _last_request;
-        std::string _client_ip;
-        int _client_port;
-
+		int 		_fd;
+        timeval 	_last_request;
+        std::string	_client_ip;
+        int			_client_port;
 };
 
 #endif
