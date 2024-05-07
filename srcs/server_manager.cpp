@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/03 19:03:54 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/06 17:03:30 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	
 	_config = Config(config_block, env);
 	
-	//ft::display_vector(server_strings);
-
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
 		std::vector<std::string> location_block;
@@ -43,7 +41,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 			throw (std::invalid_argument("Failed to split server string"));
 		}
 
-		//ft::display_vector(location_block);
 		this->_servers.push_back(Server(*this, server_block, location_block, this->_config));
 		//Server(*this, server_block, location_block, this->_config);
 		//push back dans le vector dans _servers avec const param de serveur;
@@ -71,6 +68,7 @@ void	ServerManager::runServer()
 	int cnt;
 
 	struct timeval timeout;
+
 	while(true) {
 		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;

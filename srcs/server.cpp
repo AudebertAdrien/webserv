@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/06 16:34:19 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:54:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,11 +90,13 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
 		exit(EXIT_FAILURE);
     }
 
+	/*
 	if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
         close(_fd);
 		exit(EXIT_FAILURE);
 	}
+	*/
 }
 
 int	Server::getPort()
@@ -107,78 +109,94 @@ int	Server::getFd()
 	return (this->_fd);
 }
 
-/*
-void	recvRequest(Connection &connection) {
+void	Server::recvRequest(Connection &connection) {
 
+	Request	test(connection, *this);			
+
+	int bytes_received = 0;
+	while (!bytes_received) {
+		char buffer[1024];
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+		if (bytes_received == -1) {
+			std::cerr << "Error in receiving data ######" << std::endl;
+		} else {
+			buffer[bytes_received] = '\0';
+			std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
+		}
+	}
 }
-*/
 
 void	Server::runRecvAndSolve(Connection &connection) {
 	std::cout << "runRecvAndSolve" << std::endl;
 
-	/*
 	try {
-		recvRequest(connection, connection.get_request());
+		recvRequest(connection);
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
+
 	std::string header = "HTTP/1.1 200 OK\r\n";
 	std::string body = "Hello from server!!! Here Adrien\n";
 	std::ostringstream oss;
 	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
 	std::string response = oss.str();
 
-	if (send(client_fd, response.c_str(), response.length(), 0) == -1) {
+	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
 		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	}
+}
+
+void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
+    Connection *client = new Connection(client_fd, client_ip, client_port);
+
+	std::cout << "Ip : " << client_ip <<  std::endl << "Port : " << client_port << std::endl;
+    _connections.insert(std::make_pair(client_fd, client));
+}
+
+void	Server::acceptNewConnection() {
+	int	client_fd;
+	struct sockaddr_in client_addr;
+
+	socklen_t addrlen = sizeof(_server_addr);
+
+	if ((client_fd = accept(_fd, (struct sockaddr *)&client_addr, (socklen_t*)&addrlen)) == -1) {
+		std::cerr << "Accept failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
-	int bytes_received = 0;
-	while (!bytes_received) {
-		char buffer[1024];
-		bytes_received = recv(client_fd, buffer, sizeof(buffer), 0);
-		if (bytes_received == -1) {
-			std::cerr << "Error in receiving data ######" << std::endl;
-		} else {
-			buffer[bytes_received] = '\0';
-			std::cout << "Received " << bytes_received << " bytes: " << buffer << std::endl;
-		}
+	std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
+	std::cout << "client_fd: " << client_fd << std::endl; 
+
+	struct timeval timeout;
+	timeout.tv_sec = TIMEOUT_SEC;
+	timeout.tv_usec = 0;
+	if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
+		std::cerr << "Failed to set receive timeout" << std::endl;
+		exit(EXIT_FAILURE);
 	}
-	*/
+
+	char client_ip[INET_ADDRSTRLEN];
+    inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
+    int client_port = ntohs(client_addr.sin_port);
+
+	addConnection(client_fd, client_ip, client_port);
+
 }
 
-void	Server::run()
-{
-		int	client_fd; 
+static int i = 0;
+void	Server::run() {
+	std::cout << "i" << i << std::endl;
+	i++;
+	acceptNewConnection();
 
-		socklen_t addrlen = sizeof(_server_addr);
+	std::map<int, Connection *>::iterator it = _connections.begin();
+	std::cout << "_connection.size() : " << _connections.size() << std::endl;
+	while (it != _connections.end())
+	{
+		std::map<int, Connection *>::iterator it2 = it;
+		int fd = it2->first;
 
-		if ((client_fd = accept(_fd, (struct sockaddr *)&_server_addr, (socklen_t*)&addrlen)) == -1) {
-			std::cerr << "Accept failed: " << strerror(errno) << std::endl;
-			exit(EXIT_FAILURE);
-		}
-
-		std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
-		std::cout << "client_fd: " << client_fd << std::endl; 
-
-		struct timeval timeout;
-		timeout.tv_sec = TIMEOUT_SEC;
-		timeout.tv_usec = 0;
-
-		if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
-			std::cerr << "Failed to set receive timeout" << std::endl;
-			exit(EXIT_FAILURE);
-		}
-
-		/*
-		std::map<int, Connection>::iterator it = _connections.begin();
-		while (it != _connections.end())
-		{
-			std::map<int, Connection>::iterator it2 = it;
-			int fd = it2->first;
-
-			runRecvAndSolve(it2);
-			it++;
-		}
-		*/
+		runRecvAndSolve(*(it2->second));
+		it++;
+	}
 }

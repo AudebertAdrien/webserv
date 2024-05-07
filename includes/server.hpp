@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/06 16:24:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 15:51:12 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <sys/socket.h>
 #include <cerrno>
+#include <arpa/inet.h>
 
 #include <vector>
 #include <map>
@@ -28,12 +29,14 @@
 #include "location.hpp"
 #include "connection.hpp"
 #include "server_manager.hpp"
+#include "request.hpp"
 //#include "config.hpp"
 //#include "response.hpp"
 
 class Location;
 class Connection;
 class ServerManager;
+//class Request
 //class Response;
 //class Config;
 
@@ -42,16 +45,23 @@ class Server {
 		Server();
 		Server(ServerManager manager, std::string server_block, std::vector<std::string> location_block, Config  _config);
 		~Server();
+
 		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
 		void	runRecvAndSolve(Connection &connection);
+		void	recvRequest(Connection &connection);
 		void	completeServer(std::string server_block);
 		int		getPort();
 		int		getFd();
 
+		bool	hasNewConnection();
+		void	acceptNewConnection();
+
+		void	addConnection(int client_fd, std::string client_ip, int client_port);
+
 	private:
 		Config  		_config;
-		ServerManager*	_manager;
+		ServerManager	*_manager;
 
 		std::vector<Location>    _location;
 
@@ -61,10 +71,9 @@ class Server {
 		int 				_fd;
 		struct sockaddr_in	_server_addr;
 
-		std::map<int, Connection>    _connections;
+		std::map<int, Connection *>    _connections;
 
-		bool	hasNewConnection();
-		void	acceptNewConnection();
+		//void	handleConnection();
 
 		//Location	_test;
         //int _request_uri_limit_size;
@@ -78,7 +87,6 @@ class Server {
 		bool	isSendable(int	client_fd) ?;
 		void	sendResponse(Response response);
 		void	hasRequest(int client_fd);
-		Request	recvRequest(int client_fd);
 		void	solveRequest(Request request);
 
 		void	executeAutoindex();
@@ -93,8 +101,8 @@ class Server {
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
-		*/
-		};
+		;*/
+};
 
 #endif
 
