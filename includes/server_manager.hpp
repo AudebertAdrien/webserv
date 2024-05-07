@@ -40,7 +40,10 @@ class ServerManager {
 		~ServerManager();
 		//void    setType//pour les enum
 		//Config  getConfig() const;
-		//int getMaxFd() const;
+		int getMaxFd() const;
+		fd_set	getFdSet() const;
+		std::vector<Server>	getServer();
+		int	getNbServers() const ;
 		//void    setConfig(Config config);
 		//void    setMaxFd(int fd);
 		/*fdSet(int fd, setType);
@@ -53,12 +56,14 @@ class ServerManager {
 		void	createServer(const std::string &configuration_file_path, char **env);
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
 		bool	splitServerString(std::string &server_string, std::string &server_block, std::vector<std::string> &location_string);
+		void	resetMaxFd();
 
 
 	private:
 		std::vector<Server>  _servers;
 		Config  _config;
 		int _max_fd;
+		int	_nb_servers;
 		fd_set  _read_set;
 		fd_set  _read_copy_set;
 		fd_set  _write_set;

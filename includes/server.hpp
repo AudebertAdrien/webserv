@@ -63,6 +63,7 @@ class Server {
 		std::string _host;
 		int _port;
 		int _fd;
+		int	_nb_servers;
 		struct sockaddr_in _server_addr;
 		std::map<int, Connection>    _connections;
 

@@ -15,9 +15,9 @@
 
 #include <iostream>
 #include <map>
-#include "Connection.hpp"
-#include "Server.hpp"
-#include "Location.hpp"
+#include "connection.hpp"
+#include "server.hpp"
+#include "location.hpp"
 
 class Connection;
 class Server;
@@ -26,9 +26,9 @@ class Location;
 class Request
 {
 	public:
-		Request(Connection connection, Server server, start);
+		Request(Connection connection, Server server);
         ~Request();
-		Connection	getConnection() const;
+		/*Connection	getConnection() const;
 		Method	getmethod() const;
 		Server	getServer() const;
 		Location	getLocation() const;
@@ -42,17 +42,17 @@ class Request
 		void	addContent(std::string content);
 		void	addOrigin(std::string origin);
 		void	addHeader(std::string header);
-		bool	isValidHeader(std::string header);
+		bool	isValidHeader(std::string header);*/
 
 		
 	private:
-		enum    Method;
-        enum    Uri_type;
-        enum    Transfert_type;
+		//enum    Method;
+        //enum    Uri_type;
+       // enum    Transfert_type;
 		Connection	_connection;
 		Server	_server;
 		Location	_location;
-			_start;
+		/* 	_start;
 		Method	_method;
 		std::string	_uri;
 		Uri_type	_uri_type;
@@ -60,7 +60,7 @@ class Request
 		Transfert_type	_transfer_type;
 		std::string	_content;
 		std::string	_origin;
-
+ */
 };
 
 #endif

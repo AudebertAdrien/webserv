@@ -27,6 +27,7 @@ int main(int ac, char **av, char **env)
 {
 	ServerManager	manager;
 
+	std::cout << "La valeur de FD_SETSIZE est : " << FD_SETSIZE << std::endl;
 	if (ac > 2) {
 		std::cout << "error : There are too many arguments!" << std::endl;
 	}

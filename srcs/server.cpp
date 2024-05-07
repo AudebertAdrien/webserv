@@ -53,6 +53,7 @@ Server::Server(ServerManager manager, std::string server_block, std::vector<std:
     //std::cout << "Server with params constructor" << std::endl;
 
     this->_config = config;
+	this->_manager = &manager;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
 		std::cerr << "Socket creation failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
@@ -126,6 +127,8 @@ void	Server::acceptNewConnection()
 		exit(EXIT_FAILURE);
 	}
 
+
+
 	std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
 	std::cout << "client_socket: " << client_socket << std::endl; 
 
@@ -145,6 +148,22 @@ void	Server::acceptNewConnection()
 
 void	Server::run()
 {
+	// Verification pour la place 
+
+	/* std::cout << "taille est : " << this->_manager->getNbServers() << std::endl;
+
+	//std::cout << "taille est : " << this->_manager->getServer().size() << std::endl;
+
+	std::cout << "verif " << std::endl;
+	if (this->_connections.size() >= 1024) // this->_manager->getServer().size())) 
+	{
+		std::cout << "aie" << std::endl;
+        //int fd = getUnuseConnectionFd();
+        //if (fd == -1)
+        //    return;
+        //closeConnection(fd);
+    }
+	std::cout << "on est bon =D" << std::endl; */
 
 	acceptNewConnection();
 

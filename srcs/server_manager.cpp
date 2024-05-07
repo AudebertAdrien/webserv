@@ -15,7 +15,8 @@
 #include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
-	//std::cout << "ServerManager default constructor" << std::endl;
+	std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
+	this->_max_fd = -1;
 }
 
 ServerManager::~ServerManager() {
@@ -50,6 +51,38 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 	}
 }
 
+void	ServerManager::resetMaxFd()
+{
+	for (int i = 0; i < 1024; ++i)
+	{
+		if (FD_ISSET(i, &this->_read_set) && i > this->_max_fd) 
+		{
+            this->_max_fd = i;
+		}
+	}
+}
+
+int	ServerManager::getMaxFd() const
+{
+	return (this->_max_fd);
+}
+
+fd_set	ServerManager::getFdSet() const
+{
+	return (this->_read_set);
+}
+
+std::vector<Server>	ServerManager::getServer()
+{
+	return (this->_servers);
+}
+
+int	ServerManager::getNbServers() const
+{
+	return (this->_nb_servers);
+}
+
+
 void	ServerManager::runServer()
 {
 	std::cout << "######################### RUN SERVERS ########################" << std::endl;
@@ -60,16 +93,21 @@ void	ServerManager::runServer()
 
 	FD_ZERO(&(this->_read_set));
 	FD_ZERO(&(this->_write_set));
+	int	nb = 0;
 	while (it != this->_servers.end())
 	{
 		std::cout << it->getPort() << std::endl;		
 		FD_SET(it->getFd(), &(this->_read_set));
 		FD_SET(it->getFd(), &(this->_write_set));
-		if (this->_max_fd < it->getFd())
-			this->_max_fd = it->getFd();
+		nb++;
+		//if (this->_max_fd < it->getFd())
+		//	this->_max_fd = it->getFd();
 		it++;
 	}
-
+	this->_nb_servers = nb;
+	std::cout << RED << "######################### nb serveur max vaut via nb : " << this->_nb_servers << " et via size " << this->_servers.size() << RESET <<std::endl;
+	resetMaxFd();
+	std::cout << RED << "######################### fd max vaut : " << this->_max_fd << RESET <<std::endl;
 	int cnt;
 
 	struct timeval timeout;
@@ -91,7 +129,7 @@ void	ServerManager::runServer()
 		for (std::vector<Server>::iterator it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET(it->getFd(), &_read_copy_set) || FD_ISSET(it->getFd(), &_write_copy_set)) 
 			{
-				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << "########################" << std::endl;
+				std::cout << "######################### FD_ISSET = _fd: " << it->getFd() << " port : " << it->getPort() << " ########################" << std::endl;
 				it->run();
 			}
 		}
