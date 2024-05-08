@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 15:37:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/08 17:21:31 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,11 @@ Request::Request(Connection &connection, Server &server)
 Request::~Request()
 {
     std::cout << "Request destructeur called" << std::endl;
+}
+
+void	Request::addMethod(std::string &method) {
+	if (method == "GET")
+		_method = GET;
 }
 
 /*
@@ -50,11 +55,12 @@ Server	Request::getServer() const
 	return (*_server);
 }
 
-/*
-Request Request::getMethod() const
+Method	Request::getMethod() const
 {
+	return (_method);
 }
 
+/*
 Request Request::getLocation() const
 {
 }

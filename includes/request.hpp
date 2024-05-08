@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 15:05:09 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/08 17:21:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,8 @@ class Connection;
 class Server;
 class Location;
 
+enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
+
 class Request
 {
 	public:
@@ -32,9 +34,9 @@ class Request
 		Connection		getConnection() const;
 		Server			getServer() const;
 
+		Method			getMethod() const;
 		/*
 		Location		getLocation() const;
-		Method			getMethod() const;
 		std::string		getUri() const;
 		Uri_type		getUriType() const;
 
@@ -52,9 +54,11 @@ class Request
 		bool	isValidHeader(std::string header);
 		*/
 		
+		void	addMethod(std::string &method);
+
 	private:
+		//enum    Method;
 		/*
-		enum    Method;
         enum    Uri_type;
         enum    Transfert_type;
 		*/
@@ -63,8 +67,8 @@ class Request
 		Server			*_server;
 		//Location		_location;
 		
+		Method			_method;
 		/*
-		//Method			_method;
 		std::string		_uri;
 		//Uri_type		_uri_type;
 
