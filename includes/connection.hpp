@@ -31,6 +31,7 @@ class Connection
 		std::string		getClientIp() const;
 		int				getClientPort() const;
 		Request&		getRequest();
+		void			setRequest(Request &request);
 		
 	private:
 		int 		_fd;

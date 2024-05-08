@@ -112,7 +112,7 @@ int	Server::getFd()
 
 void	Server::recvRequest(Connection &connection) {
 
-	Request	request(connection, *this);			
+	Request	*request = new Request(connection, *this);			
 
 	int bytes_received = 0;
 	while (!bytes_received) {
@@ -133,7 +133,7 @@ void	Server::recvRequest(Connection &connection) {
 				if (isFirstLine) {
 					isFirstLine = false;
 					std::string method = line.substr(0, pos);
-					request.addMethod(method);
+					request->addMethod(method);
 					continue;	
 				}
 				else {
@@ -146,11 +146,12 @@ void	Server::recvRequest(Connection &connection) {
 				}
 
 			}
-			std::cout << request.getMethod() << std::endl;
+			std::cout << request->getMethod() << std::endl;
 			std::cout << "############" << std::endl;
 			//std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
 		}
 	}
+	connection.setRequest(*request);
 }
 
 void	Server::runRecvAndSolve(Connection &connection) {
@@ -167,20 +168,21 @@ void	Server::runRecvAndSolve(Connection &connection) {
 
 void	Server::solveRequest(Connection &connection, Request &request)
 {
-	std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = "Hello from server!!! Here Adrien\n";
-	std::ostringstream oss;
-	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-	std::string response = oss.str();
-
-	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
-	}
-	/* std::cout << GREEN;
+	
+	 std::cout << GREEN;
 	if (request.getMethod() == GET)
 	{
 		std::cout << " ggg GET ggggg" << std::endl;
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		}
 	}
 	if (request.getMethod() == POST)
 	{
@@ -191,7 +193,7 @@ void	Server::solveRequest(Connection &connection, Request &request)
 	{
 		std::cout << " pppppppp POST pppppppp" << std::endl;
 	}
-	std::cout << RESET; */
+	std::cout << RESET; 
 
 }
 

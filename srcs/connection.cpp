@@ -36,6 +36,11 @@ int Connection::getFd() const
     return (this->_fd);
 }
 
+void	Connection::setRequest(Request &request)
+{
+    this->_request = &request;
+}
+
 Request& Connection::getRequest()
 {
     return *(this->_request);
