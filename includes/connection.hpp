@@ -15,6 +15,9 @@
 
 #include <iostream>
 #include <map>
+#include "request.hpp"
+
+class Request;
 
 class Connection
 {
@@ -27,12 +30,14 @@ class Connection
 		timeval	getLastRequest() const;
 		std::string getClientIp() const;
 		int getClientPort() const;
+		Request&	getRequest();
 		
 	private:
 		int 		_fd;
         timeval 	_last_request;
         std::string	_client_ip;
         int			_client_port;
+		Request		*_request;
 };
 
 #endif

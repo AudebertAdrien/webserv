@@ -18,6 +18,7 @@
 #include "connection.hpp"
 #include "server.hpp"
 #include "location.hpp"
+#include "enum.hpp"
 
 class Connection;
 class Server;
@@ -32,16 +33,22 @@ class Request
 		Connection		getConnection() const;
 		Server			getServer() const;
 
+		Method	getMethod() const
+		{
+			
+			return (this->_method);
+		}
+		std::string							getContent() const;
+		std::map<std::string , std::string>	getHeaders() const;
+
 		/*
 		Location		getLocation() const;
-		Method			getMethod() const;
 		std::string		getUri() const;
 		Uri_type		getUriType() const;
 
 		map<std::string , std::string>	getHearders() const;
 
 		Transfert_type	getTransferType() const;
-		std::string		getContent() const;
 		std::string		getOrigin() const;
 
 		//isOverTime();
@@ -54,24 +61,26 @@ class Request
 		
 	private:
 		/*
-		enum    Method;
         enum    Uri_type;
         enum    Transfert_type;
 		*/
 
 		Connection		*_connection;
 		Server			*_server;
+		std::map<std::string , std::string>	_headers;
+		std::string		_content;
 		//Location		_location;
 		
+
+		Method			_method;
 		/*
-		//Method			_method;
+		
 		std::string		_uri;
 		//Uri_type		_uri_type;
 
-		std::map<std::string , std::string>	_headers;
+		
 
 		//Transfert_type	_transfer_type;
-		std::string		_content;
 		std::string		_origin;
 
 		//_start;

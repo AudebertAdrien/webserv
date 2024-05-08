@@ -30,13 +30,14 @@
 #include "connection.hpp"
 #include "server_manager.hpp"
 #include "request.hpp"
+#include "enum.hpp"
 //#include "config.hpp"
 //#include "response.hpp"
 
 class Location;
 class Connection;
 class ServerManager;
-//class Request
+class Request;
 //class Response;
 //class Config;
 
@@ -50,6 +51,7 @@ class Server {
 		void    run();
 		void	runRecvAndSolve(Connection &connection);
 		void	recvRequest(Connection &connection);
+		void	solveRequest(Connection &connection, Request &req);
 		void	completeServer(std::string server_block);
 		int		getPort();
 		int		getFd();
@@ -87,7 +89,6 @@ class Server {
 		bool	isSendable(int	client_fd) ?;
 		void	sendResponse(Response response);
 		void	hasRequest(int client_fd);
-		void	solveRequest(Request request);
 
 		void	executeAutoindex();
 		void	executeGet(Request request);

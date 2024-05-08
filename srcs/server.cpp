@@ -136,6 +136,12 @@ void	Server::runRecvAndSolve(Connection &connection) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
 
+	solveRequest(connection, connection.getRequest());
+}
+
+void	Server::solveRequest(Connection &connection, Request &request)
+{
+	std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
 	std::string header = "HTTP/1.1 200 OK\r\n";
 	std::string body = "Hello from server!!! Here Adrien\n";
 	std::ostringstream oss;
@@ -145,6 +151,22 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
 		std::cerr << "Send failed: " << strerror(errno) << std::endl;
 	}
+	/* std::cout << GREEN;
+	if (request.getMethod() == GET)
+	{
+		std::cout << " ggg GET ggggg" << std::endl;
+	}
+	if (request.getMethod() == POST)
+	{
+		std::cout << " pppppppp POST pppppppp" << std::endl;
+	}
+
+	if (request.getMethod() == DELETE)
+	{
+		std::cout << " pppppppp POST pppppppp" << std::endl;
+	}
+	std::cout << RESET; */
+
 }
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
@@ -191,6 +213,7 @@ void	Server::run() {
 	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
 	{
 		std::cout << "too many connection, old connection must be closed" << std::endl;
+		return ;
 	}
 	acceptNewConnection();
 

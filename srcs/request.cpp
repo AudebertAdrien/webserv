@@ -50,11 +50,17 @@ Server	Request::getServer() const
 	return (*_server);
 }
 
-/*
-Request Request::getMethod() const
+std::string	Request::getContent() const
 {
+	return (this->_content);
 }
 
+std::map<std::string, std::string>	Request::getHeaders() const
+{
+	return (this->_headers);
+}
+
+/*
 Request Request::getLocation() const
 {
 }
