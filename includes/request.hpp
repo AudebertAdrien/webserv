@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 15:05:09 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/08 17:21:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,17 +30,12 @@ class Request
 		Request(Connection &connection, Server &server);
         ~Request();
 
-		Connection		getConnection() const;
-		Server			getServer() const;
-
-		Method	getMethod() const
-		{
-			
-			return (this->_method);
-		}
+		Connection							getConnection() const;
+		Server								getServer() const;
 		std::string							getContent() const;
 		std::map<std::string , std::string>	getHeaders() const;
 
+		Method								getMethod() const;
 		/*
 		Location		getLocation() const;
 		std::string		getUri() const;
@@ -59,7 +54,10 @@ class Request
 		bool	isValidHeader(std::string header);
 		*/
 		
+		void	addMethod(std::string &method);
+
 	private:
+		//enum    Method;
 		/*
         enum    Uri_type;
         enum    Transfert_type;
@@ -71,10 +69,8 @@ class Request
 		std::string		_content;
 		//Location		_location;
 		
-
 		Method			_method;
 		/*
-		
 		std::string		_uri;
 		//Uri_type		_uri_type;
 

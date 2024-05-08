@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 17:18:15 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/08 17:20:44 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ int	Server::getFd()
 
 void	Server::recvRequest(Connection &connection) {
 
-	Request	test(connection, *this);			
+	Request	request(connection, *this);			
 
 	int bytes_received = 0;
 	while (!bytes_received) {
@@ -121,8 +121,34 @@ void	Server::recvRequest(Connection &connection) {
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
-			buffer[bytes_received] = '\0';
-			std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
+			
+			std::cout << "############" << std::endl;
+			std::istringstream	iss(buffer);
+			std::string line;
+			bool isFirstLine = true;
+			while (getline(iss, line)) {
+				std::string key, value;
+				size_t pos = line.find_first_of(" \t");
+
+				if (isFirstLine) {
+					isFirstLine = false;
+					std::string method = line.substr(0, pos);
+					request.addMethod(method);
+					continue;	
+				}
+				else {
+					if (pos != std::string::npos) {
+						key = line.substr(0, pos);
+						value = line.substr(pos + 1);
+					}
+					std::cout << "key: " << key << std::endl;
+					std::cout << "value: " << value << std::endl;
+				}
+
+			}
+			std::cout << request.getMethod() << std::endl;
+			std::cout << "############" << std::endl;
+			//std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
 		}
 	}
 }
@@ -203,7 +229,6 @@ void	Server::acceptNewConnection() {
     int client_port = ntohs(client_addr.sin_port);
 
 	addConnection(client_fd, client_ip, client_port);
-
 }
 
 void	Server::run() {

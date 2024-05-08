@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/06 17:03:30 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/08 15:46:57 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,12 @@ ServerManager::ServerManager() {
 }
 
 ServerManager::~ServerManager() {
-	//std::cout << "ServerManager destructor" << std::endl;
+	std::cout << "ServerManager destructor" << std::endl;
+	std::vector<Server *>::iterator it;
+	for (it = _servers.begin() ; it != _servers.end() ; ++it) {
+		delete *it;
+	}
+	delete	_config;
 }
 
 void	ServerManager::createServer(const std::string &configuration_file_path, char **env) {
@@ -43,8 +48,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		}
 
 		this->_servers.push_back(new Server(*this, server_block, location_block, *this->_config));
-		//Server(*this, server_block, location_block, this->_config);
-		//push back dans le vector dans _servers avec const param de serveur;
 	}
 }
 
@@ -53,9 +56,7 @@ void	ServerManager::resetMaxFd()
 	for (int i = 0; i < FD_SETSIZE; ++i)
 	{
 		if (FD_ISSET(i, &this->_read_set) && i > this->_max_fd) 
-		{
             this->_max_fd = i;
-		}
 	}
 }
 
@@ -104,11 +105,12 @@ void	ServerManager::runServer()
 		it++;
 	}
 	this->_nb_servers = nb;
+
 	std::cout << RED << "######################### nb serveur max vaut via nb : " << this->_nb_servers << " et via size " << this->_servers.size() << RESET <<std::endl;
 	//resetMaxFd();
 	std::cout << RED << "######################### fd max vaut : " << this->_max_fd << RESET <<std::endl;
-	int cnt;
 
+	int cnt;
 	struct timeval timeout;
 
 	while(true) {
@@ -124,6 +126,7 @@ void	ServerManager::runServer()
 			std::cout << "Timeout occurred\n";
 			continue;
 		}
+
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {

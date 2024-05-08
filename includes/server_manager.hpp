@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 15:01:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/07 18:22:44 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <vector>
 #include <sstream>
-#include <sys/select.h> // Pour select
+#include <sys/select.h>
 #include <unistd.h> 
 //#include <map>
 
@@ -38,6 +38,7 @@ class ServerManager {
 	public:
 		ServerManager();
 		~ServerManager();
+
 		//void    setType//pour les enum
 		//Config  getConfig() const;
 		int getMaxFd() const;
@@ -61,9 +62,9 @@ class ServerManager {
 
 	private:
 		std::vector<Server *>	_servers;
-		Config				*_config;
+		Config					*_config;
 
-		int	_nb_servers;
+		int		_nb_servers;
 		int 	_max_fd;
 		fd_set  _read_set;
 		fd_set  _read_copy_set;
