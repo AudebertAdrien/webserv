@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 17:21:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:28:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <map>
+
 #include "connection.hpp"
 #include "server.hpp"
 #include "location.hpp"
@@ -34,27 +35,29 @@ class Request
 		Connection		getConnection() const;
 		Server			getServer() const;
 
-		Method			getMethod() const;
+		/* == getter == */
+		std::map<std::string, std::string>	getHeader() const;
+		Method								getMethod() const;
+		std::string							getContent() const;
 		/*
 		Location		getLocation() const;
 		std::string		getUri() const;
 		Uri_type		getUriType() const;
 
-		map<std::string , std::string>	getHearders() const;
 
 		Transfert_type	getTransferType() const;
-		std::string		getContent() const;
 		std::string		getOrigin() const;
 
 		//isOverTime();
 
-		void	addContent(std::string content);
 		void	addOrigin(std::string origin);
-		void	addHeader(std::string header);
 		bool	isValidHeader(std::string header);
 		*/
 		
-		void	addMethod(std::string &method);
+		/*== setter ==*/
+		void	addMethod(std::string &line);
+		void	addHeader(std::string &line);
+		void	addContent(std::string &content);
 
 	private:
 		//enum    Method;
@@ -68,14 +71,16 @@ class Request
 		//Location		_location;
 		
 		Method			_method;
+
+		std::map<std::string, std::string> _headers;
+		std::string		_content;
+
 		/*
 		std::string		_uri;
 		//Uri_type		_uri_type;
 
-		std::map<std::string , std::string>	_headers;
 
 		//Transfert_type	_transfer_type;
-		std::string		_content;
 		std::string		_origin;
 
 		//_start;

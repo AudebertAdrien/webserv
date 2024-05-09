@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 16:58:01 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 13:09:28 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,27 +19,16 @@ Location::Location() {
 
 Location::Location(std::string location)
 {
+    //std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
     this->_is_multi = 0;
-	/*
-    std::cout << BLUE << "########## YOUR PART ###########" << RESET << std::endl;
-    std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
-
-    std::cout << YELLOW << "show string" << std::endl;
-    std::cout << location << std::endl;
-    std::cout << "end string" << RESET << std::endl <<std::endl;
-	*/
-
 
     std::vector<std::string>    lines;
     std::istringstream iss(location);
     std::string line;
 
     while (std::getline(iss, line))
-    {
         lines.push_back(line);
-        // Traitement de chaque ligne ici
-        std::cout << "Loca Ligne : " << line << std::endl;
-    }
+
     fullFillLocation(lines);
 
     // Useless fonction, just to show location

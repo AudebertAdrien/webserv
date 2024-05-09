@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 17:20:44 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 17:28:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,12 +67,10 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 
 	completeServer(server_block);
 
-	//ft::bzero(&server_addr, sizeof(struct sockaddr_in));
+	memset(&_server_addr, '\0', sizeof(struct sockaddr_in));
 	_server_addr.sin_family          = AF_INET;
 	_server_addr.sin_port            = htons(this->_port);
 	_server_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
-    //server_addr.sin_addr.s_addr = INADDR_ANY;
-	//server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	if (bind(_fd, (struct sockaddr *)&_server_addr, sizeof(_server_addr)) == -1) {
 		std::cerr << "Bind failed: " << strerror(errno) << std::endl;
@@ -111,6 +109,7 @@ int	Server::getFd()
 }
 
 void	Server::recvRequest(Connection &connection) {
+	std::cout << "recvRequest" << std::endl;
 
 	Request	request(connection, *this);			
 
@@ -121,34 +120,39 @@ void	Server::recvRequest(Connection &connection) {
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
-			
 			std::cout << "############" << std::endl;
-			std::istringstream	iss(buffer);
+
+			std::string http_request(buffer);
+
+			size_t header_end = http_request.find("\r\n\r\n");
+			if (header_end == std::string::npos) {
+				std::cout << "header end not found" << std::endl;
+			}
+			std::cout << "header end: " << header_end << std::endl;
+
+			std::string header = http_request.substr(0, header_end);
+			std::string body = http_request.substr(header_end + 4);
+
+			std::istringstream	iss(header);
 			std::string line;
 			bool isFirstLine = true;
-			while (getline(iss, line)) {
-				std::string key, value;
-				size_t pos = line.find_first_of(" \t");
 
+			while (getline(iss, line)) {
 				if (isFirstLine) {
 					isFirstLine = false;
-					std::string method = line.substr(0, pos);
-					request.addMethod(method);
-					continue;	
+					request.addMethod(line);
+				} else {
+					request.addHeader(line);
 				}
-				else {
-					if (pos != std::string::npos) {
-						key = line.substr(0, pos);
-						value = line.substr(pos + 1);
-					}
-					std::cout << "key: " << key << std::endl;
-					std::cout << "value: " << value << std::endl;
-				}
-
 			}
-			std::cout << request.getMethod() << std::endl;
+			if (body.length())
+				request.addContent(body);
+
+			std::cout << request.getContent() << std::endl;
+
+			ft::display_map(request.getHeader());
+			
 			std::cout << "############" << std::endl;
-			//std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
 		}
 	}
 }
@@ -191,9 +195,6 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
-	std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
-	std::cout << "client_fd: " << client_fd << std::endl; 
-
 	struct timeval timeout;
 	timeout.tv_sec = TIMEOUT_SEC;
 	timeout.tv_usec = 0;
@@ -212,13 +213,14 @@ void	Server::acceptNewConnection() {
 void	Server::run() {
 
 	//check connection possible
-	std::cout << "size : " << this->_manager->getServer().size() << std::endl;
+	std::cout << "_manager->getServer().size: " << this->_manager->getServer().size() << std::endl;
 	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
 		std::cout << "ok" << std::endl;
+
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
-	std::cout << "_connection.size() : " << _connections.size() << std::endl;
+	std::cout << "_connection.size(): " << _connections.size() << std::endl;
 	while (it != _connections.end())
 	{
 		std::map<int, Connection *>::iterator it2 = it;

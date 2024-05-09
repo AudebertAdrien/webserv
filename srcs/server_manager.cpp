@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/08 15:46:57 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 14:57:51 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,12 @@
 #include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
-	std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
+	//std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
 	this->_max_fd = -1;
 }
 
 ServerManager::~ServerManager() {
-	std::cout << "ServerManager destructor" << std::endl;
+	//std::cout << "ServerManager destructor" << std::endl;
 	std::vector<Server *>::iterator it;
 	for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 		delete *it;
@@ -46,7 +46,6 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		if (!splitServerString(server_strings[i], server_block, location_block)) {
 			throw (std::invalid_argument("Failed to split server string"));
 		}
-
 		this->_servers.push_back(new Server(*this, server_block, location_block, *this->_config));
 	}
 }
@@ -80,35 +79,24 @@ int	ServerManager::getNbServers() const
 	return (this->_nb_servers);
 }
 
-
 void	ServerManager::runServer()
 {
 	std::cout << "######################### RUN SERVERS ########################" << std::endl;
 
 	std::vector<Server *>::iterator	it = this->_servers.begin();
 
-	std::cout << "server listen on port :" << std::endl;
-
 	FD_ZERO(&(this->_read_set));
 	FD_ZERO(&(this->_write_set));
 	int	nb = 0;
 	while (it != this->_servers.end())
 	{
-		std::cout << (*it)->getPort() << std::endl;		
 		FD_SET((*it)->getFd(), &(this->_read_set));
-		//FD_SET(it->getFd(), &(this->_write_set));
 		nb++;
-		//if (this->_max_fd < it->getFd())
-		//	this->_max_fd = it->getFd();
 		if (this->_max_fd < (*it)->getFd())
 			this->_max_fd = (*it)->getFd();
 		it++;
 	}
 	this->_nb_servers = nb;
-
-	std::cout << RED << "######################### nb serveur max vaut via nb : " << this->_nb_servers << " et via size " << this->_servers.size() << RESET <<std::endl;
-	//resetMaxFd();
-	std::cout << RED << "######################### fd max vaut : " << this->_max_fd << RESET <<std::endl;
 
 	int cnt;
 	struct timeval timeout;
@@ -130,7 +118,6 @@ void	ServerManager::runServer()
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {
-				std::cout << "######################### FD_ISSET = _fd: " << (*it)->getFd() << " port : " << (*it)->getPort() << "########################" << std::endl;
 				(*it)->run();
 			}
 		}

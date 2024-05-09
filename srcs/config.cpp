@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:05 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 16:56:25 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 13:08:53 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 #include "webserv_macro.hpp"
 
 Config::Config() {
-	std::cout << "Config default constructor" << std::endl;
+	//std::cout << "Config default constructor" << std::endl;
 }
 
 Config::Config(std::string config_block, char **env) {
@@ -48,7 +48,7 @@ Config::Config(std::string config_block, char **env) {
 }
 
 Config::~Config() {
-	std::cout << "Config destructor" << std::endl;
+	//std::cout << "Config destructor" << std::endl;
 }
 
 std::string Config::getSoftwareName() const {

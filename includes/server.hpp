@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 16:08:47 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 14:56:38 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@
 #include "request.hpp"
 //#include "config.hpp"
 //#include "response.hpp"
+
+#include "libft.hpp"
 
 class Location;
 class Connection;

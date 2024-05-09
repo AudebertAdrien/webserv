@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:03:34 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/30 16:57:33 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 14:57:22 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 #include <deque>
 #include <vector>
 #include <stack>
+#include <map>
 
 #include "webserv_macro.hpp"
 
 namespace ft {
-	void		display_vector(const std::vector<std::string> &ctn);
+	void	display_vector(const std::vector<std::string> &ctn);
+	void	display_map(const std::map<std::string, std::string> &map);
 
 	std::string getStringFromFile(std::string file_path);
 }
