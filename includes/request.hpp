@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 17:28:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 18:46:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,9 @@ class Server;
 class Location;
 
 enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
+enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
+enum TransferType { GENERAL, CHUNKED };
+enum Phase { READY, ON_HEADER, ON_BODY, COMPLETE };
 
 class Request
 {
@@ -37,54 +40,40 @@ class Request
 
 		/* == getter == */
 		std::map<std::string, std::string>	getHeader() const;
-		Method								getMethod() const;
-		std::string							getContent() const;
-		/*
+		Method			getMethod() const;
+		std::string		getContent() const;
 		Location		getLocation() const;
 		std::string		getUri() const;
-		Uri_type		getUriType() const;
-
-
-		Transfert_type	getTransferType() const;
+		URIType			getUriType() const;
 		std::string		getOrigin() const;
+		TransferType	getTransferType() const;
 
-		//isOverTime();
-
-		void	addOrigin(std::string origin);
 		bool	isValidHeader(std::string header);
-		*/
-		
+
 		/*== setter ==*/
 		void	addMethod(std::string &line);
 		void	addHeader(std::string &line);
 		void	addContent(std::string &content);
+		void	addOrigin(std::string origin);
+
+		//isOverTime();
 
 	private:
-		//enum    Method;
-		/*
-        enum    Uri_type;
-        enum    Transfert_type;
-		*/
-
 		Connection		*_connection;
 		Server			*_server;
-		//Location		_location;
+		Location		*_location;
 		
 		Method			_method;
+		URIType			_uri_type;
+		TransferType	_transfer_type;
 
 		std::map<std::string, std::string> _headers;
 		std::string		_content;
 
-		/*
 		std::string		_uri;
-		//Uri_type		_uri_type;
-
-
-		//Transfert_type	_transfer_type;
 		std::string		_origin;
 
 		//_start;
-		*/
 };
 
 #endif

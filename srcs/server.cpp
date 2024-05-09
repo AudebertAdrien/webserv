@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 17:28:34 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 19:08:33 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,21 +98,22 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 	*/
 }
 
-int	Server::getPort()
-{
-	return (this->_port);
+/*
+bool	Request::parseStartLine(Connection &connection, Request &request) {
 }
 
-int	Server::getFd()
-{
-	return (this->_fd);
+bool	Request::parseStartLine(Connection &connection, Request &request) {
 }
+*/
 
 void	Server::recvRequest(Connection &connection) {
 	std::cout << "recvRequest" << std::endl;
 
 	Request	request(connection, *this);			
 
+	//if (phase == Request::READY && parseStartLine(connection, request);
+	//if (phase == Request::HEADER && parseHeader(connection, request);
+			
 	int bytes_received = 0;
 	while (!bytes_received) {
 		char buffer[1024];
@@ -140,6 +141,7 @@ void	Server::recvRequest(Connection &connection) {
 			while (getline(iss, line)) {
 				if (isFirstLine) {
 					isFirstLine = false;
+					std::cout << RED << "first line : " << line << RESET << std::endl;
 					request.addMethod(line);
 				} else {
 					request.addHeader(line);
@@ -148,10 +150,10 @@ void	Server::recvRequest(Connection &connection) {
 			if (body.length())
 				request.addContent(body);
 
-			std::cout << request.getContent() << std::endl;
-
 			ft::display_map(request.getHeader());
 			
+			std::cout << YELLOW << request.getContent() << RESET << std::endl;
+
 			std::cout << "############" << std::endl;
 		}
 	}
@@ -230,4 +232,14 @@ void	Server::run() {
 		close(fd);
 		it++;
 	}
+}
+
+int	Server::getPort()
+{
+	return (this->_port);
+}
+
+int	Server::getFd()
+{
+	return (this->_fd);
 }

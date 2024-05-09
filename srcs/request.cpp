@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 17:29:23 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 18:55:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,23 @@ Request::~Request()
 }
 
 void	Request::addMethod(std::string &line) {
-	std::string key, value;
 	std::string	method;
 	size_t pos = line.find_first_of(" \t");
 
 	if (pos != std::string::npos) {
 		method = line.substr(0, pos);
 	}
+
 	if (method == "GET")
 		this->_method = GET;
+	if (method == "POST")
+		this->_method = POST;
 }
 
 void	Request::addHeader(std::string &line) {
 	std::string key, value;
 	size_t pos = line.find_first_of(" \t");
+	std::cout << GREEN << line << RESET << std::endl;
 
 	if (pos != std::string::npos) {
 		key = line.substr(0, pos);
@@ -52,20 +55,25 @@ void	Request::addContent(std::string &content) {
 	this->_content = content;	
 }
 
-
 /*
 void	addOrigin(std::string origin) {
 }
+*/
 
+/*
 void	isValidHeader(std::string header) {
 }
 */
+
+std::map<std::string, std::string>	Request::getHeader() const
+{
+	return (_headers);
+}
 
 Connection	Request::getConnection() const
 {
 	return (*_connection);
 }
-
 
 Server	Request::getServer() const
 {
@@ -77,37 +85,32 @@ Method	Request::getMethod() const
 	return (_method);
 }
 
-std::map<std::string, std::string>	Request::getHeader() const
-{
-	return (_headers);
-}
-
 std::string	Request::getContent() const
 {
 	return (_content);
 }
 
-/*
-Request Request::getLocation() const
+Location	Request::getLocation() const
 {
+	return (*_location);
 }
 
-Request Request::getUri() const
+std::string	Request::getUri() const
 {
+	return (_uri);
 }
 
-Request Request::getUriType() const
+URIType	Request::getUriType() const
 {
+	return (_uri_type);
 }
 
-
-Request Request::getTransferType() const
+TransferType	Request::getTransferType() const
 {
+	return (_transfer_type);
 }
 
-
-
-Request Request::getOrigin() const
+std::string	Request::getOrigin() const
 {
+	return (_origin);
 }
-*/

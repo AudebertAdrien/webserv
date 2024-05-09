@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 14:56:38 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 19:08:18 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,14 +52,18 @@ class Server {
 		void    run();
 		void	runRecvAndSolve(Connection &connection);
 		void	recvRequest(Connection &connection);
+		//bool	parseStartLine(Connection &connection, Request &request);
+		//bool	parseHeader(Connection &connection, Request &request);
 		void	completeServer(std::string server_block);
-		int		getPort();
-		int		getFd();
 
 		bool	hasNewConnection();
 		void	acceptNewConnection();
 
 		void	addConnection(int client_fd, std::string client_ip, int client_port);
+
+		/* == getter == */
+		int		getPort();
+		int		getFd();
 
 	private:
 		Config  		*_config;
@@ -75,19 +79,20 @@ class Server {
 
 		std::map<int, Connection *>    _connections;
 
-		//void	handleConnection();
-
-		//Location	_test;
-        //int _request_uri_limit_size;
-        //int _limit_client_body_size;
-        //std::string _default_error_page;
         /*
+		void	handleConnection();
+
+		Location	_test;
+        int _request_uri_limit_size;
+        int _limit_client_body_size;
+        std::string _default_error_page;
         queue<Response>	_responses;
 
 		bool	hasException(int client_fd);
 		void	closeConnection(int	client_fd);
 		bool	isSendable(int	client_fd) ?;
 		void	sendResponse(Response response);
+
 		void	hasRequest(int client_fd);
 		void	solveRequest(Request request);
 
