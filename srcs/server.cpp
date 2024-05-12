@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 16:57:11 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:32:22 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,15 +115,6 @@ void	Server::recvRequest(Connection &connection) {
 
 	Request	request(connection, *this);			
 
-	/*
-	if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
-		request.setPhase(Request::ON_HEADER);
-	}
-	if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
-		request.setPhase(Request::ON_HEADER);
-	}
-	*/
-			
 	int bytes_received = 0;
 	while (!bytes_received) {
 		char buffer[1024];
@@ -132,7 +123,14 @@ void	Server::recvRequest(Connection &connection) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
 			std::cout << "############" << std::endl;
-
+			/*
+			if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
+				request.setPhase(Request::ON_HEADER);
+			}
+			if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
+				request.setPhase(Request::ON_HEADER);
+			}
+			*/
 			std::string http_request(buffer);
 
 			size_t header_end = http_request.find("\r\n\r\n");
