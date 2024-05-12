@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:10 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/02 16:06:43 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:03:15 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <sstream>
+
+#include "webserv_macro.hpp"
 
 class Config {
 	public:

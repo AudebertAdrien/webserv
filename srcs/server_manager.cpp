@@ -6,13 +6,12 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/09 14:57:51 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 16:57:16 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
 #include "server.hpp"
-#include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
 	//std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;

@@ -6,12 +6,11 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 13:09:28 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:04:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
-#include "webserv_macro.hpp"
 
 Location::Location() {
     //std::cout << "Constructor Location default called" << std::endl;

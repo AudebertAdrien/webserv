@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 18:46:34 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:02:19 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,21 +17,19 @@
 #include <map>
 
 #include "connection.hpp"
-#include "server.hpp"
 #include "location.hpp"
 
-class Connection;
 class Server;
-class Location;
 
 enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
 enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
 enum TransferType { GENERAL, CHUNKED };
-enum Phase { READY, ON_HEADER, ON_BODY, COMPLETE };
 
 class Request
 {
 	public:
+		enum Phase { READY, ON_HEADER, ON_BODY, COMPLETE };
+
 		Request(Connection &connection, Server &server);
         ~Request();
 
@@ -47,6 +45,7 @@ class Request
 		URIType			getUriType() const;
 		std::string		getOrigin() const;
 		TransferType	getTransferType() const;
+		Request::Phase	getPhase() const;
 
 		bool	isValidHeader(std::string header);
 
@@ -55,6 +54,8 @@ class Request
 		void	addHeader(std::string &line);
 		void	addContent(std::string &content);
 		void	addOrigin(std::string origin);
+
+		void	setPhase(Phase new_phase);
 
 		//isOverTime();
 
@@ -66,6 +67,7 @@ class Request
 		Method			_method;
 		URIType			_uri_type;
 		TransferType	_transfer_type;
+		Phase			_phase;
 
 		std::map<std::string, std::string> _headers;
 		std::string		_content;

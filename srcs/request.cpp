@@ -6,18 +6,19 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 18:55:34 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 16:58:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
-#include "webserv_macro.hpp"
+#include "server.hpp"
 
 Request::Request(Connection &connection, Server &server)
 {
     std::cout << "Request constructeur called : " << server.getFd() << std::endl;
 	this->_connection = &connection;
 	this->_server = &server;
+	this->_phase = READY;
 }
 
 Request::~Request()
@@ -32,7 +33,6 @@ void	Request::addMethod(std::string &line) {
 	if (pos != std::string::npos) {
 		method = line.substr(0, pos);
 	}
-
 	if (method == "GET")
 		this->_method = GET;
 	if (method == "POST")
@@ -53,6 +53,10 @@ void	Request::addHeader(std::string &line) {
 
 void	Request::addContent(std::string &content) {
 	this->_content = content;	
+}
+
+void	Request::setPhase(Phase new_phase) {
+	this->_phase = new_phase;
 }
 
 /*
@@ -113,4 +117,9 @@ TransferType	Request::getTransferType() const
 std::string	Request::getOrigin() const
 {
 	return (_origin);
+}
+
+Request::Phase	Request::getPhase() const
+{
+	return (_phase);
 }

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 19:08:18 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:01:16 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,19 +28,13 @@
 
 #include "location.hpp"
 #include "connection.hpp"
-#include "server_manager.hpp"
-#include "request.hpp"
-//#include "config.hpp"
-//#include "response.hpp"
+#include "config.hpp"
 
 #include "libft.hpp"
+#include "webserv_macro.hpp"
 
-class Location;
-class Connection;
 class ServerManager;
-//class Request
-//class Response;
-//class Config;
+class Request;
 
 class Server {
 	public:
@@ -52,8 +46,10 @@ class Server {
 		void    run();
 		void	runRecvAndSolve(Connection &connection);
 		void	recvRequest(Connection &connection);
-		//bool	parseStartLine(Connection &connection, Request &request);
-		//bool	parseHeader(Connection &connection, Request &request);
+
+		bool	parseStartLine(Connection &connection, Request &request);
+		bool	parseHeader(Connection &connection, Request &request);
+
 		void	completeServer(std::string server_block);
 
 		bool	hasNewConnection();
@@ -82,7 +78,7 @@ class Server {
         /*
 		void	handleConnection();
 
-		Location	_test;
+		Location	_test;continue
         int _request_uri_limit_size;
         int _limit_client_body_size;
         std::string _default_error_page;
@@ -108,7 +104,7 @@ class Server {
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
-		;*/
+		*/
 };
 
 #endif

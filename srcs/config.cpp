@@ -6,12 +6,11 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:05 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 13:08:53 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:03:19 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config.hpp"
-#include "webserv_macro.hpp"
 
 Config::Config() {
 	//std::cout << "Config default constructor" << std::endl;

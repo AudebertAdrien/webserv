@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:34 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/22 12:50:35 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:04:01 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 #include <string>
 #include <sstream>
 #include <map>
+
+#include "webserv_macro.hpp"
 
 class Location
 {

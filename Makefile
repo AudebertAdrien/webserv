@@ -6,7 +6,7 @@
 #    By: motoko <marvin@42.fr>                      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/01/02 14:26:47 by motoko            #+#    #+#              #
-#    Updated: 2024/05/06 18:14:57 by motoko           ###   ########.fr        #
+#    Updated: 2024/05/12 16:05:25 by motoko           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,7 +26,7 @@ SRCS			:= main.cpp				\
 				   connection.cpp		\
 				   request.cpp
 
-CC				:= c++
+CC				:= c++ -g
 CFLAGS			:= -Wall -Wextra
 
 #Colors:

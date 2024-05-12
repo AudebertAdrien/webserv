@@ -6,13 +6,13 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/09 19:08:33 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 16:57:11 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 #include "server_manager.hpp"
-#include "webserv_macro.hpp"
+#include "request.hpp"
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
@@ -99,10 +99,14 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 }
 
 /*
-bool	Request::parseStartLine(Connection &connection, Request &request) {
+bool	Server::parseStartLine(Connection &connection, Request &request) {
+	std::cout << RED << "request.getPhase() 1: " << request.getPhase() << RESET << std::endl;
+	return (true);
 }
 
-bool	Request::parseStartLine(Connection &connection, Request &request) {
+bool	Server::parseHeader(Connection &connection, Request &request) {
+	std::cout << RED << "request.getPhase() 2: " << request.getPhase() << RESET << std::endl;
+	return (true);
 }
 */
 
@@ -111,8 +115,14 @@ void	Server::recvRequest(Connection &connection) {
 
 	Request	request(connection, *this);			
 
-	//if (phase == Request::READY && parseStartLine(connection, request);
-	//if (phase == Request::HEADER && parseHeader(connection, request);
+	/*
+	if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
+		request.setPhase(Request::ON_HEADER);
+	}
+	if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
+		request.setPhase(Request::ON_HEADER);
+	}
+	*/
 			
 	int bytes_received = 0;
 	while (!bytes_received) {

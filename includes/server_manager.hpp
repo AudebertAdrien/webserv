@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/07 18:22:44 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:02:47 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,15 @@
 #include <sstream>
 #include <sys/select.h>
 #include <unistd.h> 
-//#include <map>
 
 #include "config.hpp"
-//#include "server.hpp"
 #include "location.hpp"
-//#include "connection.hpp"
-//#include "Response.hpp"
 
 #include "libft.hpp"
+#include "webserv_macro.hpp"
 
 class Config;
 class Server;
-//class Connection;
-class Location;
-//class Response;
 
 class ServerManager {
 	public:
