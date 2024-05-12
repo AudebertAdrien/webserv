@@ -6,11 +6,12 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 18:17:42 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 20:11:25 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "connection.hpp"
+#include "request.hpp"
 
 Connection::Connection() {
     //std::cout << "Connection default constructor" << std::endl;
@@ -28,6 +29,20 @@ Connection::~Connection()
 {
     //std::cout << "Connection, destructeur called : " << this->getFd() << std::endl;
 }
+
+/* == setter == */
+/*
+void	Connnection::setRequest(Request *new_request) {
+	this->_request = new_request;	
+}
+*/
+
+/* == getter == */
+/*
+Request*	Connnection::getRequest() const {
+	return (this->_request);
+}
+*/
 
 int Connection::getFd() const
 {

@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/12 16:57:16 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:39:16 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
-	_config = new Config(config_block, env);
+	this->_config = new Config(config_block, env);
 	
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;

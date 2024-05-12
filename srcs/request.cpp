@@ -6,12 +6,13 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 18:24:47 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:38:17 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
 #include "server.hpp"
+#include "connection.hpp"
 
 Request::Request(Connection &connection, Server &server)
 {
@@ -69,6 +70,7 @@ void	isValidHeader(std::string header) {
 }
 */
 
+/* == getter */
 std::map<std::string, std::string>	Request::getHeader() const
 {
 	return (_headers);

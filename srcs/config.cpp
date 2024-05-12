@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:05 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:03:19 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 18:37:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,13 @@ Config::Config(std::string config_block, char **env) {
 		value.erase(value.find_last_not_of(" \t") + 1);
 
 		if (key == "software_name")
-			_software_name = value;
+			this->_software_name = value;
 		if (key == "software_version")
-			_software_version = value;
+			this->_software_version = value;
 		if (key == "http_version") 
-			_http_version = value;
+			this->_http_version = value;
 		if (key == "cgi_version")
-			_cgi_version = value;
+			this->_cgi_version = value;
 	}
 }
 

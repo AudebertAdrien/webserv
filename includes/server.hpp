@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:01:16 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:26:14 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,11 @@ class Server {
 		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
 		void	runRecvAndSolve(Connection &connection);
-		void	recvRequest(Connection &connection);
-
 		bool	parseStartLine(Connection &connection, Request &request);
 		bool	parseHeader(Connection &connection, Request &request);
-
 		void	completeServer(std::string server_block);
-
 		bool	hasNewConnection();
 		void	acceptNewConnection();
-
 		void	addConnection(int client_fd, std::string client_ip, int client_port);
 
 		/* == getter == */
@@ -62,6 +57,9 @@ class Server {
 		int		getFd();
 
 	private:
+		void		recvRequest(Connection &connection);
+		static void	solveRequest(Connection &connection);
+
 		Config  		*_config;
 		ServerManager	*_manager;
 

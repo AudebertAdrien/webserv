@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 18:21:00 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 20:06:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,9 +165,8 @@ void	Server::recvRequest(Connection &connection) {
 	}
 }
 
-void	solveRequest(connection) {
+void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
-	
 }
 
 void	Server::runRecvAndSolve(Connection &connection) {
@@ -178,12 +177,10 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
-
 	/*
 	if (request.getPhase() == Request::COMPLETE) {
 	}
 	*/
-
 	solveRequest(connection);
 
 	std::string header = "HTTP/1.1 200 OK\r\n";

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:02:47 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 20:01:33 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@
 #include "libft.hpp"
 #include "webserv_macro.hpp"
 
-class Config;
 class Server;
 
 class ServerManager {
@@ -33,26 +32,30 @@ class ServerManager {
 		ServerManager();
 		~ServerManager();
 
-		//void    setType//pour les enum
-		//Config  getConfig() const;
-		int getMaxFd() const;
+		int 	getMaxFd() const;
 		fd_set	getFdSet() const;
+		int		getNbServers() const ;
 		std::vector<Server *>	getServer();
-		int	getNbServers() const ;
-		//void    setConfig(Config config);
-		//void    setMaxFd(int fd);
-		/*fdSet(int fd, setType);
-		  fdZero(setType);
-		  fdClear(fd, setType);
-		  fdIsset(int fd, setType);
-		  fdCopy(setType);*/
-		//void    exitServer();
+
+		void	resetMaxFd();
+
 		void    runServer();
 		void	createServer(const std::string &configuration_file_path, char **env);
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
 		bool	splitServerString(std::string &server_string, std::string &server_block, std::vector<std::string> &location_string);
-		void	resetMaxFd();
 
+		//Config  getConfig() const;
+		//void    setType//pour les enum
+		//void    setConfig(Config config);
+		//void    setMaxFd(int fd);
+		
+		//fdSet(int fd, setType);
+		//fdZero(setType);
+		//fdClear(fd, setType);
+		//fdIsset(int fd, setType);
+		//fdCopy(setType);*/
+		
+		//void    exitServer();
 
 	private:
 		std::vector<Server *>	_servers;
