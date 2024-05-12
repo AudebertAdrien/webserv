@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:02:19 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 18:22:21 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,8 +57,6 @@ class Request
 
 		void	setPhase(Phase new_phase);
 
-		//isOverTime();
-
 	private:
 		Connection		*_connection;
 		Server			*_server;
@@ -74,8 +72,6 @@ class Request
 
 		std::string		_uri;
 		std::string		_origin;
-
-		//_start;
 };
 
 #endif

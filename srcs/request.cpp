@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 16:58:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 18:24:47 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 Request::Request(Connection &connection, Server &server)
 {
-    std::cout << "Request constructeur called : " << server.getFd() << std::endl;
+    //std::cout << "Request constructeur with params called : " << server.getFd() << std::endl;
 	this->_connection = &connection;
 	this->_server = &server;
 	this->_phase = READY;
@@ -23,7 +23,7 @@ Request::Request(Connection &connection, Server &server)
 
 Request::~Request()
 {
-    std::cout << "Request destructeur called" << std::endl;
+    //std::cout << "Request destructeur called" << std::endl;
 }
 
 void	Request::addMethod(std::string &line) {

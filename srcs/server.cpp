@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:32:22 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 18:21:00 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,8 +137,6 @@ void	Server::recvRequest(Connection &connection) {
 			if (header_end == std::string::npos) {
 				std::cout << "header end not found" << std::endl;
 			}
-			std::cout << "header end: " << header_end << std::endl;
-
 			std::string header = http_request.substr(0, header_end);
 			std::string body = http_request.substr(header_end + 4);
 
@@ -167,6 +165,11 @@ void	Server::recvRequest(Connection &connection) {
 	}
 }
 
+void	solveRequest(connection) {
+	std::cout << "solveRequest" << std::endl;
+	
+}
+
 void	Server::runRecvAndSolve(Connection &connection) {
 	std::cout << "runRecvAndSolve" << std::endl;
 
@@ -175,6 +178,13 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
+
+	/*
+	if (request.getPhase() == Request::COMPLETE) {
+	}
+	*/
+
+	solveRequest(connection);
 
 	std::string header = "HTTP/1.1 200 OK\r\n";
 	std::string body = "Hello from server!!! Here Adrien\n";
@@ -190,7 +200,7 @@ void	Server::runRecvAndSolve(Connection &connection) {
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port);
 
-	std::cout << "Ip : " << client_ip <<  std::endl << "Port : " << client_port << std::endl;
+	std::cout << "IP : " << client_ip <<  std::endl << "PORT : " << client_port << std::endl;
     _connections.insert(std::make_pair(client_fd, client));
 }
 
