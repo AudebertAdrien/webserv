@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 20:06:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 13:01:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -113,7 +113,7 @@ bool	Server::parseHeader(Connection &connection, Request &request) {
 void	Server::recvRequest(Connection &connection) {
 	std::cout << "recvRequest" << std::endl;
 
-	Request	request(connection, *this);			
+	Request	*request = new Request(connection, *this);			
 
 	int bytes_received = 0;
 	while (!bytes_received) {
@@ -123,6 +123,7 @@ void	Server::recvRequest(Connection &connection) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
 			std::cout << "############" << std::endl;
+
 			/*
 			if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
 				request.setPhase(Request::ON_HEADER);
@@ -131,6 +132,7 @@ void	Server::recvRequest(Connection &connection) {
 				request.setPhase(Request::ON_HEADER);
 			}
 			*/
+
 			std::string http_request(buffer);
 
 			size_t header_end = http_request.find("\r\n\r\n");
@@ -147,26 +149,30 @@ void	Server::recvRequest(Connection &connection) {
 			while (getline(iss, line)) {
 				if (isFirstLine) {
 					isFirstLine = false;
-					std::cout << RED << "first line : " << line << RESET << std::endl;
-					request.addMethod(line);
+					std::cout << RED << "First Line : " << line << RESET << std::endl;
+					request->addMethod(line);
 				} else {
-					request.addHeader(line);
+					request->addHeader(line);
 				}
 			}
 			if (body.length())
-				request.addContent(body);
+				request->addContent(body);
 
-			ft::display_map(request.getHeader());
+			ft::display_map(request->getHeader());
 			
-			std::cout << YELLOW << request.getContent() << RESET << std::endl;
+			std::cout << YELLOW << request->getContent() << RESET << std::endl;
 
 			std::cout << "############" << std::endl;
 		}
 	}
+	connection.setRequest(request);
 }
+
 
 void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
+	ft::display_map(connection.getRequest()->getHeader());
+
 }
 
 void	Server::runRecvAndSolve(Connection &connection) {

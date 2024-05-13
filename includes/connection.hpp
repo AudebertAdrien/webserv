@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 20:09:31 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 12:56:18 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@ class Connection
 		Connection(int client_fd, std::string client_ip, int client_port);
         ~Connection();
 
-		/* == getter == */
-		//void			setRequest(Request *new_request);
+		/* == setter == */
+		void			setRequest(Request *new_request);
 
 		/* == getter == */
 		Request*		getRequest() const;

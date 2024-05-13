@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 20:11:25 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 12:59:37 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,14 @@ Connection::~Connection()
 }
 
 /* == setter == */
-/*
-void	Connnection::setRequest(Request *new_request) {
+void	Connection::setRequest(Request *new_request) {
 	this->_request = new_request;	
 }
-*/
 
 /* == getter == */
-/*
-Request*	Connnection::getRequest() const {
+Request*	Connection::getRequest() const {
 	return (this->_request);
 }
-*/
 
 int Connection::getFd() const
 {
