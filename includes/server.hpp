@@ -49,17 +49,18 @@ class Server {
 		int		getFd();
 
 	private:
-		void	recvRequest(Connection &connection);
-		void	solveRequest(Connection &connection);
-		void	executeGet(Connection &connection);
-		void	runRecvAndSolve(Connection &connection);
-		bool	parseStartLine(Connection &connection, Request &request);
-		bool	parseHeader(Connection &connection, Request &request);
-		void	completeServer(std::string server_block);
-		bool	hasNewConnection();
-		void	acceptNewConnection();
-		void	addConnection(int client_fd, std::string client_ip, int client_port);
-		void    completeVectorLocation(std::vector<std::string> location_block);
+		void		recvRequest(Connection &connection);
+		void		solveRequest(Connection &connection);
+		void		executeGet(Connection &connection);
+		void		runRecvAndSolve(Connection &connection);
+		bool		parseStartLine(Connection &connection, Request &request);
+		bool		parseHeader(Connection &connection, Request &request);
+		void		completeServer(std::string server_block);
+		bool		hasNewConnection();
+		void		acceptNewConnection();
+		void		addConnection(int client_fd, std::string client_ip, int client_port);
+		void    	completeVectorLocation(std::vector<std::string> location_block);
+		std::string	createFilePath(std::string root_path, std::string relativ_path);
 		
 
 		Config  		*_config;

@@ -31,19 +31,21 @@ Location::Location(std::string location)
     fullFillLocation(lines);
 
     // Useless fonction, just to show location
-    showLocation();
+    //showLocation();
     // to erease
 
-    std::cout << YELLOW << "GET ROOT" << std::endl;
+    //std::cout << YELLOW << "GET ROOT" << std::endl;
     std::vector<std::string>    root = getInfo("root");
     size_t i = 0;
+    this->_root_path = "Nothing";
     while (i < root.size())
     {
         std::cout << "root : " << root[i] << std::endl;
+        this->_root_path = root[i];
         i++;
     }
     //std::cout << "END TEST ROOT"<< YELLOW << std::endl;
-    std::cout << BLUE << "########## END ###########" << RESET << std::endl;
+    //std::cout << BLUE << "########## END ###########" << RESET << std::endl;
 }
 
 Location::~Location()
@@ -112,7 +114,7 @@ void    Location::handleFirstLine(std::string line)
     int opt = 0;
     while (iss >> word)
     {
-        std::cout << "iteration :" << i << " avec le mot :" << word << std::endl;
+        //std::cout << "iteration :" << i << " avec le mot :" << word << std::endl;
         if (word == "location" || word == "{")
         {
             i++;

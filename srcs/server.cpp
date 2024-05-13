@@ -96,12 +96,12 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
 	*/
-	std::cout << RED << " !!!!!!!!!! Pour le serveur port num " << this->_port << std::endl << "Location block vaut :" << std::endl;
+	/* std::cout << RED << " !!!!!!!!!! Pour le serveur port num " << this->_port << std::endl << "Location block vaut :" << std::endl;
 	for(std::vector<std::string>::iterator	it=location_block.begin(); it != location_block.end(); it++)
 	{
 		std::cout << *it << std::endl;
 	}
-	std::cout<< RESET;
+	std::cout<< RESET; */
 	completeVectorLocation(location_block);
 }
 
@@ -180,10 +180,12 @@ void	Server::executeGet(Connection &connection)
 
 	while (it != this->_location.end())
 	{
-		std::cout << YELLOW << "root path : " << (*it)->getRootPath() << RESET << std::endl;
+		//std::cout << YELLOW << "@@@@@@@@@@ root path : " << (*it)->getRootPath() << RESET << std::endl;
 		if ((*it)->getRootPath() != "Nothing")
 		{
-			std::cout << "test ?????????????" << std::endl;
+			std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
+			std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
+			std::cout << "@@@@@ File path : " << file_path << RESET << std::endl;
 			break;
 		}
 		it++;
@@ -316,6 +318,43 @@ void	Server::run() {
 		close(fd);
 		it++;
 	}
+}
+
+static void trim(std::string& str) {
+    // Supprimer les espaces et les tabulations au début de la chaîne
+    std::string::size_type start = str.find_first_not_of(" \t");
+    if (start != std::string::npos) {
+        str = str.substr(start);
+    } else {
+        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+        return;
+    }
+
+    // Supprimer les espaces et les tabulations à la fin de la chaîne
+    std::string::size_type end = str.find_last_not_of(" \t");
+    if (end != std::string::npos) {
+        str = str.substr(0, end + 1);
+    } else {
+        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+    }
+}
+
+static void removeLastSemicolon(std::string& str) {
+    if (!str.empty() && str[str.size() - 1] == ';') {
+        str.erase(str.size() - 1);
+    }
+}
+
+std::string	Server::createFilePath(std::string root_path, std::string relativ_path)
+{
+	//std::cout << "root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
+	trim(root_path);
+	trim(relativ_path);
+	removeLastSemicolon(root_path);
+	//std::cout << "APres root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
+	std::string file_path = root_path + relativ_path;
+	//std::cout << "file path vaut : " << file_path << std::endl;
+	return (file_path);
 }
 
 int	Server::getPort()

@@ -41,6 +41,7 @@ class Request
 		std::map<std::string, std::string>	getHeader() const;
 		Method			getMethod() const;
 		std::string		getContent() const;
+		std::string		getRelativPath() const;
 		Location		getLocation() const;
 		std::string		getUri() const;
 		URIType			getUriType() const;
@@ -69,6 +70,7 @@ class Request
 		Phase			_phase;
 
 		std::map<std::string, std::string> _headers;
+		std::string		_relativ_path;
 		std::string		_content;
 
 		std::string		_uri;
