@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 17:21:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:27:24 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,72 +15,64 @@
 
 #include <iostream>
 #include <map>
-#include "connection.hpp"
-#include "server.hpp"
-#include "location.hpp"
-#include "enum.hpp"
 
-class Connection;
+#include "location.hpp"
+//#include "enum.hpp"
+
 class Server;
-class Location;
+class Connection;
+
+enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
+enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
+enum TransferType { GENERAL, CHUNKED };
 
 class Request
 {
 	public:
+		enum Phase { READY, ON_HEADER, ON_BODY, COMPLETE };
+
 		Request(Connection &connection, Server &server);
         ~Request();
 
 		Connection							getConnection() const;
 		Server								getServer() const;
-		std::string							getContent() const;
-		std::map<std::string , std::string>	getHeaders() const;
 
-		Method								getMethod() const;
-		/*
+		/* == getter == */
+		std::map<std::string, std::string>	getHeader() const;
+		Method			getMethod() const;
+		std::string		getContent() const;
 		Location		getLocation() const;
 		std::string		getUri() const;
-		Uri_type		getUriType() const;
-
-		map<std::string , std::string>	getHearders() const;
-
-		Transfert_type	getTransferType() const;
+		URIType			getUriType() const;
 		std::string		getOrigin() const;
+		TransferType	getTransferType() const;
+		Request::Phase	getPhase() const;
 
-		//isOverTime();
-
-		void	addContent(std::string content);
-		void	addOrigin(std::string origin);
-		void	addHeader(std::string header);
 		bool	isValidHeader(std::string header);
-		*/
-		
-		void	addMethod(std::string &method);
+
+		/*== setter ==*/
+		void	addMethod(std::string &line);
+		void	addHeader(std::string &line);
+		void	addContent(std::string &content);
+		void	addOrigin(std::string origin);
+
+		void	setPhase(Phase new_phase);
 
 	private:
-		//enum    Method;
-		/*
-        enum    Uri_type;
-        enum    Transfert_type;
-		*/
-
 		Connection		*_connection;
 		Server			*_server;
-		std::map<std::string , std::string>	_headers;
-		std::string		_content;
-		//Location		_location;
+		Location		*_location;
 		
 		Method			_method;
-		/*
+		URIType			_uri_type;
+		TransferType	_transfer_type;
+		Phase			_phase;
+
+		std::map<std::string, std::string> _headers;
+		std::string		_content;
+
 		std::string		_uri;
-		//Uri_type		_uri_type;
-
-		
-
-		//Transfert_type	_transfer_type;
 		std::string		_origin;
-
-		//_start;
-		*/
 };
 
 #endif

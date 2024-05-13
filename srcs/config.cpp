@@ -6,15 +6,14 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:46:05 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 16:56:25 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 18:37:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "config.hpp"
-#include "webserv_macro.hpp"
 
 Config::Config() {
-	std::cout << "Config default constructor" << std::endl;
+	//std::cout << "Config default constructor" << std::endl;
 }
 
 Config::Config(std::string config_block, char **env) {
@@ -37,18 +36,18 @@ Config::Config(std::string config_block, char **env) {
 		value.erase(value.find_last_not_of(" \t") + 1);
 
 		if (key == "software_name")
-			_software_name = value;
+			this->_software_name = value;
 		if (key == "software_version")
-			_software_version = value;
+			this->_software_version = value;
 		if (key == "http_version") 
-			_http_version = value;
+			this->_http_version = value;
 		if (key == "cgi_version")
-			_cgi_version = value;
+			this->_cgi_version = value;
 	}
 }
 
 Config::~Config() {
-	std::cout << "Config destructor" << std::endl;
+	//std::cout << "Config destructor" << std::endl;
 }
 
 std::string Config::getSoftwareName() const {

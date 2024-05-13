@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/03 16:55:47 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/09 13:07:35 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ int main(int ac, char **av, char **env)
 {
 	ServerManager	manager;
 
-	std::cout << "La valeur de FD_SETSIZE est : " << FD_SETSIZE << std::endl;
 	if (ac > 2) {
 		std::cout << "error : There are too many arguments!" << std::endl;
 	}

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 16:08:47 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:26:14 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,18 +28,13 @@
 
 #include "location.hpp"
 #include "connection.hpp"
-#include "server_manager.hpp"
-#include "request.hpp"
-#include "enum.hpp"
-//#include "config.hpp"
-//#include "response.hpp"
+#include "config.hpp"
 
-class Location;
-class Connection;
+#include "libft.hpp"
+#include "webserv_macro.hpp"
+
 class ServerManager;
 class Request;
-//class Response;
-//class Config;
 
 class Server {
 	public:
@@ -47,21 +42,26 @@ class Server {
 		Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config &config);
 		~Server();
 
-		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
-		void	runRecvAndSolve(Connection &connection);
-		void	recvRequest(Connection &connection);
-		void	solveRequest(Connection &connection, Request &req);
-		void	completeServer(std::string server_block);
+
+		/* == getter == */
 		int		getPort();
 		int		getFd();
 
+	private:
+		void	recvRequest(Connection &connection);
+		void	solveRequest(Connection &connection);
+		void	executeGet(Connection &connection);
+		void	runRecvAndSolve(Connection &connection);
+		bool	parseStartLine(Connection &connection, Request &request);
+		bool	parseHeader(Connection &connection, Request &request);
+		void	completeServer(std::string server_block);
 		bool	hasNewConnection();
 		void	acceptNewConnection();
-
 		void	addConnection(int client_fd, std::string client_ip, int client_port);
+		void    completeVectorLocation(std::vector<std::string> location_block);
+		
 
-	private:
 		Config  		*_config;
 		ServerManager	*_manager;
 
@@ -75,19 +75,20 @@ class Server {
 
 		std::map<int, Connection *>    _connections;
 
-		//void	handleConnection();
-
-		//Location	_test;
-        //int _request_uri_limit_size;
-        //int _limit_client_body_size;
-        //std::string _default_error_page;
         /*
+		void	handleConnection();
+
+		Location	_test;continue
+        int _request_uri_limit_size;
+        int _limit_client_body_size;
+        std::string _default_error_page;
         queue<Response>	_responses;
 
 		bool	hasException(int client_fd);
 		void	closeConnection(int	client_fd);
 		bool	isSendable(int	client_fd) ?;
 		void	sendResponse(Response response);
+
 		void	hasRequest(int client_fd);
 
 		void	executeAutoindex();
@@ -102,7 +103,7 @@ class Server {
 		char	**createCGIEnv();
 		void	executeCGI(Request request);
 		void	createResponse(int status_code);
-		;*/
+		*/
 };
 
 #endif

@@ -6,12 +6,11 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/03 16:58:01 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 17:04:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "location.hpp"
-#include "webserv_macro.hpp"
 
 Location::Location() {
     //std::cout << "Constructor Location default called" << std::endl;
@@ -19,34 +18,23 @@ Location::Location() {
 
 Location::Location(std::string location)
 {
+    //std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
     this->_is_multi = 0;
-	/*
-    std::cout << BLUE << "########## YOUR PART ###########" << RESET << std::endl;
-    std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
-
-    std::cout << YELLOW << "show string" << std::endl;
-    std::cout << location << std::endl;
-    std::cout << "end string" << RESET << std::endl <<std::endl;
-	*/
-
 
     std::vector<std::string>    lines;
     std::istringstream iss(location);
     std::string line;
 
     while (std::getline(iss, line))
-    {
         lines.push_back(line);
-        // Traitement de chaque ligne ici
-        std::cout << "Loca Ligne : " << line << std::endl;
-    }
+
     fullFillLocation(lines);
 
     // Useless fonction, just to show location
     showLocation();
     // to erease
 
-    //std::cout << YELLOW << "GET ROOT" << std::endl;
+    std::cout << YELLOW << "GET ROOT" << std::endl;
     std::vector<std::string>    root = getInfo("root");
     size_t i = 0;
     while (i < root.size())
@@ -55,7 +43,7 @@ Location::Location(std::string location)
         i++;
     }
     //std::cout << "END TEST ROOT"<< YELLOW << std::endl;
-    //std::cout << BLUE << "########## END ###########" << RESET << std::endl;
+    std::cout << BLUE << "########## END ###########" << RESET << std::endl;
 }
 
 Location::~Location()
@@ -175,6 +163,21 @@ void    Location::handleBody(std::string line)
     //    this->_body_file[key] = value;
 
     //si Multimap
+    
+    //Set de root path
+    std::multimap<std::string , std::string>::iterator  it = this->_body_file.begin();
+    /* while (it != this->_body_file.end())
+    {
+        if (it->first == "root")
+        {
+            this->_root_path = it->second;
+        }
+        it++;
+    }
+    if (it == this->_body_file.end())
+    {
+        this->_root_path = "Nothing";
+    } */
 }
 
 void    Location::fullFillLocation(std::vector<std::string> lines)
@@ -203,4 +206,9 @@ std::string Location::getLocMatcUhri() const
 int Location::getIsMulti() const
 {
     return (this->_is_multi);
+}
+
+std::string Location::getRootPath() const
+{
+    return (this->_root_path);
 }

@@ -6,13 +6,13 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 17:20:44 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 13:01:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 #include "server_manager.hpp"
-#include "webserv_macro.hpp"
+#include "request.hpp"
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
@@ -67,12 +67,10 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 
 	completeServer(server_block);
 
-	//ft::bzero(&server_addr, sizeof(struct sockaddr_in));
+	memset(&_server_addr, '\0', sizeof(struct sockaddr_in));
 	_server_addr.sin_family          = AF_INET;
 	_server_addr.sin_port            = htons(this->_port);
 	_server_addr.sin_addr.s_addr     = htonl(INADDR_ANY);
-    //server_addr.sin_addr.s_addr = INADDR_ANY;
-	//server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
 
 	if (bind(_fd, (struct sockaddr *)&_server_addr, sizeof(_server_addr)) == -1) {
 		std::cerr << "Bind failed: " << strerror(errno) << std::endl;
@@ -98,19 +96,29 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
 	*/
+	std::cout << RED << " !!!!!!!!!! Pour le serveur port num " << this->_port << std::endl << "Location block vaut :" << std::endl;
+	for(std::vector<std::string>::iterator	it=location_block.begin(); it != location_block.end(); it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout<< RESET;
+	completeVectorLocation(location_block);
 }
 
-int	Server::getPort()
-{
-	return (this->_port);
+/*
+bool	Server::parseStartLine(Connection &connection, Request &request) {
+	std::cout << RED << "request.getPhase() 1: " << request.getPhase() << RESET << std::endl;
+	return (true);
 }
 
-int	Server::getFd()
-{
-	return (this->_fd);
+bool	Server::parseHeader(Connection &connection, Request &request) {
+	std::cout << RED << "request.getPhase() 2: " << request.getPhase() << RESET << std::endl;
+	return (true);
 }
+*/
 
 void	Server::recvRequest(Connection &connection) {
+	std::cout << "recvRequest" << std::endl;
 
 	Request	*request = new Request(connection, *this);			
 
@@ -121,38 +129,90 @@ void	Server::recvRequest(Connection &connection) {
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
-			
 			std::cout << "############" << std::endl;
-			std::istringstream	iss(buffer);
+
+			/*
+			if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
+				request.setPhase(Request::ON_HEADER);
+			}
+			if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
+				request.setPhase(Request::ON_HEADER);
+			}
+			*/
+
+			std::string http_request(buffer);
+
+			size_t header_end = http_request.find("\r\n\r\n");
+			if (header_end == std::string::npos) {
+				std::cout << "header end not found" << std::endl;
+			}
+			std::string header = http_request.substr(0, header_end);
+			std::string body = http_request.substr(header_end + 4);
+
+			std::istringstream	iss(header);
 			std::string line;
 			bool isFirstLine = true;
-			while (getline(iss, line)) {
-				std::string key, value;
-				size_t pos = line.find_first_of(" \t");
 
+			while (getline(iss, line)) {
 				if (isFirstLine) {
 					isFirstLine = false;
-					std::string method = line.substr(0, pos);
-					request->addMethod(method);
-					continue;	
+					std::cout << RED << "First Line : " << line << RESET << std::endl;
+					request->addMethod(line);
+				} else {
+					request->addHeader(line);
 				}
-				else {
-					if (pos != std::string::npos) {
-						key = line.substr(0, pos);
-						value = line.substr(pos + 1);
-					}
-					std::cout << "key: " << key << std::endl;
-					std::cout << "value: " << value << std::endl;
-				}
-
 			}
-			std::cout << request->getMethod() << std::endl;
+			if (body.length())
+				request->addContent(body);
+
+			ft::display_map(request->getHeader());
+			
+			std::cout << YELLOW << request->getContent() << RESET << std::endl;
+
 			std::cout << "############" << std::endl;
-			//std::cout << "Received " << bytes_received << " bytes: \n" << buffer << std::endl;
 		}
 	}
-	connection.setRequest(*request);
+	connection.setRequest(request);
 }
+
+void	Server::executeGet(Connection &connection)
+{
+	std::vector<Location *>::iterator	it = this->_location.begin();
+
+	while (it != this->_location.end())
+	{
+		std::cout << YELLOW << "root path : " << (*it)->getRootPath() << RESET << std::endl;
+		if ((*it)->getRootPath() != "Nothing")
+		{
+			std::cout << "test ?????????????" << std::endl;
+			break;
+		}
+		it++;
+	}
+	if (it == this->_location.end())
+	{
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		}
+	}
+}
+
+void	Server::solveRequest(Connection &connection) {
+	std::cout << "solveRequest" << std::endl;
+	ft::display_map(connection.getRequest()->getHeader());
+	if (connection.getRequest()->getMethod() == GET)
+	{
+		std::cout << " ggg GET ggggg" << std::endl;
+		executeGet(connection);	
+	}
+}
+
 
 void	Server::runRecvAndSolve(Connection &connection) {
 	std::cout << "runRecvAndSolve" << std::endl;
@@ -162,11 +222,14 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
-
-	solveRequest(connection, connection.getRequest());
+	/*
+	if (request.getPhase() == Request::COMPLETE) {
+	}
+	*/
+	solveRequest(connection);
 }
 
-void	Server::solveRequest(Connection &connection, Request &request)
+/* void	Server::solveRequest(Connection &connection, Request &request)
 {
 	
 	 std::cout << GREEN;
@@ -195,12 +258,12 @@ void	Server::solveRequest(Connection &connection, Request &request)
 	}
 	std::cout << RESET; 
 
-}
+} */
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port);
 
-	std::cout << "Ip : " << client_ip <<  std::endl << "Port : " << client_port << std::endl;
+	std::cout << "IP : " << client_ip <<  std::endl << "PORT : " << client_port << std::endl;
     _connections.insert(std::make_pair(client_fd, client));
 }
 
@@ -214,9 +277,6 @@ void	Server::acceptNewConnection() {
 		std::cerr << "Accept failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
-
-	std::cout << "######################### RUN = " << "_fd1 :" << this->_fd << " port1 : " << this->_port << "########################" << std::endl;
-	std::cout << "client_fd: " << client_fd << std::endl; 
 
 	struct timeval timeout;
 	timeout.tv_sec = TIMEOUT_SEC;
@@ -234,18 +294,16 @@ void	Server::acceptNewConnection() {
 }
 
 void	Server::run() {
-
-	//check connection possible
-	std::cout << "size : " << this->_manager->getServer().size() << std::endl;
 	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
 	{
 		std::cout << "too many connection, old connection must be closed" << std::endl;
 		return ;
 	}
+
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
-	std::cout << "_connection.size() : " << _connections.size() << std::endl;
+	std::cout << "_connection.size(): " << _connections.size() << std::endl;
 	while (it != _connections.end())
 	{
 		std::map<int, Connection *>::iterator it2 = it;
@@ -255,4 +313,14 @@ void	Server::run() {
 		close(fd);
 		it++;
 	}
+}
+
+int	Server::getPort()
+{
+	return (this->_port);
+}
+
+int	Server::getFd()
+{
+	return (this->_fd);
 }

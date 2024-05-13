@@ -6,21 +6,20 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/08 15:46:57 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 13:12:14 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server_manager.hpp"
 #include "server.hpp"
-#include "webserv_macro.hpp"
 
 ServerManager::ServerManager() {
-	std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
+	//std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
 	this->_max_fd = -1;
 }
 
 ServerManager::~ServerManager() {
-	std::cout << "ServerManager destructor" << std::endl;
+	//std::cout << "ServerManager destructor" << std::endl;
 	std::vector<Server *>::iterator it;
 	for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 		delete *it;
@@ -37,7 +36,8 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
-	_config = new Config(config_block, env);
+	std::cout << YELLOW << config_block << RESET << std::endl;
+	this->_config = new Config(config_block, env);
 	
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;
@@ -46,14 +46,13 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		if (!splitServerString(server_strings[i], server_block, location_block)) {
 			throw (std::invalid_argument("Failed to split server string"));
 		}
-
 		this->_servers.push_back(new Server(*this, server_block, location_block, *this->_config));
 	}
 }
 
 void	ServerManager::resetMaxFd()
 {
-	for (int i = 0; i < FD_SETSIZE; ++i)
+	for (int i = 0; i < 1024; ++i)
 	{
 		if (FD_ISSET(i, &this->_read_set) && i > this->_max_fd) 
             this->_max_fd = i;
@@ -80,35 +79,24 @@ int	ServerManager::getNbServers() const
 	return (this->_nb_servers);
 }
 
-
 void	ServerManager::runServer()
 {
 	std::cout << "######################### RUN SERVERS ########################" << std::endl;
 
 	std::vector<Server *>::iterator	it = this->_servers.begin();
 
-	std::cout << "server listen on port :" << std::endl;
-
 	FD_ZERO(&(this->_read_set));
 	FD_ZERO(&(this->_write_set));
 	int	nb = 0;
 	while (it != this->_servers.end())
 	{
-		std::cout << (*it)->getPort() << std::endl;		
 		FD_SET((*it)->getFd(), &(this->_read_set));
-		//FD_SET(it->getFd(), &(this->_write_set));
 		nb++;
-		//if (this->_max_fd < it->getFd())
-		//	this->_max_fd = it->getFd();
 		if (this->_max_fd < (*it)->getFd())
 			this->_max_fd = (*it)->getFd();
 		it++;
 	}
 	this->_nb_servers = nb;
-
-	std::cout << RED << "######################### nb serveur max vaut via nb : " << this->_nb_servers << " et via size " << this->_servers.size() << RESET <<std::endl;
-	//resetMaxFd();
-	std::cout << RED << "######################### fd max vaut : " << this->_max_fd << RESET <<std::endl;
 
 	int cnt;
 	struct timeval timeout;
@@ -130,7 +118,6 @@ void	ServerManager::runServer()
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {
-				std::cout << "######################### FD_ISSET = _fd: " << (*it)->getFd() << " port : " << (*it)->getPort() << "########################" << std::endl;
 				(*it)->run();
 			}
 		}
@@ -146,10 +133,9 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 	std::string line;
 	while (std::getline(iss, line)) 
 	{
-		std::istringstream iss2(line);
-    	std::string fw;
-		iss2 >> fw;
-		if (line == "	location {" || fw == "location") { 
+		
+		if (line == "	location {") { 
+			std::cout << "!!!!!!!! OK" << std::endl;
 			inside_location_block = true;
 			location_ss.str("");
 			location_ss.clear();

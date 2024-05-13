@@ -6,43 +6,75 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/08 17:21:31 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/12 19:38:17 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "request.hpp"
-#include "webserv_macro.hpp"
+#include "server.hpp"
+#include "connection.hpp"
 
 Request::Request(Connection &connection, Server &server)
 {
-    std::cout << "Request constructeur called : " << server.getFd() << std::endl;
+    //std::cout << "Request constructeur with params called : " << server.getFd() << std::endl;
 	this->_connection = &connection;
 	this->_server = &server;
+	this->_phase = READY;
 }
 
 Request::~Request()
 {
-    std::cout << "Request destructeur called" << std::endl;
+    //std::cout << "Request destructeur called" << std::endl;
 }
 
-void	Request::addMethod(std::string &method) {
+void	Request::addMethod(std::string &line) {
+	std::string	method;
+	size_t pos = line.find_first_of(" \t");
+
+	if (pos != std::string::npos) {
+		method = line.substr(0, pos);
+	}
 	if (method == "GET")
-		_method = GET;
+		this->_method = GET;
+	if (method == "POST")
+		this->_method = POST;
+}
+
+void	Request::addHeader(std::string &line) {
+	std::string key, value;
+	size_t pos = line.find_first_of(" \t");
+	std::cout << GREEN << line << RESET << std::endl;
+
+	if (pos != std::string::npos) {
+		key = line.substr(0, pos);
+		value = line.substr(pos + 1);
+	}
+	this->_headers.insert(std::make_pair(key, value));
+}
+
+void	Request::addContent(std::string &content) {
+	this->_content = content;	
+}
+
+void	Request::setPhase(Phase new_phase) {
+	this->_phase = new_phase;
 }
 
 /*
-void	addContent(std::string content) {
-}
-
 void	addOrigin(std::string origin) {
 }
+*/
 
-void	addHeader(std::string header) {
-}
-
+/*
 void	isValidHeader(std::string header) {
 }
 */
+
+/* == getter */
+std::map<std::string, std::string>	Request::getHeader() const
+{
+	return (_headers);
+}
 
 Connection	Request::getConnection() const
 {
@@ -54,47 +86,42 @@ Server	Request::getServer() const
 	return (*_server);
 }
 
-std::string	Request::getContent() const
-{
-	return (this->_content);
-}
-
-std::map<std::string, std::string>	Request::getHeaders() const
-{
-	return (this->_headers);
-}
-
 Method	Request::getMethod() const
 {
 	return (_method);
 }
 
-/*
-Request Request::getLocation() const
+std::string	Request::getContent() const
 {
+	return (_content);
 }
 
-Request Request::getUri() const
+Location	Request::getLocation() const
 {
+	return (*_location);
 }
 
-Request Request::getUriType() const
+std::string	Request::getUri() const
 {
+	return (_uri);
 }
 
-Request Request::getHeaders() const
+URIType	Request::getUriType() const
 {
+	return (_uri_type);
 }
 
-Request Request::getTransferType() const
+TransferType	Request::getTransferType() const
 {
+	return (_transfer_type);
 }
 
-Request Request::getContent() const
+std::string	Request::getOrigin() const
 {
+	return (_origin);
 }
 
-Request Request::getOrigin() const
+Request::Phase	Request::getPhase() const
 {
+	return (_phase);
 }
-*/
