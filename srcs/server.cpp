@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 13:01:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 16:00:57 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,12 +124,13 @@ void	Server::recvRequest(Connection &connection) {
 
 	int bytes_received = 0;
 	while (!bytes_received) {
-		char buffer[1024];
+		char buffer[1324];
+
 		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
-			std::cout << "############" << std::endl;
+			std::cout << "############ " << bytes_received << " ############" << std::endl;
 
 			/*
 			if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
@@ -164,8 +165,6 @@ void	Server::recvRequest(Connection &connection) {
 			}
 			if (body.length())
 				request->addContent(body);
-
-			ft::display_map(request->getHeader());
 			
 			std::cout << YELLOW << request->getContent() << RESET << std::endl;
 
@@ -211,6 +210,10 @@ void	Server::solveRequest(Connection &connection) {
 		std::cout << " ggg GET ggggg" << std::endl;
 		executeGet(connection);	
 	}
+	//ft::display_map(request->getHeader());
+	Request *request = connection.getRequest();
+
+	ft::display_map(request->getHeader());
 }
 
 

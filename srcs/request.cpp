@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 19:38:17 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 16:12:11 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ void	Request::addMethod(std::string &line) {
 	if (pos != std::string::npos) {
 		method = line.substr(0, pos);
 	}
+
 	if (method == "GET")
 		this->_method = GET;
 	if (method == "POST")
