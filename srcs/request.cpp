@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 16:12:11 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/15 17:35:17 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ Request::Request(Connection &connection, Server &server)
     //std::cout << "Request constructeur with params called : " << server.getFd() << std::endl;
 	this->_connection = &connection;
 	this->_server = &server;
-	this->_phase = READY;
+	this->_phase = Request::ON_HEADER;
 }
 
 Request::~Request()
