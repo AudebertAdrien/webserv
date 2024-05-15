@@ -42,15 +42,7 @@ class Server {
 		Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config &config);
 		~Server();
 
-		void    completeVectorLocation(std::vector<std::string> location_block);
 		void    run();
-		void	runRecvAndSolve(Connection &connection);
-		bool	parseStartLine(Connection &connection, Request &request);
-		bool	parseHeader(Connection &connection, Request &request);
-		void	completeServer(std::string server_block);
-		bool	hasNewConnection();
-		void	acceptNewConnection();
-		void	addConnection(int client_fd, std::string client_ip, int client_port);
 
 		/* == getter == */
 		int		getPort();
@@ -58,7 +50,18 @@ class Server {
 
 	private:
 		void		recvRequest(Connection &connection);
-		static void	solveRequest(Connection &connection);
+		void		solveRequest(Connection &connection);
+		void		executeGet(Connection &connection);
+		void		runRecvAndSolve(Connection &connection);
+		bool		parseStartLine(Connection &connection, Request &request);
+		bool		parseHeader(Connection &connection, Request &request);
+		void		completeServer(std::string server_block);
+		bool		hasNewConnection();
+		void		acceptNewConnection();
+		void		addConnection(int client_fd, std::string client_ip, int client_port);
+		void    	completeVectorLocation(std::vector<std::string> location_block);
+		std::string	createFilePath(std::string root_path, std::string relativ_path);
+		
 
 		Config  		*_config;
 		ServerManager	*_manager;
@@ -88,7 +91,6 @@ class Server {
 		void	sendResponse(Response response);
 
 		void	hasRequest(int client_fd);
-		void	solveRequest(Request request);
 
 		void	executeAutoindex();
 		void	executeGet(Request request);

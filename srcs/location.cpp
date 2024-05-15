@@ -31,15 +31,17 @@ Location::Location(std::string location)
     fullFillLocation(lines);
 
     // Useless fonction, just to show location
-    showLocation();
+    //showLocation();
     // to erease
 
     //std::cout << YELLOW << "GET ROOT" << std::endl;
     std::vector<std::string>    root = getInfo("root");
     size_t i = 0;
+    this->_root_path = "Nothing";
     while (i < root.size())
     {
         std::cout << "root : " << root[i] << std::endl;
+        this->_root_path = root[i];
         i++;
     }
     //std::cout << "END TEST ROOT"<< YELLOW << std::endl;
@@ -112,7 +114,7 @@ void    Location::handleFirstLine(std::string line)
     int opt = 0;
     while (iss >> word)
     {
-        std::cout << "iteration :" << i << " avec le mot :" << word << std::endl;
+        //std::cout << "iteration :" << i << " avec le mot :" << word << std::endl;
         if (word == "location" || word == "{")
         {
             i++;
@@ -163,6 +165,21 @@ void    Location::handleBody(std::string line)
     //    this->_body_file[key] = value;
 
     //si Multimap
+    
+    //Set de root path
+    std::multimap<std::string , std::string>::iterator  it = this->_body_file.begin();
+    /* while (it != this->_body_file.end())
+    {
+        if (it->first == "root")
+        {
+            this->_root_path = it->second;
+        }
+        it++;
+    }
+    if (it == this->_body_file.end())
+    {
+        this->_root_path = "Nothing";
+    } */
 }
 
 void    Location::fullFillLocation(std::vector<std::string> lines)
@@ -191,4 +208,9 @@ std::string Location::getLocMatcUhri() const
 int Location::getIsMulti() const
 {
     return (this->_is_multi);
+}
+
+std::string Location::getRootPath() const
+{
+    return (this->_root_path);
 }

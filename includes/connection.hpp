@@ -16,6 +16,7 @@
 #include <iostream>
 #include <map>
 
+#include "request.hpp"
 #include "webserv_macro.hpp"
 
 class Request;
@@ -37,7 +38,6 @@ class Connection
 		timeval			getLastRequest() const;
 		std::string		getClientIp() const;
 		int				getClientPort() const;
-
 		
 	private:
 		Request		*_request;

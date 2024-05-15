@@ -28,17 +28,20 @@ Request::~Request()
 }
 
 void	Request::addMethod(std::string &line) {
+	std::istringstream iss(line);
 	std::string	method;
-	size_t pos = line.find_first_of(" \t");
+	/* size_t pos = line.find_first_of(" \t");
 
 	if (pos != std::string::npos) {
 		method = line.substr(0, pos);
 	}
-
+	*/
+	iss >> method;
 	if (method == "GET")
 		this->_method = GET;
 	if (method == "POST")
 		this->_method = POST;
+	iss >> this->_relativ_path;
 }
 
 void	Request::addHeader(std::string &line) {
@@ -125,4 +128,9 @@ std::string	Request::getOrigin() const
 Request::Phase	Request::getPhase() const
 {
 	return (_phase);
+}
+
+std::string		Request::getRelativPath() const
+{
+	return (this->_relativ_path);
 }

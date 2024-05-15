@@ -52,7 +52,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 
 void	ServerManager::resetMaxFd()
 {
-	for (int i = 0; i < FD_SETSIZE; ++i)
+	for (int i = 0; i < 1024; ++i)
 	{
 		if (FD_ISSET(i, &this->_read_set) && i > this->_max_fd) 
             this->_max_fd = i;
@@ -136,7 +136,7 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 		std::istringstream iss2(line);
     	std::string fw;
 		iss2 >> fw;
-		if (line == "	location {" || fw == "location") { 
+		if (line == "	location {" || fw == "location") {
 			inside_location_block = true;
 			location_ss.str("");
 			location_ss.clear();

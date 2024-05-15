@@ -45,6 +45,16 @@ int Connection::getFd() const
     return (this->_fd);
 }
 
+/* void	Connection::setRequest(Request &request)
+{
+    this->_request = &request;
+}
+
+Request& Connection::getRequest()
+{
+    return *(this->_request);
+}
+ */
 std::string	Connection::getClientIp() const
 {
 	return (this->_client_ip);

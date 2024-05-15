@@ -17,6 +17,9 @@
 #define PORT 8080
 #define BUFFER_SIZE 1024
 #define TIMEOUT_SEC 5
+const std::string HTML_FILE_PATH = "index.html";
+const std::string IMAGE_FILE_PATH = "images/photo.jpg";
+const std::string CSS_FILE_PATH = "css/style.css";
 
 Server::Server()
 {
@@ -96,6 +99,13 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
 	*/
+	/* std::cout << RED << " !!!!!!!!!! Pour le serveur port num " << this->_port << std::endl << "Location block vaut :" << std::endl;
+	for(std::vector<std::string>::iterator	it=location_block.begin(); it != location_block.end(); it++)
+	{
+		std::cout << *it << std::endl;
+	}
+	std::cout<< RESET; */
+	completeVectorLocation(location_block);
 }
 
 /*
@@ -170,15 +180,132 @@ void	Server::recvRequest(Connection &connection) {
 	connection.setRequest(request);
 }
 
+static std::string loadFileContent(const std::string& filePath) 
+{
+	std::cout << GREEN << filePath << RESET << std::endl;
+    std::ifstream file(filePath.c_str(), std::ios::binary);
+    if (!file) 
+	{
+		std::cerr << RED <<"doc not find " << strerror(errno) << RESET << std::endl;
+        return ""; // Gérer l'erreur de fichier non trouvé
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    return (buffer.str());
+}
+
+static std::string generateCSSPart(std::string filePath) 
+{
+    std::string cssContent = loadFileContent(filePath + CSS_FILE_PATH);
+    if (cssContent.empty()) 
+	{
+		std::cerr << RED <<"CSS not find " << strerror(errno) << RESET << std::endl;
+        return ""; // Gérer l'erreur de fichier CSS non trouvé
+    }
+
+    std::stringstream part;
+    part << "--boundary\r\n"
+         << "Content-Type: text/css\r\n"
+         << "\r\n"
+         << cssContent << "\r\n";
+    return (part.str());
+}
+
+static std::string generateHTMLPart(std::string filePath) 
+{
+    std::string htmlContent = loadFileContent(filePath + HTML_FILE_PATH);
+    if (htmlContent.empty()) 
+	{
+		std::cerr << RED <<"HTML not find " << strerror(errno) << RESET << std::endl;
+        return ""; // Gérer l'erreur de fichier HTML non trouvé
+    }
+
+    std::stringstream part;
+    part << "--boundary\r\n"
+         << "Content-Type: text/html\r\n"
+         << "\r\n"
+         << htmlContent << "\r\n";
+    return (part.str());
+}
+
+static std::string generateImagePart(std::string filePath) 
+{
+    std::string imageData = loadFileContent(filePath + IMAGE_FILE_PATH);
+    if (imageData.empty()) {
+        return ""; // Gérer l'erreur de fichier image non trouvé
+    }
+
+    std::stringstream part;
+    part << "--boundary\r\n"
+         << "Content-Type: image/jpeg\r\n" // Adapter le Content-Type en fonction du format de l'image
+         << "\r\n"
+         << imageData << "\r\n";
+    return (part.str());
+}
+
+static std::string generateResponse(std::string filePath) 
+{
+    std::string response;
+    response += generateHTMLPart(filePath);
+	std::cout << RED << "HTML part done : " <<response << RESET << std::endl;
+    response += generateCSSPart(filePath); // Ajouter la partie CSS
+	std::cout << YELLOW << "CSS part done : " <<response << RESET << std::endl;
+    response += generateImagePart(filePath);
+    response += "--boundary--\r\n";
+	std::cout << GREEN << "all part done : " <<response << RESET << std::endl;
+    return (response);
+}
+
+void	Server::executeGet(Connection &connection)
+{
+	std::cout << "executeGet" << std::endl;
+	std::vector<Location *>::iterator	it = this->_location.begin();
+
+	while (it != this->_location.end())
+	{
+		std::cout << YELLOW << "@@@@@@@@@@ root path : " << (*it)->getRootPath() << RESET << std::endl;
+		if ((*it)->getRootPath() != "Nothing")
+		{
+			std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
+			std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
+			std::cout << "@@@@@ File path : " << file_path << RESET << std::endl;
+			std::string header = "HTTP/1.1 200 OK\r\n";
+			std::string body = generateResponse(file_path);
+			std::ostringstream oss;
+			oss << header << "Content-Length: " << body.length() /* << "\r\n\r\n" */ << body;
+			std::string response = oss.str();
+			if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+				std::cerr << "Send failed: " << strerror(errno) << std::endl;
+			return;
+		}
+		it++;
+	}
+	
+	std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+	std::string header = "HTTP/1.1 200 OK\r\n";
+	std::string body = "Hello from server!!! Here Adrien\n";
+	std::ostringstream oss;
+	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+	std::string response = oss.str();
+	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+}
 
 void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
+	ft::display_map(connection.getRequest()->getHeader());
+	if (connection.getRequest()->getMethod() == GET)
+	{
+		std::cout << " ggg GET ggggg" << std::endl;
+		executeGet(connection);	
+	}
 	//ft::display_map(request->getHeader());
 	Request *request = connection.getRequest();
 
 	ft::display_map(request->getHeader());
-
 }
+
 
 void	Server::runRecvAndSolve(Connection &connection) {
 	std::cout << "runRecvAndSolve" << std::endl;
@@ -193,17 +320,38 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	}
 	*/
 	solveRequest(connection);
-
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = "Hello from server!!! Here Adrien\n";
-	std::ostringstream oss;
-	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-	std::string response = oss.str();
-
-	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
-	}
 }
+
+/* void	Server::solveRequest(Connection &connection, Request &request)
+{
+	
+	 std::cout << GREEN;
+	if (request.getMethod() == GET)
+	{
+		std::cout << " ggg GET ggggg" << std::endl;
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1) {
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		}
+	}
+	if (request.getMethod() == POST)
+	{
+		std::cout << " pppppppp POST pppppppp" << std::endl;
+	}
+
+	if (request.getMethod() == DELETE)
+	{
+		std::cout << " pppppppp POST pppppppp" << std::endl;
+	}
+	std::cout << RESET; 
+
+} */
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port);
@@ -253,11 +401,11 @@ void	Server::acceptNewConnection() {
 }
 
 void	Server::run() {
-
-	//check connection possible
-	std::cout << "_manager->getServer().size: " << this->_manager->getServer().size() << std::endl;
 	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
-		std::cout << "ok" << std::endl;
+	{
+		std::cout << "too many connection, old connection must be closed" << std::endl;
+		return ;
+	}
 
 	acceptNewConnection();
 
@@ -272,6 +420,43 @@ void	Server::run() {
 		close(fd);
 		it++;
 	}
+}
+
+static void trim(std::string& str) {
+    // Supprimer les espaces et les tabulations au début de la chaîne
+    std::string::size_type start = str.find_first_not_of(" \t");
+    if (start != std::string::npos) {
+        str = str.substr(start);
+    } else {
+        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+        return;
+    }
+
+    // Supprimer les espaces et les tabulations à la fin de la chaîne
+    std::string::size_type end = str.find_last_not_of(" \t");
+    if (end != std::string::npos) {
+        str = str.substr(0, end + 1);
+    } else {
+        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+    }
+}
+
+static void removeLastSemicolon(std::string& str) {
+    if (!str.empty() && str[str.size() - 1] == ';') {
+        str.erase(str.size() - 1);
+    }
+}
+
+std::string	Server::createFilePath(std::string root_path, std::string relativ_path)
+{
+	//std::cout << "root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
+	trim(root_path);
+	trim(relativ_path);
+	removeLastSemicolon(root_path);
+	//std::cout << "APres root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
+	std::string file_path = root_path + relativ_path;
+	//std::cout << "file path vaut : " << file_path << std::endl;
+	return (file_path);
 }
 
 int	Server::getPort()
