@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 16:00:57 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 18:33:10 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
  
+	/*
 	int flags = fcntl(_fd, F_GETFL, 0);
     if (flags == -1) {
         std::cerr << "Failed to get socket flags\n";
@@ -89,7 +90,6 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
     }
 
-	/*
 	if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
         close(_fd);
@@ -115,16 +115,17 @@ void	Server::recvRequest(Connection &connection) {
 
 	Request	*request = new Request(connection, *this);			
 
-	int bytes_received = 0;
-	while (!bytes_received) {
-		char buffer[1324];
+	int bytes_received = 1;
+	while (bytes_received != -1) {
+		char buffer[500];
 
+		std::cout << "111111111 " << bytes_received << " ############" << std::endl;
 		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+		std::cout << "4444444444 " << bytes_received << " ############" << std::endl;
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 		} else {
-			std::cout << "############ " << bytes_received << " ############" << std::endl;
-
+			std::cout << "2222222222 " << bytes_received << " ############" << std::endl;
 			/*
 			if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
 				request.setPhase(Request::ON_HEADER);
@@ -164,6 +165,8 @@ void	Server::recvRequest(Connection &connection) {
 			std::cout << "############" << std::endl;
 		}
 	}
+
+	std::cout << "33333333333333 " << bytes_received << " ############" << std::endl;
 	connection.setRequest(request);
 }
 
@@ -219,6 +222,20 @@ void	Server::acceptNewConnection() {
 		std::cerr << "Accept failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
+
+	/*
+	int flags = fcntl(client_fd, F_GETFL, 0);
+    if (flags == -1) {
+        std::cerr << "Failed to get socket flags\n";
+        close(_fd);
+		exit(EXIT_FAILURE);
+    }
+	if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+        close(_fd);
+		exit(EXIT_FAILURE);
+	}
+	*/
 
 	struct timeval timeout;
 	timeout.tv_sec = TIMEOUT_SEC;

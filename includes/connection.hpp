@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 12:56:18 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 16:37:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ class Connection
 		Request		*_request;
 
 		int 		_fd;
-        timeval 	_last_request;
         std::string	_client_ip;
         int			_client_port;
+        timeval 	_last_request;
 };
 
 #endif

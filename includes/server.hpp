@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 19:26:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/13 16:36:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,9 @@ class Server {
         /*
 		void	handleConnection();
 
-		Location	_test;continue
         int _request_uri_limit_size;
         int _limit_client_body_size;
+
         std::string _default_error_page;
         queue<Response>	_responses;
 
