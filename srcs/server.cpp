@@ -18,8 +18,7 @@
 #define BUFFER_SIZE 1024
 #define TIMEOUT_SEC 5
 const std::string HTML_FILE_PATH = "index.html";
-const std::string IMAGE_FILE_PATH = "images/photo.jpg";
-const std::string CSS_FILE_PATH = "css/style.css";
+
 
 Server::Server()
 {
@@ -170,6 +169,26 @@ void	Server::recvRequest(Connection &connection) {
 	connection.setRequest(request);
 }
 
+/* std::vector<char> loadFileContent2(const std::string& filename) {
+    std::ifstream file(filename.c_str(), std::ios::binary);
+    if (file) {
+        // Get the size of the file
+        file.seekg(0, std::ios::end);
+        std::streampos fileSize = file.tellg();
+        file.seekg(0, std::ios::beg);
+
+        // Create a vector to hold the content
+        std::vector<char> buffer(fileSize);
+
+        // Read the file content into the buffer
+        file.read(buffer.data(), fileSize);
+
+        return buffer;
+    }
+    return std::vector<char>();
+} */
+
+
 static std::string loadFileContent(const std::string& filePath) 
 {
 	std::cout << GREEN << filePath << RESET << std::endl;
@@ -177,7 +196,7 @@ static std::string loadFileContent(const std::string& filePath)
     if (!file) 
 	{
 		std::cerr << RED <<"doc not find " << strerror(errno) << RESET << std::endl;
-        return ""; // Gérer l'erreur de fichier non trouvé
+        return "404 Not Found"; // Gérer l'erreur de fichier non trouvé
     }
 
     std::stringstream buffer;
@@ -187,7 +206,7 @@ static std::string loadFileContent(const std::string& filePath)
 
 static std::string generateCSSPart(std::string filePath) 
 {
-    std::string cssContent = loadFileContent(filePath + CSS_FILE_PATH);
+    std::string cssContent = loadFileContent(filePath);
     if (cssContent.empty()) 
 	{
 		std::cerr << RED <<"CSS not find " << strerror(errno) << RESET << std::endl;
@@ -195,9 +214,10 @@ static std::string generateCSSPart(std::string filePath)
     }
 
     std::stringstream part;
-    part << "--boundary\r\n"
-         << "Content-Type: text/css\r\n"
-         << "\r\n"
+    part //<< "--boundary\r\n"
+         << "Content-Type: text/css" << "\n"
+		 << "Content-Length: " << cssContent.length() << "\n"
+         << "\r\n\r\n"
          << cssContent << "\r\n";
     return (part.str());
 }
@@ -212,38 +232,43 @@ static std::string generateHTMLPart(std::string filePath)
     }
 
     std::stringstream part;
-    part << "--boundary\r\n"
-         << "Content-Type: text/html\r\n"
-         << "\r\n"
+    part //<< "--boundary\r\n"
+         << "Content-Type: text/html" << "\n"
+		 << "Content-Length: " << htmlContent.length() << "\n"
+         << "\r\n\r\n"
          << htmlContent << "\r\n";
     return (part.str());
 }
 
 static std::string generateImagePart(std::string filePath) 
 {
-    std::string imageData = loadFileContent(filePath + IMAGE_FILE_PATH);
+    std::string imageData = loadFileContent(filePath);
     if (imageData.empty()) {
         return ""; // Gérer l'erreur de fichier image non trouvé
     }
 
     std::stringstream part;
-    part << "--boundary\r\n"
-         << "Content-Type: image/jpeg\r\n" // Adapter le Content-Type en fonction du format de l'image
-         << "\r\n"
+    part //<< "--boundary\r\n"
+         << "Content-Type: image/jpeg" << "\n"
+		 << "Content-Length: " << imageData.length() << "\n"
+         << "\r\n\r\n"
          << imageData << "\r\n";
     return (part.str());
 }
 
-static std::string generateResponse(std::string filePath) 
+static std::string generateResponse(std::string filePath, std::string relativ_path) 
 {
     std::string response;
-    response += generateHTMLPart(filePath);
-	std::cout << RED << "HTML part done : " <<response << RESET << std::endl;
-    response += generateCSSPart(filePath); // Ajouter la partie CSS
-	std::cout << YELLOW << "CSS part done : " <<response << RESET << std::endl;
-    response += generateImagePart(filePath);
-    response += "--boundary--\r\n";
-	std::cout << GREEN << "all part done : " <<response << RESET << std::endl;
+	if (relativ_path == "/")
+    	response += generateHTMLPart(filePath);
+	//std::cout << RED << "HTML part done : " <<response << RESET << std::endl;
+	else if (relativ_path == "/css/style.css")
+    	response += generateCSSPart(filePath); // Ajouter la partie CSS
+	//std::cout << YELLOW << "CSS part done : " <<response << RESET << std::endl;
+    else if (relativ_path == "/images/photo.jpg")
+		response += generateImagePart(filePath);
+    //response += "--boundary--\r\n";
+	//std::cout << GREEN << "all part done : " <<response << RESET << std::endl;
     return (response);
 }
 
@@ -254,19 +279,22 @@ void	Server::executeGet(Connection &connection)
 
 	while (it != this->_location.end())
 	{
-		std::cout << YELLOW << "@@@@@@@@@@ root path : " << (*it)->getRootPath() << RESET << std::endl;
+		//std::cout << YELLOW << "@@@@@@@@@@ root path : " << (*it)->getRootPath() << RESET << std::endl;
 		if ((*it)->getRootPath() != "Nothing")
 		{
-			std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
+			//std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
 			std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
-			std::cout << "@@@@@ File path : " << file_path << RESET << std::endl;
-			std::string header = "HTTP/1.1 200 OK\r\n";
-			std::string body = generateResponse(file_path);
-			std::ostringstream oss;
-			oss << header << "Content-Length: " << body.length() /* << "\r\n\r\n" */ << body;
-			std::string response = oss.str();
-			if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
-				std::cerr << "Send failed: " << strerror(errno) << std::endl;
+			//std::cout << "@@@@@ File path : " << file_path << RESET << std::endl;
+			//for (int i = 0; i < 3; i++)
+			//{
+				std::string header = "HTTP/1.1 200 OK\r\n";
+				std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
+				std::ostringstream oss;
+				oss << header << body;
+				std::string response = oss.str();
+				if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
+					std::cerr << "Send failed: " << strerror(errno) << std::endl;
+			//}
 			return;
 		}
 		it++;
