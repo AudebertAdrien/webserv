@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/16 16:20:50 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/16 17:01:28 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,22 +122,17 @@ bool	Server::parseHeader(Connection &connection, Request &request) {
 /*
 void    Server::recvRequest(Connection &connection) {
     std::cout << "recvRequest" << std::endl;
+
     Request *request = new Request(connection, *this);
-    int bytes_received = 0;
-    while (!bytes_received) {
-        char buffer[1324];
+    int bytes_received = 1;
+
+    while (bytes_received > 0) {
+        char buffer[500];
         bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
         if (bytes_received == -1) {
             std::cerr << "Error in receiving data ######" << std::endl;
         } else {
             std::cout << "############ " << bytes_received << " ############" << std::endl;
-
-            if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
-                request.setPhase(Request::ON_HEADER);
-            }
-            if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
-                request.setPhase(Request::ON_HEADER);
-            }
 
             std::string http_request(buffer);
             size_t header_end = http_request.find("\r\n\r\n");
@@ -173,9 +168,9 @@ void	Server::recvRequest(Connection &connection) {
 
 	Request	*request = new Request(connection, *this);			
 
-	int bytes_received = 0;
-	while (bytes_received < 0) {
-		char	buffer[2000];	
+	int bytes_received = 1;
+	while (bytes_received > 0) {
+		char	buffer[500];	
 
 		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
 		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
@@ -214,10 +209,10 @@ void	Server::recvRequest(Connection &connection) {
 			if (request->getPhase() == Request::ON_BODY) {
 				if (body.length())
 					request->addContent(body);
-				std::cout << YELLOW << request->getContent() << RESET << std::endl;
 			}
 		}
 	}
+	std::cout << YELLOW << request->getContent() << RESET << std::endl;
 	connection.setRequest(request);
 }
 
@@ -346,17 +341,17 @@ void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
 	ft::display_map(connection.getRequest()->getHeader());
 
+	/*
 	if (connection.getRequest()->getMethod() == GET)
 	{
 		std::cout << " ggg GET ggggg" << std::endl;
 		executeGet(connection);	
 	}
-	/*
+	*/
 	if (connection.getRequest()->getMethod() == POST)
 	{
 		std::cout << "==POST==" << std::endl;
 	}
-	*/
 
 	//ft::display_map(request->getHeader());
 }
@@ -370,11 +365,20 @@ void	Server::runRecvAndSolve(Connection &connection) {
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
+
+	std::string header = "HTTP/1.1 200 OK\r\n";
+	std::string body = "Hello from server!!! Here Adrien\n";
+	std::ostringstream oss;
+	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+	std::string response = oss.str();
+	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+
 	/*
 	if (request.getPhase() == Request::COMPLETE) {
 	}
 	*/
-	solveRequest(connection);
+	//solveRequest(connection);
 }
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {

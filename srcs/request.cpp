@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/15 17:35:17 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/16 17:00:51 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void	Request::addHeader(std::string &line) {
 }
 
 void	Request::addContent(std::string &content) {
-	this->_content = content;	
+	this->_content += content;	
 }
 
 void	Request::setPhase(Phase new_phase) {
