@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/15 17:44:36 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/16 16:20:50 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 	completeVectorLocation(location_block);
 }
 
+/*
 bool	Server::parseStartLine(Connection &connection, Request &request) {
 	std::cout << RED << "request.getPhase() 1: " << request.getPhase() << RESET << std::endl;
 	return (true);
@@ -116,17 +117,68 @@ bool	Server::parseHeader(Connection &connection, Request &request) {
 	std::cout << RED << "request.getPhase() 2: " << request.getPhase() << RESET << std::endl;
 	return (true);
 }
+*/
+
+/*
+void    Server::recvRequest(Connection &connection) {
+    std::cout << "recvRequest" << std::endl;
+    Request *request = new Request(connection, *this);
+    int bytes_received = 0;
+    while (!bytes_received) {
+        char buffer[1324];
+        bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+        if (bytes_received == -1) {
+            std::cerr << "Error in receiving data ######" << std::endl;
+        } else {
+            std::cout << "############ " << bytes_received << " ############" << std::endl;
+
+            if (request.getPhase() == Request::READY && parseStartLine(connection, request)) {
+                request.setPhase(Request::ON_HEADER);
+            }
+            if (request.getPhase() == Request::ON_HEADER && parseHeader(connection, request)) {
+                request.setPhase(Request::ON_HEADER);
+            }
+
+            std::string http_request(buffer);
+            size_t header_end = http_request.find("\r\n\r\n");
+            if (header_end == std::string::npos) {
+                std::cout << "header end not found" << std::endl;
+            }
+            std::string header = http_request.substr(0, header_end);
+            std::string body = http_request.substr(header_end + 4);
+            std::istringstream  iss(header);
+            std::string line;
+            bool isFirstLine = true;
+            while (getline(iss, line)) {
+                if (isFirstLine) {
+                    isFirstLine = false;
+                    std::cout << RED << "First Line : " << line << RESET << std::endl;
+                    request->addMethod(line);
+                } else {
+                    request->addHeader(line);
+                }
+            }
+            if (body.length())
+                request->addContent(body);
+            std::cout << YELLOW << request->getContent() << RESET << std::endl;
+            std::cout << "############" << std::endl;
+        }
+    }
+    connection.setRequest(request);
+}
+*/
 
 void	Server::recvRequest(Connection &connection) {
 	std::cout << "recvRequest" << std::endl;
 
 	Request	*request = new Request(connection, *this);			
 
-	int bytes_received = 1;
-	while (bytes_received != -1) {
-		char	buffer[500];	
+	int bytes_received = 0;
+	while (bytes_received < 0) {
+		char	buffer[2000];	
 
-		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
+		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
 		std::cout << "bytes_received: " << bytes_received << " ############" << std::endl;
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
@@ -168,26 +220,6 @@ void	Server::recvRequest(Connection &connection) {
 	}
 	connection.setRequest(request);
 }
-
-/* std::vector<char> loadFileContent2(const std::string& filename) {
-    std::ifstream file(filename.c_str(), std::ios::binary);
-    if (file) {
-        // Get the size of the file
-        file.seekg(0, std::ios::end);
-        std::streampos fileSize = file.tellg();
-        file.seekg(0, std::ios::beg);
-
-        // Create a vector to hold the content
-        std::vector<char> buffer(fileSize);
-
-        // Read the file content into the buffer
-        file.read(buffer.data(), fileSize);
-
-        return buffer;
-    }
-    return std::vector<char>();
-} */
-
 
 static std::string loadFileContent(const std::string& filePath) 
 {
@@ -314,17 +346,17 @@ void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
 	ft::display_map(connection.getRequest()->getHeader());
 
-	/*
 	if (connection.getRequest()->getMethod() == GET)
 	{
 		std::cout << " ggg GET ggggg" << std::endl;
 		executeGet(connection);	
 	}
-	*/
+	/*
 	if (connection.getRequest()->getMethod() == POST)
 	{
 		std::cout << "==POST==" << std::endl;
 	}
+	*/
 
 	//ft::display_map(request->getHeader());
 }
