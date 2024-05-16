@@ -61,6 +61,8 @@ class Server {
 		void		addConnection(int client_fd, std::string client_ip, int client_port);
 		void    	completeVectorLocation(std::vector<std::string> location_block);
 		std::string	createFilePath(std::string root_path, std::string relativ_path);
+		void		initiateResponse(Connection &connection, Location &loc);
+		void		closestMatch(Connection &connection);
 		
 
 		Config  		*_config;
