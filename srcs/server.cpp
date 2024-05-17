@@ -229,6 +229,7 @@ void	Server::recvRequest(Connection &connection) {
 
 static std::string loadFileContent3(const std::string& filePath) 
 {
+	std::cout << GREEN << filePath << RESET << std::endl;
 	std::ifstream fileStream(filePath.c_str());
 	std::string	content;
 
@@ -305,17 +306,65 @@ static std::string generateImagePart(std::string filePath)
     return (part.str());
 }
 
+void split(const std::string& str, char delimiter, std::vector<std::string>& tokens)
+{
+    size_t start = 0;
+    size_t end = str.find(delimiter);
+
+    while (end != std::string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+        start = end + 1;
+        end = str.find(delimiter, start);
+    }
+    tokens.push_back(str.substr(start));
+}
+
+static int	lastElem(std::string str)
+{
+	std::cout << RED << "WTFFFFFFFF LAST ELEM VAUT " << str[str.length() - 1] << RESET << std::endl;
+	if (str[str.length() - 1] == '/')
+    	return (1);
+	else
+		return (0);
+}
+
+static std::string lastExt(const std::string &str)
+{
+	std::vector<std::string> tokens;
+
+	split(str, '/', tokens);
+	size_t pos = tokens.back().find('.');
+    if (pos != std::string::npos)
+        return (tokens.back().substr(pos + 1));
+    return "";
+}
+
 static std::string generateResponse(std::string filePath, std::string relativ_path) 
 {
     std::string response;
-	if (relativ_path == "/")
+	std::cout << YELLOW;
+	std::cout << "Last ext vaut = " << lastExt(filePath) << std::endl;
+	std::cout << "Last elem vaut = " << lastElem(filePath) << RESET << std::endl;
+	if (lastElem(filePath) == 1)
+	{
+		std::cout << "html part done : " << RESET << std::endl;
     	response += generateHTMLPart(filePath);
+	}
 	//std::cout << RED << "HTML part done : " <<response << RESET << std::endl;
-	else if (relativ_path == "/css/style.css")
-    	response += generateCSSPart(filePath); // Ajouter la partie CSS
+	//else if (relativ_path == "/css/style.css")
+	else if (lastExt(filePath) == "css")
+    {
+		std::cout << "CSS part done : " << RESET << std::endl;
+		response += generateCSSPart(filePath);
+	} 
 	//std::cout << YELLOW << "CSS part done : " <<response << RESET << std::endl;
-    else if (relativ_path == "/images/photo.jpg")
+    //else if (relativ_path == "/images/photo.jpg")
+	else if (lastExt(filePath) == "jpg")
+	{
+		std::cout << "jpg part done : " << RESET << std::endl;
 		response += generateImagePart(filePath);
+	}
+	std::cout << RESET << std::endl;
     //response += "--boundary--\r\n";
 	//std::cout << GREEN << "all part done : " <<response << RESET << std::endl;
     return (response);
@@ -348,16 +397,6 @@ void	Server::executeGet(Connection &connection)
 			if ((*it)->getRootPath() != "Nothing")
 			{
 				initiateResponse(connection, *(*it));
-				//std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
-				/* std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
-				std::string header = "HTTP/1.1 200 OK\r\n";
-				std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
-				std::ostringstream oss;
-				oss << header << body;
-				std::string response = oss.str();
-				//std::cout << RED <<oss.str() << RESET << std::endl;
-				if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-					std::cerr << "Send failed: " << strerror(errno) << std::endl; */
 				return;
 			}
 		}
@@ -579,18 +618,6 @@ static void removeLastSemicolon(std::string& str) {
     }
 }
 
-void split(const std::string& str, char delimiter, std::vector<std::string>& tokens) {
-    size_t start = 0;
-    size_t end = str.find(delimiter);
-
-    while (end != std::string::npos) {
-        tokens.push_back(str.substr(start, end - start));
-        start = end + 1;
-        end = str.find(delimiter, start);
-    }
-    tokens.push_back(str.substr(start));
-}
-
 bool containsDot(const std::string& str) 
 {
 	if (str.find('.') != std::string::npos)
@@ -610,13 +637,13 @@ static int	lastWordaFile(std::string str)
 		return (0);
 }
 
-/* static int	lastNotaBS(std::string str)
+static int	lastNotaBS(std::string str)
 {
-	size_t len = std::strlen(str);
-    if (len == 0) {
-        return 0;
+    if (str.empty()) {
+        return (0);
     }
-    return str[len - 1] == '?';
+	if (str[str.length() - 1] != '/')
+    	return (1);
 }
 
 static void	adjust(std::string& str)
@@ -626,9 +653,9 @@ static void	adjust(std::string& str)
 	else if (lastWordaFile(str) == 1)
 		return ;
 	else if (lastNotaBS(str) == 1 )
-		addBS(str);
+		str += '/';
 	return ;
-} */
+}
 
 std::string	Server::createFilePath(std::string root_path, std::string relativ_path)
 {
@@ -636,7 +663,7 @@ std::string	Server::createFilePath(std::string root_path, std::string relativ_pa
 	trim(root_path);
 	trim(relativ_path);
 	removeLastSemicolon(root_path);
-	//adjust(relativ_path);
+	adjust(relativ_path);
 	//std::cout << "APres root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
 	std::string file_path = root_path + relativ_path;
 	//std::cout << "file path vaut : " << file_path << std::endl;
