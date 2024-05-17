@@ -24,7 +24,8 @@ SRCS			:= main.cpp				\
 				   server.cpp			\
 				   location.cpp			\
 				   connection.cpp		\
-				   request.cpp
+				   request.cpp			\
+				   utils.cpp
 
 CC				:= c++ -g
 CFLAGS			:= -Wall -Wextra

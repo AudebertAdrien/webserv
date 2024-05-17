@@ -32,6 +32,7 @@
 
 #include "libft.hpp"
 #include "webserv_macro.hpp"
+#include "utils.hpp"
 
 class ServerManager;
 class Request;
