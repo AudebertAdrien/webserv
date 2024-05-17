@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 15:04:53 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 16:39:41 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,17 @@ void	Server::recvRequest(Connection &connection) {
 	connection.setRequest(request);
 }
 
+static std::string loadFileContent3(const std::string& filePath) 
+{
+	std::ifstream fileStream(filePath.c_str());
+	std::string	content;
+
+	content.assign((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
+	fileStream.close();
+
+	return (content);
+}
+
 static std::string loadFileContent(const std::string& filePath) 
 {
 	std::cout << GREEN << filePath << RESET << std::endl;
@@ -175,7 +186,7 @@ static std::string loadFileContent(const std::string& filePath)
     if (!file) 
 	{
 		std::cerr << RED <<"doc not find " << strerror(errno) << RESET << std::endl;
-        return "404 Not Found"; // Gérer l'erreur de fichier non trouvé
+        return ""; // Gérer l'erreur de fichier non trouvé
     }
 
     std::stringstream buffer;
@@ -195,9 +206,9 @@ static std::string generateCSSPart(std::string filePath)
     std::stringstream part;
     part //<< "--boundary\r\n"
          << "Content-Type: text/css" << "\n"
-		 << "Content-Length: " << cssContent.length() << "\n"
+		 << "Content-Length: " << cssContent.length()
          << "\r\n\r\n"
-         << cssContent << "\r\n";
+         << cssContent;
     return (part.str());
 }
 
@@ -213,15 +224,15 @@ static std::string generateHTMLPart(std::string filePath)
     std::stringstream part;
     part //<< "--boundary\r\n"
          << "Content-Type: text/html" << "\n"
-		 << "Content-Length: " << htmlContent.length() << "\n"
+		 << "Content-Length: " << htmlContent.length()
          << "\r\n\r\n"
-         << htmlContent << "\r\n";
+         << htmlContent;
     return (part.str());
 }
 
 static std::string generateImagePart(std::string filePath) 
 {
-    std::string imageData = loadFileContent(filePath);
+    std::string imageData = loadFileContent3(filePath);
     if (imageData.empty()) {
         return ""; // Gérer l'erreur de fichier image non trouvé
     }
@@ -229,9 +240,9 @@ static std::string generateImagePart(std::string filePath)
     std::stringstream part;
     part //<< "--boundary\r\n"
          << "Content-Type: image/jpeg" << "\n"
-		 << "Content-Length: " << imageData.length() << "\n"
+		 << "Content-Length: " << imageData.length()
          << "\r\n\r\n"
-         << imageData << "\r\n";
+         << imageData;
     return (part.str());
 }
 
@@ -251,6 +262,20 @@ static std::string generateResponse(std::string filePath, std::string relativ_pa
     return (response);
 }
 
+void	Server::initiateResponse(Connection &connection, Location &loc)
+{
+	std::string file_path = createFilePath(loc.getRootPath(), connection.getRequest()->getRelativPath());
+	std::cout << GREEN << file_path << RESET << std::endl;
+	std::string header = "HTTP/1.1 200 OK\r\n";
+	std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
+	std::ostringstream oss;
+	oss << header << body;
+	std::string response = oss.str();
+	//std::cout << RED <<oss.str() << RESET << std::endl;
+	if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+}
+
 void	Server::executeGet(Connection &connection)
 {
 	std::cout << "executeGet" << std::endl;
@@ -259,24 +284,85 @@ void	Server::executeGet(Connection &connection)
 	while (it != this->_location.end())
 	{
 		//std::cout << YELLOW << "@@@@@@@@@@ root path : " << (*it)->getRootPath() << RESET << std::endl;
-		if ((*it)->getRootPath() != "Nothing")
+		if (connection.getRequest()->getRelativPath() == (*it)->getLocMatcUhri())
 		{
-			//std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
-			std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
-			//std::cout << "@@@@@ File path : " << file_path << RESET << std::endl;
-			//for (int i = 0; i < 3; i++)
-			//{
+			if ((*it)->getRootPath() != "Nothing")
+			{
+				initiateResponse(connection, *(*it));
+				//std::cout << YELLOW << "@@@@@@@@ root path : @@@@@@@ " << (*it)->getRootPath() << std::endl;
+				/* std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
 				std::string header = "HTTP/1.1 200 OK\r\n";
 				std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
 				std::ostringstream oss;
 				oss << header << body;
 				std::string response = oss.str();
+				//std::cout << RED <<oss.str() << RESET << std::endl;
 				if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-					std::cerr << "Send failed: " << strerror(errno) << std::endl;
-			//}
-			return;
+					std::cerr << "Send failed: " << strerror(errno) << std::endl; */
+				return;
+			}
 		}
 		it++;
+	}
+	std::cout << "pas de match parfait" << std::endl;
+
+	closestMatch(connection);
+}
+
+static int countCommonCharacters(const std::string &s1, const std::string &s2)
+{
+    int commonCount = 0;
+    size_t len = std::min(s1.size(), s2.size());
+
+    for (size_t i = 0; i < len; ++i) 
+	{
+        if (s1[i] == s2[i])
+            commonCount++;
+    }
+    return (commonCount);
+}
+
+
+static int findClosestStringIndex(const std::string &target, const std::vector<Location *> &vecteur)
+{
+    if (vecteur.empty())
+		return -1;
+
+    int closestIndex = 0;
+    int maxCommonCharacters = countCommonCharacters(target, vecteur[0]->getLocMatcUhri());
+
+    for (size_t i = 1; i < vecteur.size(); ++i) 
+	{
+        int commonCharacters = countCommonCharacters(target, vecteur[i]->getLocMatcUhri());
+        if (commonCharacters > maxCommonCharacters) {
+            closestIndex = i;
+            maxCommonCharacters = commonCharacters;
+        }
+    }
+
+    return (closestIndex);
+}
+
+void	Server::closestMatch(Connection &connection)
+{
+	/* std::vector<Location *>::iterator	it = this->_location.begin();
+	
+	/* for (it = this->_location.begin(); it != this->_location.end(); it++)
+	{
+		if ((*it)->getLocMatcUhri() == "/")
+		{
+			initiateResponse(connection, *(*it));
+			/* std::string file_path = createFilePath((*it)->getRootPath(), connection.getRequest()->getRelativPath());
+			std::string header = "HTTP/1.1 200 OK\r\n";
+			std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
+			std::ostringstream oss;
+			oss << header << body;
+			std::string response = oss.str();
+			//std::cout << RED <<oss.str() << RESET << std::endl;
+			if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
+				std::cerr << "Send failed: " << strerror(errno) << std::endl; 
+			return;
+		}
 	}
 	
 	std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
@@ -286,8 +372,25 @@ void	Server::executeGet(Connection &connection)
 	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
 	std::string response = oss.str();
 	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		std::cerr << "Send failed: " << strerror(errno) << std::endl; */
+
+	int	index = findClosestStringIndex(connection.getRequest()->getRelativPath(), this->_location);
+	std::cout << RED << "index vaut = " << RESET << index << std::endl;
+	if (index != -1)
+		initiateResponse(connection, *this->_location[index]);
+	else
+	{
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	}
 }
+
 
 void	Server::solveRequest(Connection &connection) {
 	ft::display_map(connection.getRequest()->getHeader());
