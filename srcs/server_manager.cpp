@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/17 18:23:45 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 19:23:27 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,9 +68,14 @@ int	ServerManager::getMaxFd() const
 	return (this->_max_fd);
 }
 
-fd_set	ServerManager::getFdSet() const
+fd_set	ServerManager::getFdReadSet() const
 {
 	return (this->_read_set);
+}
+
+fd_set	ServerManager::getFdWriteSet() const
+{
+	return (this->_write_set);
 }
 
 std::vector<Server *>	ServerManager::getServer()
@@ -113,7 +118,7 @@ void	ServerManager::runServer()
 
 		this->_read_copy_set = this->_read_set;
 		this->_write_copy_set = this->_write_set;
-		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1) {
+		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, NULL)) == -1){
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
@@ -121,7 +126,6 @@ void	ServerManager::runServer()
 			std::cout << "Timeout occurred\n";
 			continue;
 		}
-
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {

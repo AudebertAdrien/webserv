@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 18:37:05 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 19:43:28 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 
 #define PORT 8080
 #define BUFFER_SIZE 1024
-#define TIMEOUT_SEC 2
+#define TIMEOUT_SEC 5
 const std::string HTML_FILE_PATH = "index.html";
 
 void    Server::completeVectorLocation(std::vector<std::string> location_block)
@@ -98,12 +98,13 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 Server::~Server() {
 }
 
+/*
 void	Server::recvRequest(Connection &connection) {
 	Request	*request = new Request(connection, *this);			
 
 	int bytes_received = 1;
 	while (bytes_received > 0) {
-		char	buffer[1000];	
+		char	buffer[500];	
 
 		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
 		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
@@ -175,9 +176,9 @@ void	Server::recvRequest(Connection &connection) {
 	}
 	connection.setRequest(request);
 } 
+*/
 
 
-/*
 void	Server::recvRequest(Connection &connection) {
 	std::cout << "recvRequest" << std::endl;
 
@@ -185,7 +186,7 @@ void	Server::recvRequest(Connection &connection) {
 
 	int bytes_received = 0;
 	while (!bytes_received) {
-		char buffer[1324];
+		char buffer[1200];
 
 		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
 		if (bytes_received == -1) {
@@ -225,7 +226,6 @@ void	Server::recvRequest(Connection &connection) {
 	}
 	connection.setRequest(request);
 }
-*/
 
 static std::string loadFileContent3(const std::string& filePath) 
 {
@@ -491,7 +491,11 @@ void	Server::addConnection(int client_fd, std::string client_ip, int client_port
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
 	this->_manager->setFd(client_fd, "_write_set");
-	
+
+	std::cout << RED << "READ SET" << RESET << std::endl;
+	ft::displayFdSet(this->_manager->getFdReadSet());
+	std::cout << RED << "WRITE SET" << RESET << std::endl;
+	ft::displayFdSet(this->_manager->getFdWriteSet());
 }
 
 void	Server::acceptNewConnection() {
@@ -505,17 +509,20 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
+	/*
 	int flags = fcntl(client_fd, F_GETFL, 0);
     if (flags == -1) {
         std::cerr << "Failed to get socket flags\n";
         close(_fd);
 		exit(EXIT_FAILURE);
     }
+
 	if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
 		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
         close(_fd);
 		exit(EXIT_FAILURE);
 	}
+	*/
 
 	struct timeval timeout;
 	timeout.tv_sec = TIMEOUT_SEC;

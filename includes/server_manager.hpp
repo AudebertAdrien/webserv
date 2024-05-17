@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 18:20:31 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 18:42:13 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,8 @@ class ServerManager {
 		~ServerManager();
 
 		int 	getMaxFd() const;
-		fd_set	getFdSet() const;
+		fd_set	getFdReadSet() const;
+		fd_set	getFdWriteSet() const;
 		int		getNbServers() const ;
 		std::vector<Server *>	getServer();
 
