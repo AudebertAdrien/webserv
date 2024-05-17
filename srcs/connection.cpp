@@ -6,28 +6,21 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 12:59:37 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 14:58:43 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "connection.hpp"
 #include "request.hpp"
 
-Connection::Connection() {
-    //std::cout << "Connection default constructor" << std::endl;
-}
-
 Connection::Connection(int client_fd, std::string client_ip, int client_port)
 {
-    //std::cout << "Connection constructor with params called" << std::endl;
     this->_fd = client_fd;
     this->_client_ip = client_ip;
     this->_client_port = client_port;
 }
 
-Connection::~Connection()
-{
-    //std::cout << "Connection, destructeur called : " << this->getFd() << std::endl;
+Connection::~Connection() {
 }
 
 /* == setter == */
@@ -45,16 +38,6 @@ int Connection::getFd() const
     return (this->_fd);
 }
 
-/* void	Connection::setRequest(Request &request)
-{
-    this->_request = &request;
-}
-
-Request& Connection::getRequest()
-{
-    return *(this->_request);
-}
- */
 std::string	Connection::getClientIp() const
 {
 	return (this->_client_ip);

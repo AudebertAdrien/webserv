@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 15:36:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 15:08:18 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@
 #include <map>
 
 #include "location.hpp"
-//#include "enum.hpp"
 
 class Server;
 class Connection;
@@ -25,6 +24,8 @@ class Connection;
 enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
 enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
 enum TransferType { GENERAL, CHUNKED };
+
+#define MAX_BUFFER_SIZE 1024
 
 class Request
 {
@@ -34,8 +35,8 @@ class Request
 		Request(Connection &connection, Server &server);
         ~Request();
 
-		Connection							getConnection() const;
-		Server								getServer() const;
+		Connection		getConnection() const;
+		Server			getServer() const;
 
 		/* == getter == */
 		std::map<std::string, std::string>	getHeader() const;
@@ -63,7 +64,7 @@ class Request
 		Connection		*_connection;
 		Server			*_server;
 		Location		*_location;
-		
+
 		Method			_method;
 		URIType			_uri_type;
 		TransferType	_transfer_type;
