@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/17 15:05:12 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 18:23:45 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,6 +56,13 @@ void	ServerManager::resetMaxFd()
 	}
 }
 
+void	ServerManager::setFd(int fd, std::string fd_type) {
+	if (fd_type == "_read_set")
+		FD_SET(fd, &this->_read_set);
+	if (fd_type == "_write_set")
+		FD_SET(fd, &this->_write_set);
+}
+
 int	ServerManager::getMaxFd() const
 {
 	return (this->_max_fd);
@@ -83,7 +90,9 @@ void	ServerManager::runServer()
 	std::vector<Server *>::iterator	it = this->_servers.begin();
 
 	FD_ZERO(&(this->_read_set));
+	FD_ZERO(&(this->_read_copy_set));
 	FD_ZERO(&(this->_write_set));
+	FD_ZERO(&(this->_write_copy_set));
 	int	nb = 0;
 	while (it != this->_servers.end())
 	{
@@ -102,8 +111,9 @@ void	ServerManager::runServer()
 		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;
 
-		_read_copy_set = this->_read_set;
-		if ((cnt = select(this->_max_fd + 1, &_read_copy_set, NULL, NULL, &timeout)) == -1) {
+		this->_read_copy_set = this->_read_set;
+		this->_write_copy_set = this->_write_set;
+		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1) {
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}

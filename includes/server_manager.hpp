@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 20:01:33 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 18:20:31 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ class ServerManager {
 		//void    setConfig(Config config);
 		//void    setMaxFd(int fd);
 		
-		//fdSet(int fd, setType);
+		void	setFd(int fd, std::string fd_type);
 		//fdZero(setType);
 		//fdClear(fd, setType);
 		//fdIsset(int fd, setType);
@@ -67,12 +67,14 @@ class ServerManager {
 		fd_set  _read_copy_set;
 		fd_set  _write_set;
 		fd_set  _write_copy_set;
-		/*  fd_set  _error_set;
-		  fd_set  _error_copy_set;*/
+
 		/*
-		   bool    isValidConfigBlock(config_block);
-		   bool    isValidServerBlock(server_block);
-		   bool    isValidLocationBlock(location_block);*/
+		fd_set  _error_set;
+		fd_set  _error_copy_set;
+		bool    isValidConfigBlock(config_block);
+		bool    isValidServerBlock(server_block);
+		bool    isValidLocationBlock(location_block);
+		*/
 };
 
 #endif
