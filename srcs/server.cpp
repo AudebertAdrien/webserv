@@ -98,20 +98,19 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 Server::~Server() {
 }
 
-void	Server::recvRequest(Connection &connection) {
+/* void	Server::recvRequest(Connection &connection) {
 	Request	*request = new Request(connection, *this);			
 
 	int bytes_received = 1;
 	while (bytes_received > 0) {
-		char	buffer[500];	
+		char	buffer[1000];	
 
-		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
-		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
 		if (bytes_received == -1) {
-			break;
+			std::cerr << "Error in receiving data ######" << std::endl;
 		} else if (bytes_received == 0) {
 			std::cerr << "Connection close" << std::endl;
-			break;
 		} else {
 			std::string header;
 			std::string body;
@@ -120,18 +119,24 @@ void	Server::recvRequest(Connection &connection) {
 			if (request->getPhase() == Request::READY) {
 				std::string http_request(buffer);
 
+				std::cout << "BUFFER :" << http_request << std::endl;
+
 				size_t header_end = http_request.find("\r\n\r\n");
 				if (header_end == std::string::npos) {
 					std::cout << "Header end not found1" << std::endl;
 				}
+				else {
+					header = http_request.substr(0, header_end);
+									std::cout << "header :" << header << std::endl;
 
-				header = http_request.substr(0, header_end);
-				std::istringstream	iss(header);
-				std::string first_line;
-				std::getline(iss, first_line);
+					std::istringstream	iss(header);
+					std::string first_line;
+					std::getline(iss, first_line);
 
-				request->addMethod(header);
-				request->setPhase(Request::ON_HEADER);
+					std::cout << RED << "First Line : " << first_line << RESET << std::endl;
+					request->addMethod(header);
+					request->setPhase(Request::ON_HEADER);
+				}
 			}
 
 			if (request->getPhase() == Request::ON_HEADER) {
@@ -141,19 +146,20 @@ void	Server::recvRequest(Connection &connection) {
 				if (header_end == std::string::npos) {
 					std::cout << "Header end not found2" << std::endl;
 				}
+				else {
+					header = http_request.substr(0, header_end);
 
-				header = http_request.substr(0, header_end);
+					std::istringstream	iss(header);
+					std::string line;
 
-				std::istringstream	iss(header);
-				std::string line;
-
-				std::getline(iss, line);
-				while (getline(iss, line)) {
-					request->addHeader(line);
+					std::getline(iss, line);
+					while (getline(iss, line)) {
+						request->addHeader(line);
+					}
 				}
 
 				if (header_end != std::string::npos) {
-					std::cout << "!+ npos : " << header_end << std::endl;
+					std::cout << "!= npos : " << header_end << std::endl;
             		body = http_request.substr(header_end + 4);
 					request->addContent(body);
 					request->setPhase(Request::ON_BODY);
@@ -169,7 +175,57 @@ void	Server::recvRequest(Connection &connection) {
 		}
 	}
 	connection.setRequest(request);
+} */
+
+
+void	Server::recvRequest(Connection &connection) {
+	std::cout << "recvRequest" << std::endl;
+
+	Request	*request = new Request(connection, *this);			
+
+	int bytes_received = 0;
+	while (!bytes_received) {
+		char buffer[1324];
+
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+		if (bytes_received == -1) {
+			std::cerr << "Error in receiving data ######" << std::endl;
+		} else {
+			std::cout << "############ " << bytes_received << " ############" << std::endl;
+
+			std::string http_request(buffer);
+
+			size_t header_end = http_request.find("\r\n\r\n");
+			if (header_end == std::string::npos) {
+				std::cout << "header end not found" << std::endl;
+			}
+			std::string header = http_request.substr(0, header_end);
+			std::string body = http_request.substr(header_end + 4);
+
+			std::istringstream	iss(header);
+			std::string line;
+			bool isFirstLine = true;
+
+			while (getline(iss, line)) {
+				if (isFirstLine) {
+					isFirstLine = false;
+					std::cout << RED << "First Line : " << line << RESET << std::endl;
+					request->addMethod(line);
+				} else {
+					request->addHeader(line);
+				}
+			}
+			if (body.length())
+				request->addContent(body);
+			
+			std::cout << YELLOW << request->getContent() << RESET << std::endl;
+
+			std::cout << "############" << std::endl;
+		}
+	}
+	connection.setRequest(request);
 }
+
 
 static std::string loadFileContent3(const std::string& filePath) 
 {
@@ -523,12 +579,64 @@ static void removeLastSemicolon(std::string& str) {
     }
 }
 
+void split(const std::string& str, char delimiter, std::vector<std::string>& tokens) {
+    size_t start = 0;
+    size_t end = str.find(delimiter);
+
+    while (end != std::string::npos) {
+        tokens.push_back(str.substr(start, end - start));
+        start = end + 1;
+        end = str.find(delimiter, start);
+    }
+    tokens.push_back(str.substr(start));
+}
+
+bool containsDot(const std::string& str) 
+{
+	if (str.find('.') != std::string::npos)
+    	return (1);
+	else
+		return (0);
+}
+
+static int	lastWordaFile(std::string str)
+{
+	std::vector<std::string> tokens;
+
+	split(str, '/', tokens);
+	if (!tokens.empty() && containsDot(tokens.back()))
+		return (1);
+	else
+		return (0);
+}
+
+/* static int	lastNotaBS(std::string str)
+{
+	size_t len = std::strlen(str);
+    if (len == 0) {
+        return 0;
+    }
+    return str[len - 1] == '?';
+}
+
+static void	adjust(std::string& str)
+{
+	if (str == "/")
+		return;
+	else if (lastWordaFile(str) == 1)
+		return ;
+	else if (lastNotaBS(str) == 1 )
+		addBS(str);
+	return ;
+} */
+
 std::string	Server::createFilePath(std::string root_path, std::string relativ_path)
 {
 	//std::cout << "root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
 	trim(root_path);
 	trim(relativ_path);
 	removeLastSemicolon(root_path);
+	//adjust(relativ_path);
 	//std::cout << "APres root path vaut : " << root_path << " et relative path vaut : " << relativ_path << std::endl;
 	std::string file_path = root_path + relativ_path;
 	//std::cout << "file path vaut : " << file_path << std::endl;
