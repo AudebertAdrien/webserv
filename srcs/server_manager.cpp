@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/16 16:46:54 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 15:07:52 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,10 @@
 #include "server.hpp"
 
 ServerManager::ServerManager() {
-	//std::cout << GREEN << "ServerManager default constructor" << RESET<< std::endl;
 	this->_max_fd = -1;
 }
 
 ServerManager::~ServerManager() {
-	//std::cout << "ServerManager destructor" << std::endl;
 	std::vector<Server *>::iterator it;
 	for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 		delete *it;

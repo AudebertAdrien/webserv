@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/16 17:01:28 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 15:10:33 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,16 +18,6 @@
 #define BUFFER_SIZE 1024
 #define TIMEOUT_SEC 5
 const std::string HTML_FILE_PATH = "index.html";
-
-
-Server::Server()
-{
-    //std::cout << "Server default constructor" << std::endl;
-}
-
-Server::~Server() {
-	//std::cout << "Server destructor" << std::endl;
-}
 
 void    Server::completeVectorLocation(std::vector<std::string> location_block)
 {
@@ -50,10 +40,7 @@ void	Server::completeServer(std::string server_block)
 	this->_port = atoi(word.c_str());
 }
 
-Server::Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config  &config)
-{
-    //std::cout << "Server with params constructor" << std::endl;
-
+Server::Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config  &config) {
     this->_config = &config;
 	this->_manager = &manager;
 	if ((_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) == -1) {
@@ -98,6 +85,7 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
 	*/
+
 	/* std::cout << RED << " !!!!!!!!!! Pour le serveur port num " << this->_port << std::endl << "Location block vaut :" << std::endl;
 	for(std::vector<std::string>::iterator	it=location_block.begin(); it != location_block.end(); it++)
 	{
@@ -107,112 +95,76 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 	completeVectorLocation(location_block);
 }
 
-/*
-bool	Server::parseStartLine(Connection &connection, Request &request) {
-	std::cout << RED << "request.getPhase() 1: " << request.getPhase() << RESET << std::endl;
-	return (true);
+Server::~Server() {
 }
-
-bool	Server::parseHeader(Connection &connection, Request &request) {
-	std::cout << RED << "request.getPhase() 2: " << request.getPhase() << RESET << std::endl;
-	return (true);
-}
-*/
-
-/*
-void    Server::recvRequest(Connection &connection) {
-    std::cout << "recvRequest" << std::endl;
-
-    Request *request = new Request(connection, *this);
-    int bytes_received = 1;
-
-    while (bytes_received > 0) {
-        char buffer[500];
-        bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
-        if (bytes_received == -1) {
-            std::cerr << "Error in receiving data ######" << std::endl;
-        } else {
-            std::cout << "############ " << bytes_received << " ############" << std::endl;
-
-            std::string http_request(buffer);
-            size_t header_end = http_request.find("\r\n\r\n");
-            if (header_end == std::string::npos) {
-                std::cout << "header end not found" << std::endl;
-            }
-            std::string header = http_request.substr(0, header_end);
-            std::string body = http_request.substr(header_end + 4);
-            std::istringstream  iss(header);
-            std::string line;
-            bool isFirstLine = true;
-            while (getline(iss, line)) {
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    std::cout << RED << "First Line : " << line << RESET << std::endl;
-                    request->addMethod(line);
-                } else {
-                    request->addHeader(line);
-                }
-            }
-            if (body.length())
-                request->addContent(body);
-            std::cout << YELLOW << request->getContent() << RESET << std::endl;
-            std::cout << "############" << std::endl;
-        }
-    }
-    connection.setRequest(request);
-}
-*/
 
 void	Server::recvRequest(Connection &connection) {
-	std::cout << "recvRequest" << std::endl;
-
 	Request	*request = new Request(connection, *this);			
 
 	int bytes_received = 1;
 	while (bytes_received > 0) {
 		char	buffer[500];	
 
-		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
-		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
-		std::cout << "bytes_received: " << bytes_received << " ############" << std::endl;
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
 		if (bytes_received == -1) {
-			std::cerr << "Error in receiving data ######" << std::endl;
+			break;
 		} else if (bytes_received == 0) {
 			std::cerr << "Connection close" << std::endl;
 		} else {
 			std::string header;
 			std::string body;
 
-			if (request->getPhase() == Request::ON_HEADER) {
+			buffer[bytes_received] = '\0';
+			if (request->getPhase() == Request::READY) {
 				std::string http_request(buffer);
+
 				size_t header_end = http_request.find("\r\n\r\n");
 				if (header_end == std::string::npos) {
-					std::cout << "header end not found" << std::endl;
+					std::cout << "Header end not found" << std::endl;
 				}
 
 				header = http_request.substr(0, header_end);
-				body = http_request.substr(header_end + 4);
+				std::istringstream	iss(header);
+				std::string first_line;
+				std::getline(iss, first_line);
+
+				request->addMethod(header);
+				request->setPhase(Request::ON_HEADER);
+			}
+
+			if (request->getPhase() == Request::ON_HEADER) {
+				std::string http_request(buffer);
+
+				size_t header_end = http_request.find("\r\n\r\n");
+				if (header_end == std::string::npos) {
+					std::cout << "Header end not found" << std::endl;
+				}
+
+				header = http_request.substr(0, header_end);
+
 				std::istringstream	iss(header);
 				std::string line;
-				bool isFirstLine = true;
+
+				std::getline(iss, line);
 				while (getline(iss, line)) {
-					if (isFirstLine) {
-						isFirstLine = false;
-						std::cout << RED << "First Line : " << line << RESET << std::endl;
-						request->addMethod(line);
-					} else {
-						request->addHeader(line);
-					}
+					request->addHeader(line);
 				}
-				request->setPhase(Request::ON_BODY);
-			}
-			if (request->getPhase() == Request::ON_BODY) {
-				if (body.length())
+
+				if (header_end != std::string::npos) {
+            		body = http_request.substr(header_end + 4);
 					request->addContent(body);
+					request->setPhase(Request::ON_BODY);
+					buffer[0] = 0;
+				}
+			}
+
+			if (request->getPhase() == Request::ON_BODY) {
+				std::string rest(buffer);
+
+				request->addContent(rest);
 			}
 		}
 	}
-	std::cout << YELLOW << request->getContent() << RESET << std::endl;
 	connection.setRequest(request);
 }
 
@@ -338,47 +290,38 @@ void	Server::executeGet(Connection &connection)
 }
 
 void	Server::solveRequest(Connection &connection) {
-	std::cout << "solveRequest" << std::endl;
 	ft::display_map(connection.getRequest()->getHeader());
+	std::cout << connection.getRequest()->getContent() << std::endl;
 
-	/*
 	if (connection.getRequest()->getMethod() == GET)
 	{
-		std::cout << " ggg GET ggggg" << std::endl;
+		std::cout << "==GET==" << std::endl;
 		executeGet(connection);	
 	}
-	*/
 	if (connection.getRequest()->getMethod() == POST)
 	{
 		std::cout << "==POST==" << std::endl;
-	}
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
 
-	//ft::display_map(request->getHeader());
+	}
 }
 
 
 void	Server::runRecvAndSolve(Connection &connection) {
-	std::cout << "runRecvAndSolve" << std::endl;
-
 	try {
 		recvRequest(connection);
 	} catch (std::exception &e) {
 		std::cerr << "recvRequest error!!!" << std::endl;
 	}
 
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = "Hello from server!!! Here Adrien\n";
-	std::ostringstream oss;
-	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-	std::string response = oss.str();
-	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
-
-	/*
-	if (request.getPhase() == Request::COMPLETE) {
-	}
-	*/
-	//solveRequest(connection);
+	solveRequest(connection);
 }
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
@@ -403,7 +346,7 @@ void	Server::acceptNewConnection() {
 	int flags = fcntl(client_fd, F_GETFL, 0);
     if (flags == -1) {
         std::cerr << "Failed to get socket flags\n";
-        close(_fd);
+        close(_fd);.
 		exit(EXIT_FAILURE);
     }
 	if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
@@ -438,7 +381,6 @@ void	Server::run() {
 	acceptNewConnection();
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
-	std::cout << "_connection.size(): " << _connections.size() << std::endl;
 	while (it != _connections.end())
 	{
 		std::map<int, Connection *>::iterator it2 = it;
