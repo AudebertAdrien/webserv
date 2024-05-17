@@ -273,6 +273,7 @@ static std::string generateResponse(std::string filePath, std::string relativ_pa
 void	Server::initiateResponse(Connection &connection, Location &loc)
 {
 	std::string file_path = createFilePath(loc.getRootPath(), connection.getRequest()->getRelativPath());
+	std::cout << GREEN << file_path << RESET << std::endl;
 	std::string header = "HTTP/1.1 200 OK\r\n";
 	std::string body = generateResponse(file_path, connection.getRequest()->getRelativPath());
 	std::ostringstream oss;
@@ -316,11 +317,45 @@ void	Server::executeGet(Connection &connection)
 	closestMatch(connection);
 }
 
+static int countCommonCharacters(const std::string &s1, const std::string &s2)
+{
+    int commonCount = 0;
+    size_t len = std::min(s1.size(), s2.size());
+
+    for (size_t i = 0; i < len; ++i) 
+	{
+        if (s1[i] == s2[i])
+            commonCount++;
+    }
+    return (commonCount);
+}
+
+
+static int findClosestStringIndex(const std::string &target, const std::vector<Location *> &vecteur)
+{
+    if (vecteur.empty())
+		return -1;
+
+    int closestIndex = 0;
+    int maxCommonCharacters = countCommonCharacters(target, vecteur[0]->getLocMatcUhri());
+
+    for (size_t i = 1; i < vecteur.size(); ++i) 
+	{
+        int commonCharacters = countCommonCharacters(target, vecteur[i]->getLocMatcUhri());
+        if (commonCharacters > maxCommonCharacters) {
+            closestIndex = i;
+            maxCommonCharacters = commonCharacters;
+        }
+    }
+
+    return (closestIndex);
+}
+
 void	Server::closestMatch(Connection &connection)
 {
-	std::vector<Location *>::iterator	it = this->_location.begin();
+	/* std::vector<Location *>::iterator	it = this->_location.begin();
 	
-	for (it = this->_location.begin(); it != this->_location.end(); it++)
+	/* for (it = this->_location.begin(); it != this->_location.end(); it++)
 	{
 		if ((*it)->getLocMatcUhri() == "/")
 		{
@@ -333,7 +368,7 @@ void	Server::closestMatch(Connection &connection)
 			std::string response = oss.str();
 			//std::cout << RED <<oss.str() << RESET << std::endl;
 			if (send(connection.getFd(), response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-				std::cerr << "Send failed: " << strerror(errno) << std::endl; */
+				std::cerr << "Send failed: " << strerror(errno) << std::endl; 
 			return;
 		}
 	}
@@ -345,8 +380,25 @@ void	Server::closestMatch(Connection &connection)
 	oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
 	std::string response = oss.str();
 	if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		std::cerr << "Send failed: " << strerror(errno) << std::endl; */
+
+	int	index = findClosestStringIndex(connection.getRequest()->getRelativPath(), this->_location);
+	std::cout << RED << "index vaut = " << RESET << index << std::endl;
+	if (index != -1)
+		initiateResponse(connection, *this->_location[index]);
+	else
+	{
+		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+		std::string header = "HTTP/1.1 200 OK\r\n";
+		std::string body = "Hello from server!!! Here Adrien\n";
+		std::ostringstream oss;
+		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+		std::string response = oss.str();
+		if (send(connection.getFd(), response.c_str(), response.length(), 0) == -1)
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	}
 }
+
 
 void	Server::solveRequest(Connection &connection) {
 	std::cout << "solveRequest" << std::endl;
