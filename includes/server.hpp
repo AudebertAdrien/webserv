@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 16:36:04 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 14:53:56 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,8 @@ class Server {
 		void		solveRequest(Connection &connection);
 		void		executeGet(Connection &connection);
 		void		runRecvAndSolve(Connection &connection);
-		bool		parseStartLine(Connection &connection, Request &request);
-		bool		parseHeader(Connection &connection, Request &request);
+		//bool		parseStartLine(Connection &connection, Request &request);
+		//bool		parseHeader(Connection &connection, Request &request);
 		void		completeServer(std::string server_block);
 		bool		hasNewConnection();
 		void		acceptNewConnection();

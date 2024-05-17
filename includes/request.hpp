@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/15 17:34:11 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 14:53:37 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ class Request
 		Request(Connection &connection, Server &server);
         ~Request();
 
-		Connection							getConnection() const;
-		Server								getServer() const;
+		Connection		getConnection() const;
+		Server			getServer() const;
 
 		/* == getter == */
 		std::map<std::string, std::string>	getHeader() const;

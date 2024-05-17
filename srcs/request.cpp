@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/15 17:35:17 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 15:00:52 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,40 +14,23 @@
 #include "server.hpp"
 #include "connection.hpp"
 
-Request::Request(Connection &connection, Server &server)
-{
-    //std::cout << "Request constructeur with params called : " << server.getFd() << std::endl;
+Request::Request(Connection &connection, Server &server) {
 	this->_connection = &connection;
 	this->_server = &server;
-	this->_phase = Request::ON_HEADER;
+	this->_phase = Request::READY;
 }
 
-Request::~Request()
-{
-    //std::cout << "Request destructeur called" << std::endl;
+Request::~Request() {
 }
 
-void	Request::addMethod(std::string &line) {
-	std::istringstream iss(line);
-	std::string	method;
-	/* size_t pos = line.find_first_of(" \t");
-
-	if (pos != std::string::npos) {
-		method = line.substr(0, pos);
-	}
-	*/
-	iss >> method;
-	if (method == "GET")
-		this->_method = GET;
-	if (method == "POST")
-		this->_method = POST;
-	iss >> this->_relativ_path;
+/*
+void	isValidHeader(std::string header) {
 }
+*/
 
 void	Request::addHeader(std::string &line) {
 	std::string key, value;
 	size_t pos = line.find_first_of(" \t");
-	std::cout << GREEN << line << RESET << std::endl;
 
 	if (pos != std::string::npos) {
 		key = line.substr(0, pos);
@@ -56,8 +39,20 @@ void	Request::addHeader(std::string &line) {
 	this->_headers.insert(std::make_pair(key, value));
 }
 
+void	Request::addMethod(std::string &line) {
+	std::istringstream iss(line);
+	std::string	method;
+
+	iss >> method;
+	if (method == "GET")
+		this->_method = GET;
+	if (method == "POST")
+		this->_method = POST;
+	iss >> this->_relativ_path;
+}
+
 void	Request::addContent(std::string &content) {
-	this->_content = content;	
+	this->_content += content;	
 }
 
 void	Request::setPhase(Phase new_phase) {
@@ -66,11 +61,6 @@ void	Request::setPhase(Phase new_phase) {
 
 /*
 void	addOrigin(std::string origin) {
-}
-*/
-
-/*
-void	isValidHeader(std::string header) {
 }
 */
 
