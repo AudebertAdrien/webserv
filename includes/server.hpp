@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 14:53:56 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/18 15:20:06 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,7 @@ class Server {
 		void		initiateResponse(Connection &connection, Location &loc);
 		void		closestMatch(Connection &connection);
 		
+		bool		hasNewConnection(int fd, fd_set set);
 
 		Config  		*_config;
 		ServerManager	*_manager;

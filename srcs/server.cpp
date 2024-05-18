@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 19:43:28 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/18 15:31:20 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,9 @@ void	Server::recvRequest(Connection &connection) {
 	while (bytes_received > 0) {
 		char	buffer[500];	
 
-		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
-		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
+		bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), MSG_DONTWAIT);
+		std::cout << "FUCK THAT BYTES: " << bytes_received << std::endl;
+		//bytes_received = recv(connection.getFd(), buffer, sizeof(buffer), 0);
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 			break;
@@ -177,7 +178,6 @@ void	Server::recvRequest(Connection &connection) {
 	connection.setRequest(request);
 } 
 */
-
 
 void	Server::recvRequest(Connection &connection) {
 	std::cout << "recvRequest" << std::endl;
@@ -509,6 +509,8 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
+	std::cout << RED << "CLIENT_FD: " << client_fd << RESET << std::endl;
+
 	/*
 	int flags = fcntl(client_fd, F_GETFL, 0);
     if (flags == -1) {
@@ -524,19 +526,25 @@ void	Server::acceptNewConnection() {
 	}
 	*/
 
-	struct timeval timeout;
-	timeout.tv_sec = TIMEOUT_SEC;
-	timeout.tv_usec = 0;
-	if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
-		std::cerr << "Failed to set receive timeout" << std::endl;
-		exit(EXIT_FAILURE);
+	if (!hasNewConnection(client_fd, this->_manager->getFdReadSet()) ) {
+		struct timeval timeout;
+		timeout.tv_sec = TIMEOUT_SEC;
+		timeout.tv_usec = 0;
+		if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
+			std::cerr << "Failed to set receive timeout" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		char client_ip[INET_ADDRSTRLEN];
+		inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
+		int client_port = ntohs(client_addr.sin_port);
+
+		addConnection(client_fd, client_ip, client_port);
 	}
+}
 
-	char client_ip[INET_ADDRSTRLEN];
-    inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
-    int client_port = ntohs(client_addr.sin_port);
-
-	addConnection(client_fd, client_ip, client_port);
+bool	Server::hasNewConnection(int fd, fd_set set) {
+	return (FD_ISSET(fd, &set));
 }
 
 void	Server::run() {
