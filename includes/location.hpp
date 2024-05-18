@@ -24,7 +24,6 @@
 class Location
 {
 	public:
-        Location();
 		Location(std::string location);
         ~Location();
 
@@ -38,29 +37,17 @@ class Location
         std::string 				getLocMatcUhri() const;
 		std::vector<std::string>	getAllowMethod() const;
         std::vector<std::string>    getInfo(std::string key);
-        int		getIsMulti() const;
-        void    showLocation();
+        int							getIsMulti() const;
 
-		//	getUri() const;
-		//std::string	getAuthBasicRealm() const;
-        //std::map<std::string , std::string> getAurhBasicFile() const;
-        //    getIndex() const;
-        //    getCgi() const;
-        //bool    getAutoindex() const;
 		
 	private:
-        int 		_is_multi;
-        std::string _opt_modif;
-        std::string _loc_match_uri;
-        std::string _root_path;
-        std::vector<std::string>    _allow_method;
-        std::multimap<std::string , std::string> _body_file;
+		int 										_is_multi;
+        std::string									_root_path;
+        std::string									_opt_modif;
+        std::string									_loc_match_uri;
+        std::vector<std::string>					_allow_method;
+        std::multimap<std::string , std::string>	_body_file;
 
-		//_uri;
-        //_index;
-        //_cgi;
-        //bool    _autoindex;
-        //std::string _auth_basic_realm;
 };
 
 #endif

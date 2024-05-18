@@ -15,18 +15,23 @@
 
 #include <iostream>
 #include <map>
+#include <sys/socket.h>
 
-#include "request.hpp"
 #include "webserv_macro.hpp"
+#include "libft.hpp"
+#include "utils.hpp"
 
 class Request;
+class Server;
+class Response;
 
 class Connection
 {
 	public:
-		Connection();
-		Connection(int client_fd, std::string client_ip, int client_port);
+		Connection(int client_fd, std::string client_ip, int client_port, Server &server);
         ~Connection();
+		void	recvRequest();
+		void	solveRequest();
 
 		/* == setter == */
 		void			setRequest(Request *new_request);
@@ -40,7 +45,12 @@ class Connection
 		int				getClientPort() const;
 		
 	private:
+		void	initiateResponse(Location &loc);
+		void	closestMatch();
+
+		Server		*_server;
 		Request		*_request;
+		Response 	*_response;
 
 		int 		_fd;
         std::string	_client_ip;

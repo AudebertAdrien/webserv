@@ -23,11 +23,6 @@ Request::Request(Connection &connection, Server &server) {
 Request::~Request() {
 }
 
-/*
-void	isValidHeader(std::string header) {
-}
-*/
-
 void	Request::addHeader(std::string &line) {
 	std::string key, value;
 	size_t pos = line.find_first_of(" \t");
@@ -58,11 +53,6 @@ void	Request::addContent(std::string &content) {
 void	Request::setPhase(Phase new_phase) {
 	this->_phase = new_phase;
 }
-
-/*
-void	addOrigin(std::string origin) {
-}
-*/
 
 /* == getter */
 std::map<std::string, std::string>	Request::getHeader() const
@@ -108,11 +98,6 @@ URIType	Request::getUriType() const
 TransferType	Request::getTransferType() const
 {
 	return (_transfer_type);
-}
-
-std::string	Request::getOrigin() const
-{
-	return (_origin);
 }
 
 Request::Phase	Request::getPhase() const

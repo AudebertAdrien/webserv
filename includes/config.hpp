@@ -20,7 +20,6 @@
 
 class Config {
 	public:
-		Config();
 		Config(std::string config_block, char **env);
         ~Config();
 

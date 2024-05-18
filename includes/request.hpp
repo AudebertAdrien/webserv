@@ -46,17 +46,13 @@ class Request
 		Location		getLocation() const;
 		std::string		getUri() const;
 		URIType			getUriType() const;
-		std::string		getOrigin() const;
 		TransferType	getTransferType() const;
 		Request::Phase	getPhase() const;
-
-		bool	isValidHeader(std::string header);
 
 		/*== setter ==*/
 		void	addMethod(std::string &line);
 		void	addHeader(std::string &line);
 		void	addContent(std::string &content);
-		void	addOrigin(std::string origin);
 
 		void	setPhase(Phase new_phase);
 

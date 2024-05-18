@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/17 15:07:52 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/17 19:23:27 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,24 +56,11 @@ void	ServerManager::resetMaxFd()
 	}
 }
 
-int	ServerManager::getMaxFd() const
-{
-	return (this->_max_fd);
-}
-
-fd_set	ServerManager::getFdSet() const
-{
-	return (this->_read_set);
-}
-
-std::vector<Server *>	ServerManager::getServer()
-{
-	return (this->_servers);
-}
-
-int	ServerManager::getNbServers() const
-{
-	return (this->_nb_servers);
+void	ServerManager::setFd(int fd, std::string fd_type) {
+	if (fd_type == "_read_set")
+		FD_SET(fd, &this->_read_set);
+	if (fd_type == "_write_set")
+		FD_SET(fd, &this->_write_set);
 }
 
 void	ServerManager::runServer()
@@ -83,41 +70,38 @@ void	ServerManager::runServer()
 	std::vector<Server *>::iterator	it = this->_servers.begin();
 
 	FD_ZERO(&(this->_read_set));
+	FD_ZERO(&(this->_read_copy_set));
 	FD_ZERO(&(this->_write_set));
-	int	nb = 0;
+	FD_ZERO(&(this->_write_copy_set));
 	while (it != this->_servers.end())
 	{
 		FD_SET((*it)->getFd(), &(this->_read_set));
-		nb++;
-		if (this->_max_fd < (*it)->getFd())
-			this->_max_fd = (*it)->getFd();
 		it++;
 	}
-	this->_nb_servers = nb;
 
+	resetMaxFd();
 	int cnt;
 	struct timeval timeout;
-
+	
 	while(true) {
 		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;
 
-		_read_copy_set = this->_read_set;
-		if ((cnt = select(this->_max_fd + 1, &_read_copy_set, NULL, NULL, &timeout)) == -1) {
+		this->_read_copy_set = this->_read_set;
+		this->_write_copy_set = this->_write_set;
+		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, NULL)) == -1){
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		else if (cnt == 0) {
-			std::cout << "Timeout occurred\n";
+		else if (cnt == 0)
 			continue;
-		}
-
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {
 				(*it)->run();
 			}
-		}
+		} 
+		resetMaxFd();
 	}
 }
 
@@ -187,3 +171,22 @@ bool	ServerManager::splitConfigString(std::string &config_string, std::string &c
 	return (true);
 }
 
+int	ServerManager::getMaxFd() const
+{
+	return (this->_max_fd);
+}
+
+fd_set &	ServerManager::getFdReadSet()
+{
+	return (this->_read_set);
+}
+
+fd_set &	ServerManager::getFdWriteSet()
+{
+	return (this->_write_set);
+}
+
+std::vector<Server *>	ServerManager::getServer()
+{
+	return (this->_servers);
+}

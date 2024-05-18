@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 14:53:56 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/18 15:20:06 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 #include <map>
 
 #include "location.hpp"
-#include "connection.hpp"
 #include "config.hpp"
 
 #include "libft.hpp"
@@ -36,6 +35,7 @@
 
 class ServerManager;
 class Request;
+class Connection;
 
 class Server {
 	public:
@@ -46,25 +46,18 @@ class Server {
 		void    run();
 
 		/* == getter == */
-		int		getPort();
-		int		getFd();
+		int						getPort();
+		int						getFd();
+		std::vector<Location *>	&getLocation();
 
 	private:
-		void		recvRequest(Connection &connection);
-		void		solveRequest(Connection &connection);
-		void		executeGet(Connection &connection);
 		void		runRecvAndSolve(Connection &connection);
-		//bool		parseStartLine(Connection &connection, Request &request);
-		//bool		parseHeader(Connection &connection, Request &request);
-		void		completeServer(std::string server_block);
-		bool		hasNewConnection();
+		void		setPort(std::string server_block);
 		void		acceptNewConnection();
 		void		addConnection(int client_fd, std::string client_ip, int client_port);
-		void    	completeVectorLocation(std::vector<std::string> location_block);
-		std::string	createFilePath(std::string root_path, std::string relativ_path);
-		void		initiateResponse(Connection &connection, Location &loc);
-		void		closestMatch(Connection &connection);
-		
+		void    	fillVectorLocation(std::vector<std::string> location_block);
+		void		removeOldFd(int fd);
+		bool		hasNewConnection(int fd, fd_set &set);
 
 		Config  		*_config;
 		ServerManager	*_manager;
