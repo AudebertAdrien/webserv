@@ -1,0 +1,16 @@
+h1 {
+	color: blue;
+	background-color: yellow;
+	font-style: italic;
+}
+
+.text {
+	color: red;
+	font-size: 1.5em;
+	font-family: Verdana;
+}
+
+img {
+	//height: auto;
+	width: 200px;
+}
