@@ -6,13 +6,14 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:03:34 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/17 18:36:53 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 17:00:18 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 #include <iostream>
+#include <sstream>
 #include <cstdlib>
 #include <fstream>
 #include <deque>
@@ -23,9 +24,12 @@
 #include "webserv_macro.hpp"
 
 namespace ft {
-	void	displayVector(const std::vector<std::string> &ctn);
-	void	displayMap(const std::map<std::string, std::string> &map);
-	void	displayFdSet(const fd_set& set);
-
+	void 		clearStringStream(std::istringstream &ss);
+	void		trimStr(std::string &str);	
 	std::string getStringFromFile(std::string file_path);
+
+	void	displayMap(const std::map<std::string, std::string> &map);
+	void	displayMultiMap(std::multimap<std::string , std::string> map);
+	void	displayVector(const std::vector<std::string> &ctn);
+	void	displayFdSet(const fd_set& set);
 }

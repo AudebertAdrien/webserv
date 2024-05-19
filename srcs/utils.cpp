@@ -29,21 +29,19 @@ void split(const std::string& str, char delimiter, std::vector<std::string>& tok
 
 void trim(std::string& str) 
 {
-    // Supprimer les espaces et les tabulations au début de la chaîne
     std::string::size_type start = str.find_first_not_of(" \t");
     if (start != std::string::npos) {
         str = str.substr(start);
     } else {
-        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+        str.clear();
         return;
     }
 
-    // Supprimer les espaces et les tabulations à la fin de la chaîne
     std::string::size_type end = str.find_last_not_of(" \t");
     if (end != std::string::npos) {
         str = str.substr(0, end + 1);
     } else {
-        str.clear(); // Si la chaîne est entièrement composée d'espaces ou de tabulations
+        str.clear();
     }
     return ;
 }
@@ -94,14 +92,14 @@ void	adjust(std::string& str)
 	return ;
 }
 
-/////////// FONCTION TO CHOOSE THE GOOD LOCATION ////////////////
+/////////// FONCTION TO CHOOSE THE BEST LOCATION ////////////////
 
 int countCommonCharacters(const std::string &s1, const std::string &s2)
 {
     int commonCount = 0;
     size_t len = std::min(s1.size(), s2.size());
 
-    for (size_t i = 0; i < len; ++i) 
+    for (size_t i = 0; i < len; ++i)
 	{
         if (s1[i] == s2[i])
             commonCount++;
@@ -137,7 +135,6 @@ int findClosestStringIndex(const std::string &target, const std::vector<Location
 
 std::string loadFileContent3(const std::string& filePath) 
 {
-	std::cout << GREEN << filePath << RESET << std::endl;
 	std::ifstream fileStream(filePath.c_str());
 	std::string	content;
 
@@ -154,7 +151,7 @@ std::string loadFileContent(const std::string& filePath)
     if (!file) 
 	{
 		std::cerr << RED <<"doc not find " << strerror(errno) << RESET << std::endl;
-        return ""; // Gérer l'erreur de fichier non trouvé
+        return "";
     }
 
     std::stringstream buffer;
@@ -168,12 +165,11 @@ std::string generateCSSPart(std::string filePath)
     if (cssContent.empty()) 
 	{
 		std::cerr << RED <<"CSS not find " << strerror(errno) << RESET << std::endl;
-        return ""; // Gérer l'erreur de fichier CSS non trouvé
+        return "";
     }
 
     std::stringstream part;
-    part //<< "--boundary\r\n"
-         << "Content-Type: text/css" << "\n"
+    part << "Content-Type: text/css" << "\n"
 		 << "Content-Length: " << cssContent.length()
          << "\r\n\r\n"
          << cssContent;
@@ -186,12 +182,11 @@ std::string generateHTMLPart(std::string filePath)
     if (htmlContent.empty()) 
 	{
 		std::cerr << RED <<"HTML not find " << strerror(errno) << RESET << std::endl;
-        return ""; // Gérer l'erreur de fichier HTML non trouvé
+        return "";
     }
 
     std::stringstream part;
-    part //<< "--boundary\r\n"
-         << "Content-Type: text/html" << "\n"
+    part << "Content-Type: text/html" << "\n"
 		 << "Content-Length: " << htmlContent.length()
          << "\r\n\r\n"
          << htmlContent;
@@ -202,12 +197,11 @@ std::string generateImagePart(std::string filePath)
 {
     std::string imageData = loadFileContent3(filePath);
     if (imageData.empty()) {
-        return ""; // Gérer l'erreur de fichier image non trouvé
+        return "";
     }
 
     std::stringstream part;
-    part //<< "--boundary\r\n"
-         << "Content-Type: image/jpeg" << "\n"
+    part << "Content-Type: image/jpeg" << "\n"
 		 << "Content-Length: " << imageData.length()
          << "\r\n\r\n"
          << imageData;
@@ -216,7 +210,7 @@ std::string generateImagePart(std::string filePath)
 
 int	lastElem(std::string str)
 {
-	std::cout << RED << "WTFFFFFFFF LAST ELEM VAUT " << str[str.length() - 1] << RESET << std::endl;
+	//std::cout << RED << "WTFFFFFFFF LAST ELEM VAUT " << str[str.length() - 1] << RESET << std::endl;
 	if (str[str.length() - 1] == '/')
     	return (1);
 	else
@@ -237,30 +231,24 @@ std::string lastExt(const std::string &str)
 std::string generateResponse(std::string filePath, std::string relativ_path) 
 {
     std::string response;
-	std::cout << YELLOW;
-	std::cout << "Last ext vaut = " << lastExt(filePath) << std::endl;
-	std::cout << "Last elem vaut = " << lastElem(filePath) << RESET << std::endl;
+	//std::cout << YELLOW;
+	/* std::cout << "Last ext vaut = " << lastExt(filePath) << std::endl;
+	std::cout << "Last elem vaut = " << lastElem(filePath) << RESET << std::endl; */
 	if (lastElem(filePath) == 1)
 	{
 		std::cout << "html part done : " << RESET << std::endl;
     	response += generateHTMLPart(filePath);
 	}
-	//std::cout << RED << "HTML part done : " <<response << RESET << std::endl;
-	//else if (relativ_path == "/css/style.css")
 	else if (lastExt(filePath) == "css")
     {
 		std::cout << "CSS part done : " << RESET << std::endl;
 		response += generateCSSPart(filePath);
 	} 
-	//std::cout << YELLOW << "CSS part done : " <<response << RESET << std::endl;
-    //else if (relativ_path == "/images/photo.jpg")
 	else if (lastExt(filePath) == "jpg")
 	{
 		std::cout << "jpg part done : " << RESET << std::endl;
 		response += generateImagePart(filePath);
 	}
 	std::cout << RESET << std::endl;
-    //response += "--boundary--\r\n";
-	//std::cout << GREEN << "all part done : " <<response << RESET << std::endl;
     return (response);
 }

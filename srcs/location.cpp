@@ -12,13 +12,8 @@
 
 #include "location.hpp"
 
-Location::Location() {
-    //std::cout << "Constructor Location default called" << std::endl;
-}
-
 Location::Location(std::string location)
 {
-    //std::cout << BLUE <<"Constructor Location Param called" << RESET << std::endl;
     this->_is_multi = 0;
 
     std::vector<std::string>    lines;
@@ -29,60 +24,28 @@ Location::Location(std::string location)
         lines.push_back(line);
 
     fullFillLocation(lines);
-
-    // Useless fonction, just to show location
-    //showLocation();
-    // to erease
-
-    //std::cout << YELLOW << "GET ROOT" << std::endl;
     std::vector<std::string>    root = getInfo("root");
     size_t i = 0;
-    this->_root_path = "Nothing";
     while (i < root.size())
     {
-        std::cout << "root : " << root[i] << std::endl;
         this->_root_path = root[i];
         i++;
     }
-    //std::cout << "END TEST ROOT"<< YELLOW << std::endl;
-    //std::cout << BLUE << "########## END ###########" << RESET << std::endl;
 }
 
 Location::~Location()
 {
-    //std::cout << "Destructor Location called" << std::endl;
     this->_body_file.clear();
 }
 
-static void showMap(std::multimap<std::string , std::string> map)
-{
-    std::multimap<std::string , std::string>::iterator   it = map.begin();
-    
-    while(it != map.end())
-    {
-        std::cout << "Clé : " << it->first << ", Valeur : " << it->second << std::endl;
-        it++;
-    }
-}
-
-void    Location::showLocation()
-{
-	/*
-    std::cout << GREEN << std::endl <<"Show what we get" << std::endl;
-    std::cout <<"opt : " <<this->_opt_modif << std::endl;
-    std::cout <<"Uri match : " <<this->_loc_match_uri << std::endl;
-    std::cout << "Map : " << std::endl;
-	*/
-    showMap(this->_body_file);
-}
 
 std::vector<std::string>    Location::getInfo(std::string key)
 {
-    std::vector<std::string>    info; // stocker les info a renvoyer
+    std::vector<std::string>    info;
 
     std::pair<std::multimap<std::string, std::string>::iterator, std::multimap<std::string, std::string>::iterator> range;
 
-    range = this->_body_file.equal_range(key); //range de la valeur key
+    range = this->_body_file.equal_range(key);
 
     std::multimap<std::string, std::string>::iterator it = range.first;
     while (it != range.second)
@@ -114,7 +77,6 @@ void    Location::handleFirstLine(std::string line)
     int opt = 0;
     while (iss >> word)
     {
-        //std::cout << "iteration :" << i << " avec le mot :" << word << std::endl;
         if (word == "location" || word == "{")
         {
             i++;
@@ -127,8 +89,6 @@ void    Location::handleFirstLine(std::string line)
         }
         else if ((i == 2 && opt == 1) || (i == 1 && opt == 0))
             this->_loc_match_uri = word;
-        else
-            std::cout << RED << "Config file not available, format of a location block not accepted"<< RESET <<std::endl;//trow error
         i++;
     }
 
@@ -138,9 +98,9 @@ void    Location::handleBody(std::string line)
 {
     std::istringstream iss(line);
     std::string key;
-    int i = 1;
     std::string value;
     std::string buff;
+    int i = 1;
 
     iss >> key;
     if (this->_body_file.find(key) != this->_body_file.end())
@@ -149,37 +109,13 @@ void    Location::handleBody(std::string line)
     {
         if (i <= 2)
         {
-            //this->_body_file.insert(std::make_pair(key, value));
             value += buff;
             value += " ";
         }
-        else
-            std::cout << "Config file not available, format of a location block not accepted"<< std::endl;//trow error
         i++;
     }
     this->_body_file.insert(std::make_pair(key, value));
-    // si map
-    //if (iss >> error)
-    //     std::cout << "Config file not available, format of a location block not accepted"<< std::endl;//trow error
-    //else
-    //    this->_body_file[key] = value;
-
-    //si Multimap
-    
-    //Set de root path
     std::multimap<std::string , std::string>::iterator  it = this->_body_file.begin();
-    /* while (it != this->_body_file.end())
-    {
-        if (it->first == "root")
-        {
-            this->_root_path = it->second;
-        }
-        it++;
-    }
-    if (it == this->_body_file.end())
-    {
-        this->_root_path = "Nothing";
-    } */
 }
 
 void    Location::fullFillLocation(std::vector<std::string> lines)

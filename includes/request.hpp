@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 15:08:18 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 16:26:00 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,17 +46,13 @@ class Request
 		Location		getLocation() const;
 		std::string		getUri() const;
 		URIType			getUriType() const;
-		std::string		getOrigin() const;
 		TransferType	getTransferType() const;
 		Request::Phase	getPhase() const;
-
-		bool	isValidHeader(std::string header);
 
 		/*== setter ==*/
 		void	addMethod(std::string &line);
 		void	addHeader(std::string &line);
 		void	addContent(std::string &content);
-		void	addOrigin(std::string origin);
 
 		void	setPhase(Phase new_phase);
 
