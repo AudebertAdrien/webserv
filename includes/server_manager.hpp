@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:02 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 17:10:00 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:24:12 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 
 class Server;
 
-#define SELECT_TIMEOUT 1
+#define SELECT_TIMEOUT 5
 
 class ServerManager {
 	public:

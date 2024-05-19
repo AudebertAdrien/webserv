@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 14:56:28 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:44:43 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ class Server {
 		void		acceptNewConnection();
 		void		addConnection(int client_fd, std::string client_ip, int client_port);
 		void    	fillVectorLocation(std::vector<std::string> location_block);
-		void		removeOldFd(int fd);
+		void		removeFromSet(int fd);
 		bool		hasNewConnection(int fd, fd_set &set);
 
 		Config  		*_config;

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 17:58:52 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:44:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,18 +157,19 @@ void	Server::run() {
 		int fd = it2->first;
 
 		runRecvAndSolve(*(it2->second));
+		removeFromSet(fd);
 		close(fd);
-		removeOldFd(fd);
 		it++;
 	}
 }
 
-void	Server::removeOldFd(int fd)
+void	Server::removeFromSet(int fd)
 {
 	if (FD_ISSET(fd, &this->_manager->getFdReadSet()))
 		FD_CLR(fd, &this->_manager->getFdReadSet());
 	if (FD_ISSET(fd, &this->_manager->getFdWriteSet()))
 		FD_CLR(fd, &this->_manager->getFdWriteSet());
+    //this->_connections.erase(fd);
 }
 
 int	Server::getPort()

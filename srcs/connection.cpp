@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:13:00 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:33:52 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -204,7 +204,7 @@ void	Connection::initiateResponse(Location &loc)
 {
 	std::string file_path = createFilePath(loc.getRootPath(), this->_request->getRelativPath());
 	std::cout << GREEN << file_path << RESET << std::endl;
-	std::string header = "HTTP/1.1 200 OK\r\n";
+	std::string header = "HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\n";
 	std::string body = generateResponse(file_path, this->_request->getRelativPath());
 	std::ostringstream oss;
 	oss << header << body;

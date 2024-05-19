@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 19:10:06 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 19:10:08 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:20:29 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -239,12 +239,12 @@ std::string generateResponse(std::string filePath, std::string relativ_path)
 		std::cout << "html part done : " << RESET << std::endl;
     	response += generateHTMLPart(filePath);
 	}
-	else if (lastExt(filePath) == "css")
+	if (lastExt(filePath) == "css")
     {
 		std::cout << "CSS part done : " << RESET << std::endl;
 		response += generateCSSPart(filePath);
 	} 
-	else if (lastExt(filePath) == "jpg")
+	if (lastExt(filePath) == "jpg")
 	{
 		std::cout << "jpg part done : " << RESET << std::endl;
 		response += generateImagePart(filePath);
