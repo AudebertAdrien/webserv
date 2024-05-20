@@ -74,10 +74,9 @@ int	lastWordaFile(std::string str)
 
 int	lastNotaBS(std::string str)
 {
-    if (str.empty()) {
+    if (str.empty())
         return (0);
-    }
-	if (str[str.length() - 1] != '/')
+	else if (str[str.length() - 1] != '/')
     	return (1);
 }
 
@@ -284,4 +283,21 @@ std::string	createFilePath(std::string root_path, std::string relativ_path)
 	adjust(relativ_path);
 	std::string file_path = root_path + relativ_path;
 	return (file_path);
+}
+
+std::string toString(Method method) {
+    switch (method) {
+        case DEFAULT:
+			return "DEFAULT";
+        case GET:
+            return "GET";
+        case POST:
+            return "POST";
+        case DELETE:
+            return "DELETE";
+        case PUT:
+            return "PUT";
+        default:
+            return "UNKNOWN";
+    }
 }

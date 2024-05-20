@@ -15,9 +15,13 @@
 
 #include <iostream>
 #include <map>
+#include <sys/wait.h>
+
 #include "connection.hpp"
 #include "server.hpp"
 #include "location.hpp"
+#include "request.hpp"
+#include "utils.hpp"
 
 class Connection;
 class Server;
@@ -31,7 +35,8 @@ class Response
 
 		void	generateResp(std::string fp, std::string rel);
 		void	sendResp(int fd);
-		void	handleCgi(std::string fp, int client_fd);
+		void	handleCGI(std::string fp, int client_fd);
+		void	execCGI(int client_fd, std::string method, std::string path, std::string param);
 
 		/* == getter == */
 		Connection*		getConnection() const;

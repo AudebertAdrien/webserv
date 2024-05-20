@@ -21,8 +21,12 @@
 #include <cstring>
 
 #include "location.hpp"
+#include "request.hpp"
 
 const std::string HTML_FILE_PATH = "index.html";
+
+// FONCTION TO CHANGE METHODE TO STRG
+std::string toString(Method method);
 
 // FONCTION TO CLEAN STRG
 void        trim(std::string& str);
