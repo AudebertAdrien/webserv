@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:04:02 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/19 16:12:25 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 14:16:55 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,13 @@ namespace ft {
 	void clearStringStream(std::istringstream &ss) {
 		ss.clear();
 		ss.str("");
+	}
+
+	void    trimStr(std::string &str)
+	{
+		static const char* spaces = " \t";
+		str.erase(0, str.find_first_not_of(spaces));
+		str.erase(str.find_last_not_of(spaces) + 1);
 	}
 
 	std::string getStringFromFile(std::string file_path) {
@@ -31,6 +38,12 @@ namespace ft {
 
 		file.close();
 		return (line);
+	}
+
+	bool	findKeyInMap(const std::map<std::string, std::string>& myMap, const std::string& key) {
+		std::map<std::string, std::string>::const_iterator it = myMap.find(key);
+
+		return it != myMap.end();
 	}
 
 	void	displayMap(const std::map<std::string, std::string> &map) {

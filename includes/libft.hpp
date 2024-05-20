@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:03:34 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/19 17:00:18 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 14:18:05 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,8 @@ namespace ft {
 	void 		clearStringStream(std::istringstream &ss);
 	void		trimStr(std::string &str);	
 	std::string getStringFromFile(std::string file_path);
-
+	bool		findKeyInMap(const std::map<std::string, std::string>& myMap, const std::string& key);
+    
 	void	displayMap(const std::map<std::string, std::string> &map);
 	void	displayMultiMap(std::multimap<std::string , std::string> map);
 	void	displayVector(const std::vector<std::string> &ctn);

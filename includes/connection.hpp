@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:05:14 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 15:59:59 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ class Connection
 		void	recvRequest();
 		void	solveRequest();
 
+		bool	sendData(const std::string& data);
 		void	handleBytesReceived(int bytes_received);
 		bool	parseStartLine();
 		bool	parseHeader();
@@ -70,13 +71,7 @@ class Connection
         int			_client_port;
         timeval 	_last_request;
 
-		char		_buffer[500];
-		/*
-		std::string _http_request;
-		std::string	_header;
-		size_t		_header_end;
-		std::string	_body;
-		*/
+		char		_buffer[1000];
 };
 
 #endif

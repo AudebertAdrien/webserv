@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 19:10:06 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:20:29 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 15:39:56 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -169,7 +169,7 @@ std::string generateCSSPart(std::string filePath)
     }
 
     std::stringstream part;
-    part << "Content-Type: text/css" << "\n"
+    part << "Content-Type: text/css" << "\r\n"
 		 << "Content-Length: " << cssContent.length()
          << "\r\n\r\n"
          << cssContent;
@@ -186,7 +186,7 @@ std::string generateHTMLPart(std::string filePath)
     }
 
     std::stringstream part;
-    part << "Content-Type: text/html" << "\n"
+    part << "Content-Type: text/html" << "\r\n"
 		 << "Content-Length: " << htmlContent.length()
          << "\r\n\r\n"
          << htmlContent;
@@ -200,13 +200,31 @@ std::string generateImagePart(std::string filePath)
         return "";
     }
 
+	std::cout << "imageData.length =  " << imageData.length() << std::endl;
     std::stringstream part;
-    part << "Content-Type: image/jpeg" << "\n"
+    part << "Content-Type: image/jpeg" << "\r\n"
+		 << "Content-Length: " << imageData.length()
+         << "\r\n\r\n"
+         << imageData;
+	std::cout << "PART = " << part.str().size() << std::endl;
+    return (part.str());
+}
+
+std::string generateFaviconPart(std::string filePath) 
+{
+    std::string imageData = loadFileContent3(filePath);
+    if (imageData.empty()) {
+        return "";
+    }
+
+    std::stringstream part;
+    part << "Content-Type: image/x-icon" << "\r\n"
 		 << "Content-Length: " << imageData.length()
          << "\r\n\r\n"
          << imageData;
     return (part.str());
 }
+
 
 int	lastElem(std::string str)
 {
@@ -237,18 +255,23 @@ std::string generateResponse(std::string filePath, std::string relativ_path)
 	if (lastElem(filePath) == 1)
 	{
 		std::cout << "html part done : " << RESET << std::endl;
-    	response += generateHTMLPart(filePath);
+    	return generateHTMLPart(filePath);
 	}
 	if (lastExt(filePath) == "css")
     {
 		std::cout << "CSS part done : " << RESET << std::endl;
-		response += generateCSSPart(filePath);
+		return generateCSSPart(filePath);
 	} 
 	if (lastExt(filePath) == "jpg")
 	{
 		std::cout << "jpg part done : " << RESET << std::endl;
-		response += generateImagePart(filePath);
+		return generateImagePart(filePath);
+	}
+	if (lastExt(filePath) == "ico")
+	{
+		std::cout << "ico part done : " << RESET << std::endl;
+		return generateFaviconPart(filePath);
 	}
 	std::cout << RESET << std::endl;
-    return (response);
+    return (NULL);
 }

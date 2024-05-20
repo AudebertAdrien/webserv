@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:33:52 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 16:01:43 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ bool	Connection::parseStartLine() {
 
 	size_t header_end = http_request.find("\r\n\r\n");
 
-	std::cout << "Header end : " << header_end << std::endl;
+	std::cout << "Header end toto : " << header_end << std::endl;
 	if (header_end == std::string::npos) {
 		std::cout << "Header end not found 1" << std::endl;
 	}
@@ -91,7 +91,9 @@ bool	Connection::parseHeader() {
 		this->_request->addHeader(line);
 	}
 
-	if (header_end != std::string::npos) {
+	std::cout << "this->_request._header[Content-Length]" << ft::findKeyInMap(this->_request->getHeader(), "Content-Length") << std::endl; 
+
+	if (ft::findKeyInMap(this->_request->getHeader(), "Content-Length")) {
 		std::cout << "!= npos : " << header_end << std::endl;
 		std::string body = http_request.substr(header_end + 4);
 		this->_request->addContent(body);
@@ -200,18 +202,40 @@ std::string	createFilePath(std::string root_path, std::string relativ_path)
 	return (file_path);
 }
 
+bool Connection::sendData(const std::string& data) {
+	size_t totalBytesSent = 0;
+	size_t dataLength = data.length();
+	const char* dataPtr = data.c_str();
+
+	while (totalBytesSent < dataLength) {
+		ssize_t bytesSent = send(this->_fd, dataPtr + totalBytesSent, dataLength - totalBytesSent, MSG_NOSIGNAL);
+		if (bytesSent == -1) {
+			std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
+			return false;
+		}
+		std::cout << "bytesSent: " << bytesSent << std::endl;
+		totalBytesSent += bytesSent;
+		std::cout << "totalBytesSent: " << totalBytesSent << std::endl;
+	}
+
+    return true;
+}
+
 void	Connection::initiateResponse(Location &loc)
 {
 	std::string file_path = createFilePath(loc.getRootPath(), this->_request->getRelativPath());
 	std::cout << GREEN << file_path << RESET << std::endl;
-	std::string header = "HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\n";
+	//std::string header = "HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\n";
+	std::string header = "HTTP/1.1 200 OK\r\n";
 	std::string body = generateResponse(file_path, this->_request->getRelativPath());
 	std::ostringstream oss;
 	oss << header << body;
 	std::string response = oss.str();
 	//std::cout << RED <<oss.str() << RESET << std::endl;
-	if (send(this->_fd, response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	//if (send(this->_fd, response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
+	//	std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	sendData(response);
+
 }
 
 void	Connection::closestMatch()

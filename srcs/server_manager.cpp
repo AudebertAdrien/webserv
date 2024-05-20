@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/19 17:09:21 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 16:54:08 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,7 @@ void	ServerManager::runServer()
 	struct timeval timeout;
 	
 	while(true) {
-		timeout.tv_sec = SELECT_TIMEOUT;
+		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;
 
 		this->_read_copy_set = this->_read_set;
@@ -93,13 +93,13 @@ void	ServerManager::runServer()
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		else if (cnt == 0)
+		else if (cnt == 0) {
+			std::cout << "Time occured" << std::endl;
 			continue;
+		}
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
-			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {
-				(*it)->run();
-			}
+			(*it)->run();
 		} 
 		resetMaxFd();
 	}
@@ -179,6 +179,11 @@ int	ServerManager::getMaxFd() const
 fd_set &	ServerManager::getFdReadSet()
 {
 	return (this->_read_set);
+}
+
+fd_set &	ServerManager::getFdReadSetCopy()
+{
+	return (this->_read_copy_set);
 }
 
 fd_set &	ServerManager::getFdWriteSet()
