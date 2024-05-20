@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 15:06:22 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/19 18:03:26 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,14 @@ Request::~Request() {
 
 void	Request::addHeader(std::string &line) {
 	std::string key, value;
-	size_t pos = line.find_first_of(" \t");
 
+	size_t pos = line.find(":");
 	if (pos != std::string::npos) {
-		key = line.substr(0, pos);
-		value = line.substr(pos + 1);
+		std::string key = line.substr(0, pos);
+		std::string value = line.substr(pos + 1);
+
+		this->_headers.insert(std::make_pair(key, value));
 	}
-	this->_headers.insert(std::make_pair(key, value));
 }
 
 void	Request::addMethod(std::string &line) {

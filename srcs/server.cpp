@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/18 15:31:20 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 17:27:08 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 #include "server_manager.hpp"
 #include "request.hpp"
 #include "connection.hpp"
+
+static int i = 0;
 
 Server::Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config  &config) {
     this->_config = &config;
@@ -73,15 +75,6 @@ void	Server::setPort(std::string server_block)
 	this->_port = atoi(word.c_str());
 }
 
-void	Server::runRecvAndSolve(Connection &connection) {
-	try {
-		connection.recvRequest();
-		connection.solveRequest();
-	} catch (std::exception &e) {
-		std::cerr << "recvRequest error!!!" << std::endl;
-	}
-}
-
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port, *this);
 
@@ -89,10 +82,10 @@ void	Server::addConnection(int client_fd, std::string client_ip, int client_port
 	this->_manager->setFd(client_fd, "_read_set");
 	this->_manager->setFd(client_fd, "_write_set");
 
-	/* std::cout << RED << "READ SET" << RESET << std::endl;
+	 std::cout << RED << "READ SET" << RESET << std::endl;
 	ft::displayFdSet(this->_manager->getFdReadSet());
 	std::cout << RED << "WRITE SET" << RESET << std::endl;
-	ft::displayFdSet(this->_manager->getFdWriteSet()); */
+	ft::displayFdSet(this->_manager->getFdWriteSet());
 }
 
 bool	Server::hasNewConnection(int fd, fd_set &set) {
@@ -110,12 +103,27 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
-	if (!hasNewConnection(client_fd, this->_manager->getFdReadSet()) ) {
+	std::cout << RED << "CONNECTION ACCEPTED: " << i++ << std::endl;
+	//if (!hasNewConnection(client_fd, this->_manager->getFdReadSet()) ) {
 		struct timeval timeout;
-		timeout.tv_sec = 5;
+		timeout.tv_sec = 3;
 		timeout.tv_usec = 0;
+
 		if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
 			std::cerr << "Failed to set receive timeout" << std::endl;
+			exit(EXIT_FAILURE);
+		}
+
+		int flags = fcntl(client_fd, F_GETFL, 0);
+		if (flags == -1) {
+			std::cerr << "Failed to get socket flags\n";
+			close(client_fd);
+			exit(EXIT_FAILURE);
+		}
+
+		if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+			std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+			close(client_fd);
 			exit(EXIT_FAILURE);
 		}
 
@@ -124,6 +132,15 @@ void	Server::acceptNewConnection() {
 		int client_port = ntohs(client_addr.sin_port);
 
 		addConnection(client_fd, client_ip, client_port);
+	//}
+}
+
+void	Server::runRecvAndSolve(Connection &connection) {
+	try {
+		connection.recvRequest();
+		connection.solveRequest();
+	} catch (std::exception &e) {
+		std::cerr << "recvRequest error!!!" << std::endl;
 	}
 }
 
@@ -134,7 +151,9 @@ void	Server::run() {
 		return ;
 	}
 
-	acceptNewConnection();
+	if (FD_ISSET(this->_fd, &this->_manager->getFdReadSetCopy())) {
+		acceptNewConnection();
+	}
 
 	std::map<int, Connection *>::iterator it = _connections.begin();
 	while (it != _connections.end())
@@ -142,19 +161,22 @@ void	Server::run() {
 		std::map<int, Connection *>::iterator it2 = it;
 		int fd = it2->first;
 
-		runRecvAndSolve(*(it2->second));
-		close(fd);
-		removeOldFd(fd);
+		if (FD_ISSET(fd, &this->_manager->getFdReadSetCopy())) {
+			runRecvAndSolve(*(it2->second));
+			removeFromSet(fd);
+			close(fd);
+		}
 		it++;
 	}
 }
 
-void	Server::removeOldFd(int fd)
+void	Server::removeFromSet(int fd)
 {
 	if (FD_ISSET(fd, &this->_manager->getFdReadSet()))
 		FD_CLR(fd, &this->_manager->getFdReadSet());
 	if (FD_ISSET(fd, &this->_manager->getFdWriteSet()))
 		FD_CLR(fd, &this->_manager->getFdWriteSet());
+    //this->_connections.erase(fd);
 }
 
 int	Server::getPort()

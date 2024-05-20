@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/13 16:37:04 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 15:59:59 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,27 @@ class Request;
 class Server;
 class Response;
 
+#define REQ_BUFFER_SIZE 500
+
 class Connection
 {
 	public:
 		Connection(int client_fd, std::string client_ip, int client_port, Server &server);
         ~Connection();
+
 		void	recvRequest();
 		void	solveRequest();
+
+		bool	sendData(const std::string& data);
+		void	handleBytesReceived(int bytes_received);
+		bool	parseStartLine();
+		bool	parseHeader();
+		bool	parseBody();
+		bool	findHeaderEnd();
+		void	processRequestLine();
+		void	processHeaders();
+		void	clearBuffer();
+
 
 		/* == setter == */
 		void			setRequest(Request *new_request);
@@ -58,6 +72,8 @@ class Connection
         std::string	_client_ip;
         int			_client_port;
         timeval 	_last_request;
+
+		char		_buffer[1000];
 };
 
 #endif

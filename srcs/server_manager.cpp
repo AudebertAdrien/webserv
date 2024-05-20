@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/17 19:23:27 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 16:54:08 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,17 +89,17 @@ void	ServerManager::runServer()
 
 		this->_read_copy_set = this->_read_set;
 		this->_write_copy_set = this->_write_set;
-		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, NULL)) == -1){
+		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1){
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
-		else if (cnt == 0)
+		else if (cnt == 0) {
+			std::cout << "Time occured" << std::endl;
 			continue;
+		}
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
-			if (FD_ISSET((*it)->getFd(), &_read_copy_set)) {
-				(*it)->run();
-			}
+			(*it)->run();
 		} 
 		resetMaxFd();
 	}
@@ -179,6 +179,11 @@ int	ServerManager::getMaxFd() const
 fd_set &	ServerManager::getFdReadSet()
 {
 	return (this->_read_set);
+}
+
+fd_set &	ServerManager::getFdReadSetCopy()
+{
+	return (this->_read_copy_set);
 }
 
 fd_set &	ServerManager::getFdWriteSet()
