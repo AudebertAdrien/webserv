@@ -153,73 +153,6 @@ void	Connection::recvRequest() {
 	}
 } 
 
-/*
-void	Connection::recvRequest() {	
-	Request	*request = new Request(*this, *this->_server);			
-
-	int bytes_received = 1;
-	while (bytes_received > 0) {
-		char buffer[500];
-
-		std::cout << "recvRequest" << std::endl;
-		bytes_received = recv(this->_fd, buffer, sizeof(buffer), 0);
-		std::cout << "bytes_received: " << bytes_received << std::endl;
-		if (bytes_received == -1) {
-			std::cerr << "Error in receiving data ######" << std::endl;
-			break ;
-		} else {
-			std::string http_request(buffer);
-
-			size_t header_end = http_request.find("\r\n\r\n");
-			if (header_end == std::string::npos) {
-				std::cout << "header end not found" << std::endl;
-			}
-			std::string header = http_request.substr(0, header_end);
-			std::string body = http_request.substr(header_end + 4);
-
-			std::istringstream	iss(header);
-			std::string line;
-			bool isFirstLine = true;
-			while (getline(iss, line)) {
-				if (isFirstLine) {
-					isFirstLine = false;
-					std::cout << RED << line << RESET << std::endl;
-					request->addMethod(line);
-				} else {
-					request->addHeader(line);
-				}
-			}
-			if (body.length())
-				request->addContent(body);
-			
-			std::cout << YELLOW << request->getContent() << RESET << std::endl;
-
-			std::cout << "############" << std::endl;
-		}
-	}
-	setRequest(request);
-}
-*/
-
-bool Connection::sendData(const std::string& data) {
-	size_t totalBytesSent = 0;
-	size_t dataLength = data.length();
-	const char* dataPtr = data.c_str();
-
-	while (totalBytesSent < dataLength) {
-		ssize_t bytesSent = send(this->_fd, dataPtr + totalBytesSent, dataLength - totalBytesSent, MSG_NOSIGNAL);
-		if (bytesSent == -1) {
-			std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
-			return false;
-		}
-		std::cout << "bytesSent: " << bytesSent << std::endl;
-		totalBytesSent += bytesSent;
-		std::cout << "totalBytesSent: " << totalBytesSent << std::endl;
-	}
-
-    return true;
-}
-
 void	Connection::initiateResponse(Location &loc)
 {
 	Response	*rep = new Response(*this, *this->_server);
@@ -228,17 +161,6 @@ void	Connection::initiateResponse(Location &loc)
 	std::cout << GREEN << file_path << RESET << std::endl;
 	this->_response->generateResp(file_path, this->_request->getRelativPath());
 	this->_response->sendResp(this->_fd);
-	/* //std::string header = "HTTP/1.1 200 OK\r\nConnection: Keep-Alive\r\n";
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = generateResponse(file_path, this->_request->getRelativPath());
-	std::ostringstream oss;
-	oss << header << body;
-	std::string response = oss.str();
-	//std::cout << RED <<oss.str() << RESET << std::endl;
-	//if (send(this->_fd, response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-	//	std::cerr << "Send failed: " << strerror(errno) << std::endl;
-	sendData(response); */
-
 }
 
 void	Connection::closestMatch()

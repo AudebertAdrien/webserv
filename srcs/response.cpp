@@ -53,24 +53,14 @@ Response::Response(Connection &connection, Server &server)
 
  void   Response::sendResp(int fd)
  {
-    /* if (send(fd, this->_response.c_str(), this->_response.length(), MSG_NOSIGNAL) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl; */
     size_t totalBytesSent = 0;
 	size_t dataLength = this->_response.length();
 	const char* dataPtr = this->_response.c_str();
 
 	while (totalBytesSent < dataLength) {
 		ssize_t bytesSent = send(fd, dataPtr + totalBytesSent, dataLength - totalBytesSent, MSG_NOSIGNAL);
-		if (bytesSent == -1) {
-			std::cerr << "Failed to send data: " << strerror(errno) << std::endl;
-			//return ;
-		}
-		std::cout << "bytesSent: " << bytesSent << std::endl;
 		totalBytesSent += bytesSent;
-		std::cout << "totalBytesSent: " << totalBytesSent << std::endl;
 	}
-
-    return ;
  }
 
  /* == getter == */

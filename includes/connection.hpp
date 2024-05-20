@@ -36,15 +36,9 @@ class Connection
 		void	recvRequest();
 		void	solveRequest();
 
-		bool	sendData(const std::string& data);
-		void	handleBytesReceived(int bytes_received);
 		bool	parseStartLine();
 		bool	parseHeader();
 		bool	parseBody();
-		bool	findHeaderEnd();
-		void	processRequestLine();
-		void	processHeaders();
-		void	clearBuffer();
 
 
 		/* == setter == */
