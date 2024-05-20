@@ -25,9 +25,26 @@ Response::Response(Connection &connection, Server &server)
 
  }
 
+ void   Response::handleCgi(std::string fp, int client_fd)
+ {
+    std::string script_path = fp;
+    std::string query_string = "";
+
+    if (fp.find("?") != std::string::npos) 
+    {
+        query_string = fp.substr(fp.find("?") + 1);
+        script_path = fp.substr(0, script_path.find("?"));
+    }
+ }
+
  void   Response::generateResp(std::string fp, std::string rel)
  {
     this->_header = "HTTP/1.1 200 OK\r\n";
+    if (fp.find("cgi") != std::string::npos)
+    {
+        std::cout << "cgi part has to be handle : " << RESET << std::endl;
+        handleCgi(fp, this->_connection->getFd());
+    }
 	this->_body = generateResponse(fp, rel);
 	std::ostringstream oss;
 	oss << this->_header << this->_body;
@@ -39,3 +56,9 @@ Response::Response(Connection &connection, Server &server)
     if (send(fd, this->_response.c_str(), this->_response.length(), MSG_NOSIGNAL) == -1)
 		std::cerr << "Send failed: " << strerror(errno) << std::endl;
  }
+
+ /* == getter == */
+Connection*		Response::getConnection() const
+{
+    return (this->_connection);
+}

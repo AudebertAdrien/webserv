@@ -31,6 +31,11 @@ class Response
 
 		void	generateResp(std::string fp, std::string rel);
 		void	sendResp(int fd);
+		void	handleCgi(std::string fp, int client_fd);
+
+		/* == getter == */
+		Connection*		getConnection() const;
+
 		/* Connection	getConnection() const;
 		int	getStatusCode() const;
 		std::string	getStatusDescritpion() const;
@@ -49,6 +54,7 @@ class Response
 		std::string	_header;
 		std::string	_body;
 		std::string	_response;
+
         /* enum    Transfert_type;
 		std::map<int, vector<string>>	_status
 		Connection	_connection;
