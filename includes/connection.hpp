@@ -35,9 +35,11 @@ class Connection
 
 		/* == setter == */
 		void			setRequest(Request *new_request);
+		void			setRespons(Response *new_respons);
 
 		/* == getter == */
 		Request*		getRequest() const;
+		Response*		getRespons() const;
 
 		int				getFd() const;
 		timeval			getLastRequest() const;

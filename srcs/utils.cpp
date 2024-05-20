@@ -252,3 +252,13 @@ std::string generateResponse(std::string filePath, std::string relativ_path)
 	std::cout << RESET << std::endl;
     return (response);
 }
+
+std::string	createFilePath(std::string root_path, std::string relativ_path)
+{
+	trim(root_path);
+	trim(relativ_path);
+	removeLastSemicolon(root_path);
+	adjust(relativ_path);
+	std::string file_path = root_path + relativ_path;
+	return (file_path);
+}

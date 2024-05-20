@@ -25,6 +25,7 @@ SRCS			:= main.cpp				\
 				   location.cpp			\
 				   connection.cpp		\
 				   request.cpp			\
+				   response.cpp			\
 				   utils.cpp
 
 CC				:= c++ -g

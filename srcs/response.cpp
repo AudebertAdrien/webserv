@@ -10,4 +10,32 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "response.hpp"
+#include "server.hpp"
+#include "connection.hpp"
 
+Response::Response(Connection &connection, Server &server)
+{
+	this->_connection = &connection;
+	this->_server = &server;
+}
+
+ Response::~Response()
+ {
+
+ }
+
+ void   Response::generateResp(std::string fp, std::string rel)
+ {
+    this->_header = "HTTP/1.1 200 OK\r\n";
+	this->_body = generateResponse(fp, rel);
+	std::ostringstream oss;
+	oss << this->_header << this->_body;
+	this->_response = oss.str();
+ }
+
+ void   Response::sendResp(int fd)
+ {
+    if (send(fd, this->_response.c_str(), this->_response.length(), MSG_NOSIGNAL) == -1)
+		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+ }

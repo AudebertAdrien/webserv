@@ -13,6 +13,7 @@
 #include "connection.hpp"
 #include "request.hpp"
 #include "server.hpp"
+#include "response.hpp"
 
 Connection::Connection(int client_fd, std::string client_ip, int client_port, Server &server)
 {
@@ -30,9 +31,17 @@ void	Connection::setRequest(Request *new_request) {
 	this->_request = new_request;	
 }
 
+void	Connection::setRespons(Response *new_respons) {
+	this->_response = new_respons;	
+}
+
 /* == getter == */
 Request*	Connection::getRequest() const {
 	return (this->_request);
+}
+
+Response*	Connection::getRespons() const{
+	return (this->_response);
 }
 
 int Connection::getFd() const
@@ -95,28 +104,14 @@ void	Connection::recvRequest() {
 	setRequest(request);
 }
 
-std::string	createFilePath(std::string root_path, std::string relativ_path)
-{
-	trim(root_path);
-	trim(relativ_path);
-	removeLastSemicolon(root_path);
-	adjust(relativ_path);
-	std::string file_path = root_path + relativ_path;
-	return (file_path);
-}
-
 void	Connection::initiateResponse(Location &loc)
 {
+	Response	*rep = new Response(*this, *this->_server);
+	setRespons(rep);
 	std::string file_path = createFilePath(loc.getRootPath(), this->_request->getRelativPath());
 	std::cout << GREEN << file_path << RESET << std::endl;
-	std::string header = "HTTP/1.1 200 OK\r\n";
-	std::string body = generateResponse(file_path, this->_request->getRelativPath());
-	std::ostringstream oss;
-	oss << header << body;
-	std::string response = oss.str();
-	//std::cout << RED <<oss.str() << RESET << std::endl;
-	if (send(this->_fd, response.c_str(), response.length(), MSG_NOSIGNAL) == -1)
-		std::cerr << "Send failed: " << strerror(errno) << std::endl;
+	this->_response->generateResp(file_path, this->_request->getRelativPath());
+	this->_response->sendResp(this->_fd);
 }
 
 void	Connection::closestMatch()

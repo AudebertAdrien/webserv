@@ -48,5 +48,6 @@ std::string generateImagePart(std::string filePath);
 int	        lastElem(std::string str);
 std::string lastExt(const std::string &str);
 std::string generateResponse(std::string filePath, std::string relativ_path);
+std::string	createFilePath(std::string root_path, std::string relativ_path);
 
 #endif

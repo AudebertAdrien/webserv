@@ -26,9 +26,12 @@ class Location;
 class Response
 {
 	public:
-		Response(Connection connection, Server server, start);
+		Response(Connection &connection, Server &server);
         ~Response();
-		Connection	getConnection() const;
+
+		void	generateResp(std::string fp, std::string rel);
+		void	sendResp(int fd);
+		/* Connection	getConnection() const;
 		int	getStatusCode() const;
 		std::string	getStatusDescritpion() const;
 		map<std::string , std::string>	getHearders() const;
@@ -36,19 +39,24 @@ class Response
 		std::string	getContent() const;
 		void	addHeader(std::string header_key, std::string header_value);
 		c_str() ??
-		make_status ??
+		make_status ?? */
 		
 
 		
 	private:
-        enum    Transfert_type;
+		Connection	*_connection;
+		Server		*_server;
+		std::string	_header;
+		std::string	_body;
+		std::string	_response;
+        /* enum    Transfert_type;
 		std::map<int, vector<string>>	_status
 		Connection	_connection;
 		int	_status_code;
 		std::string	_status_description;
 		std::map<std::string , std::string>	_headers;
 		Transfert_type	_transfer_type;
-		std::string	_content;
+		std::string	_content; */
 
 };
 
