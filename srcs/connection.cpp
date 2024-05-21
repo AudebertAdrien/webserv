@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/20 16:01:43 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 18:24:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	Connection::getClientPort() const
 }
 
 bool	Connection::parseStartLine() {
-	std::cout << "parseStartLine" << std::endl;
+	//std::cout << "parseStartLine" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -82,12 +82,12 @@ bool	Connection::parseStartLine() {
 }
 
 bool	Connection::parseHeader() {
-	std::cout << "parseHeader" << std::endl;
+	//std::cout << "parseHeader" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
 	if (header_end == std::string::npos) {
-		std::cout << "Header end not found 2" << std::endl;
+		std::cout << "Header end not found" << std::endl;
 	}
 
 	std::string header = http_request.substr(0, header_end);
@@ -100,10 +100,7 @@ bool	Connection::parseHeader() {
 		this->_request->addHeader(line);
 	}
 
-	std::cout << "this->_request._header[Content-Length]" << ft::findKeyInMap(this->_request->getHeader(), "Content-Length") << std::endl; 
-
 	if (ft::findKeyInMap(this->_request->getHeader(), "Content-Length")) {
-		std::cout << "!= npos : " << header_end << std::endl;
 		std::string body = http_request.substr(header_end + 4);
 		this->_request->addContent(body);
 		_buffer[0] = 0;
@@ -113,7 +110,7 @@ bool	Connection::parseHeader() {
 }
 
 bool	Connection::parseBody() {
-	std::cout << "parseBody" << std::endl;
+	//std::cout << "parseBody" << std::endl;
 	std::string rest(_buffer);
 
 	_request->addContent(rest);
@@ -126,9 +123,7 @@ void	Connection::recvRequest() {
 	int bytes_received = 1;
 	while (bytes_received > 0) {
 
-		//bytes_received = recv(this->_fd, buffer, sizeof(buffer), MSG_DONTWAIT);
 		bytes_received = recv(this->_fd, this->_buffer, sizeof(this->_buffer), 0);
-		std::cout << "FUCK THAT BYTES: " << bytes_received << std::endl;
 		if (bytes_received == -1) {
 			std::cerr << "Error in receiving data ######" << std::endl;
 			break;
