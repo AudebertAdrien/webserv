@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/20 16:54:08 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 16:34:57 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,6 @@ void	ServerManager::runServer()
 			exit(EXIT_FAILURE);
 		}
 		else if (cnt == 0) {
-			std::cout << "Time occured" << std::endl;
 			continue;
 		}
 		std::vector<Server *>::iterator it;

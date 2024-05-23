@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv_macro.hpp                                  :+:      :+:    :+:   */
+/*   webserv_macro.hpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 16:31:28 by motoko            #+#    #+#             */
-/*   Updated: 2024/04/26 13:24:19 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 14:17:23 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,3 +17,7 @@
 #define	YELLOW	"\e[93m"
 #define	BLUE	"\e[34m"
 #define RESET	"\e[0m"
+
+enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
+enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
+enum TransferType { GENERAL, CHUNKED };

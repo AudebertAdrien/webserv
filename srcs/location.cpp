@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:29 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 17:04:04 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 18:49:27 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ std::string Location::getOpt() const
     return (this->_opt_modif);
 }
 
-std::string Location::getLocMatcUhri() const
+std::string Location::getLocMatchUri() const
 {
     return (this->_loc_match_uri);
 }

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 19:09:33 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/17 19:09:41 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/05/22 18:27:59 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ std::string generateHTMLPart(std::string filePath);
 std::string generateImagePart(std::string filePath);
 int	        lastElem(std::string str);
 std::string lastExt(const std::string &str);
-std::string generateResponse(std::string filePath, std::string relativ_path);
+std::string generateResponse(std::string filePath);
 std::string	createFilePath(std::string root_path, std::string relativ_path);
 
 #endif

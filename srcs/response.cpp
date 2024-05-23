@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:25 by tlorne            #+#    #+#             */
-/*   Updated: 2024/04/22 12:51:27 by tlorne           ###   ########.fr       */
+/*   Updated: 2024/05/22 19:01:04 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,30 +97,34 @@ Response::Response(Connection &connection, Server &server)
 
     if (fp.find("?") != std::string::npos) 
     {
+
+    	std::cout << GREEN << "fp.find" << RESET << std::endl;
         param_string = fp.substr(fp.find("?") + 1);
         script_path = fp.substr(0, script_path.find("?"));
     }
+
     std::cout << GREEN << "path : "<<script_path << RESET << std::endl;
     std::cout << YELLOW <<"param : " << param_string << RESET << std::endl;
     execCGI(client_fd, toString(this->_connection->getRequest()->getMethod()), script_path, param_string);
  }
 
- void   Response::generateResp(std::string fp, std::string rel)
+ void   Response::createResponse(std::string fp)
  {
     this->_header = "HTTP/1.1 200 OK\r\n";
     if (fp.find("cgi") != std::string::npos)
     {
         std::cout << "cgi part has to be handle : " << RESET << std::endl;
         handleCGI(fp, this->_connection->getFd());
-        return ;
+		return ;
     }
-	this->_body = generateResponse(fp, rel);
+
+	this->_body = generateResponse(fp);
 	std::ostringstream oss;
 	oss << this->_header << this->_body;
 	this->_response = oss.str();
  }
 
- void   Response::sendResp(int fd)
+ void   Response::sendResponse(int fd)
  {
     size_t totalBytesSent = 0;
 	size_t dataLength = this->_response.length();

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/20 17:27:08 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 14:02:46 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,6 @@
 #include "server_manager.hpp"
 #include "request.hpp"
 #include "connection.hpp"
-
-static int i = 0;
 
 Server::Server(ServerManager &manager, std::string server_block, std::vector<std::string> location_block, Config  &config) {
     this->_config = &config;
@@ -80,12 +78,6 @@ void	Server::addConnection(int client_fd, std::string client_ip, int client_port
 
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
-	this->_manager->setFd(client_fd, "_write_set");
-
-	 std::cout << RED << "READ SET" << RESET << std::endl;
-	ft::displayFdSet(this->_manager->getFdReadSet());
-	std::cout << RED << "WRITE SET" << RESET << std::endl;
-	ft::displayFdSet(this->_manager->getFdWriteSet());
 }
 
 bool	Server::hasNewConnection(int fd, fd_set &set) {
@@ -103,36 +95,33 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
-	std::cout << RED << "CONNECTION ACCEPTED: " << i++ << std::endl;
-	//if (!hasNewConnection(client_fd, this->_manager->getFdReadSet()) ) {
-		struct timeval timeout;
-		timeout.tv_sec = 3;
-		timeout.tv_usec = 0;
+	struct timeval timeout;
+	timeout.tv_sec = 3;
+	timeout.tv_usec = 0;
 
-		if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
-			std::cerr << "Failed to set receive timeout" << std::endl;
-			exit(EXIT_FAILURE);
-		}
+	if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
+		std::cerr << "Failed to set receive timeout" << std::endl;
+		exit(EXIT_FAILURE);
+	}
 
-		int flags = fcntl(client_fd, F_GETFL, 0);
-		if (flags == -1) {
-			std::cerr << "Failed to get socket flags\n";
-			close(client_fd);
-			exit(EXIT_FAILURE);
-		}
+	int flags = fcntl(client_fd, F_GETFL, 0);
+	if (flags == -1) {
+		std::cerr << "Failed to get socket flags\n";
+		close(client_fd);
+		exit(EXIT_FAILURE);
+	}
 
-		if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
-			std::cerr << "Listen failed: " << strerror(errno) << std::endl;
-			close(client_fd);
-			exit(EXIT_FAILURE);
-		}
+	if (fcntl(client_fd, F_SETFL, flags | O_NONBLOCK) == -1) {
+		std::cerr << "Listen failed: " << strerror(errno) << std::endl;
+		close(client_fd);
+		exit(EXIT_FAILURE);
+	}
 
-		char client_ip[INET_ADDRSTRLEN];
-		inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
-		int client_port = ntohs(client_addr.sin_port);
+	char client_ip[INET_ADDRSTRLEN];
+	inet_ntop(AF_INET, &(client_addr.sin_addr), client_ip, INET_ADDRSTRLEN);
+	int client_port = ntohs(client_addr.sin_port);
 
-		addConnection(client_fd, client_ip, client_port);
-	//}
+	addConnection(client_fd, client_ip, client_port);
 }
 
 void	Server::runRecvAndSolve(Connection &connection) {
@@ -140,7 +129,7 @@ void	Server::runRecvAndSolve(Connection &connection) {
 		connection.recvRequest();
 		connection.solveRequest();
 	} catch (std::exception &e) {
-		std::cerr << "recvRequest error!!!" << std::endl;
+		std::cerr << "error : Recv or Solve" << std::endl;
 	}
 }
 
@@ -165,6 +154,7 @@ void	Server::run() {
 			runRecvAndSolve(*(it2->second));
 			removeFromSet(fd);
 			close(fd);
+        	//this->_connections.erase(fd);
 		}
 		it++;
 	}
@@ -176,7 +166,6 @@ void	Server::removeFromSet(int fd)
 		FD_CLR(fd, &this->_manager->getFdReadSet());
 	if (FD_ISSET(fd, &this->_manager->getFdWriteSet()))
 		FD_CLR(fd, &this->_manager->getFdWriteSet());
-    //this->_connections.erase(fd);
 }
 
 int	Server::getPort()
