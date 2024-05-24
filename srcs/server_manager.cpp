@@ -13,7 +13,7 @@ ServerManager::~ServerManager() {
 	delete	_config;
 }
 
-void	ServerManager::createServer(const std::string &configuration_file_path, char **env) {
+void	ServerManager::createServer(const std::string &configuration_file_path) {
 	std::string	config_string = ft::getStringFromFile(configuration_file_path);
 
 	std::string config_block;
@@ -22,7 +22,7 @@ void	ServerManager::createServer(const std::string &configuration_file_path, cha
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
-	this->_config = new Config(config_block, env);
+	this->_config = new Config(config_block);
 	
 	for (size_t i = 0; i < server_strings.size(); i++) {
 		std::string server_block;

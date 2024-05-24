@@ -41,7 +41,7 @@ class ServerManager {
 		std::vector<Server *>	getServer();
 
 		void    runServer();
-		void	createServer(const std::string &configuration_file_path, char **env);
+		void	createServer(const std::string &configuration_file_path);
 		void	setFd(int fd, std::string fd_type);
 		
 		

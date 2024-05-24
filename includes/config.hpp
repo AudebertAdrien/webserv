@@ -20,7 +20,7 @@
 
 class Config {
 	public:
-		Config(std::string config_block, char **env);
+		Config(std::string config_block);
         ~Config();
 
 		std::string	getSoftwareName() const;
@@ -33,7 +33,6 @@ class Config {
         std::string	_software_version;
 		std::string _http_version;
 		std::string	_cgi_version;
-		char		**_env;
 };
 
 #endif
