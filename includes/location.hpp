@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:34 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/12 19:26:00 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 18:49:08 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ class Location
         /* == getter == */
 		std::string					getRootPath() const;
         std::string 				getOpt() const;
-        std::string 				getLocMatcUhri() const;
+        std::string 				getLocMatchUri() const;
 		std::vector<std::string>	getAllowMethod() const;
         std::vector<std::string>    getInfo(std::string key);
         int							getIsMulti() const;

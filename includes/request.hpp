@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:07 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 16:26:00 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 14:17:19 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,6 @@
 
 class Server;
 class Connection;
-
-enum Method { DEFAULT, GET, HEAD, POST, PUT, DELETE, OPTIONS, TRACE };
-enum URIType { DIRECTORY, RESOURCE_FILE, FILE_TO_CREATE, CGI_PROGRAM };
-enum TransferType { GENERAL, CHUNKED };
 
 #define MAX_BUFFER_SIZE 1024
 

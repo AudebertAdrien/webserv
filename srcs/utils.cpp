@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/17 19:10:06 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/20 15:39:56 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/24 14:56:13 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,9 @@ int	lastWordaFile(std::string str)
 
 int	lastNotaBS(std::string str)
 {
-    if (str.empty()) {
+    if (str.empty())
         return (0);
-    }
-	if (str[str.length() - 1] != '/')
+	else if (str[str.length() - 1] != '/')
     	return (1);
 }
 
@@ -94,48 +93,40 @@ void	adjust(std::string& str)
 
 /////////// FONCTION TO CHOOSE THE BEST LOCATION ////////////////
 
-int countCommonCharacters(const std::string &s1, const std::string &s2)
-{
-    int commonCount = 0;
-    size_t len = std::min(s1.size(), s2.size());
-
-    for (size_t i = 0; i < len; ++i)
-	{
-        if (s1[i] == s2[i])
-            commonCount++;
-    }
-    return (commonCount);
-}
-
 
 int findClosestStringIndex(const std::string &target, const std::vector<Location *> &vecteur)
 {
     if (vecteur.empty())
 		return -1;
 
-    int closestIndex = 0;
-    int maxCommonCharacters = countCommonCharacters(target, vecteur[0]->getLocMatcUhri());
+    int 				closestIndex = 0;
+	long unsigned int	maxCommonCharacters = 0;
 
-    for (size_t i = 1; i < vecteur.size(); ++i) 
+	std::cout << RED << "target: " << target << RESET << std::endl;
+    for (size_t i = 0; i < vecteur.size(); ++i) 
 	{
-        int commonCharacters = countCommonCharacters(target, vecteur[i]->getLocMatcUhri());
-        if (commonCharacters > maxCommonCharacters) {
-            closestIndex = i;
-            maxCommonCharacters = commonCharacters;
-        }
-    }
+		std::cout << YELLOW << "vecteur[i]->getRootPath(): " << vecteur[i]->getRootPath() << RESET << std::endl;
+		std::cout << YELLOW << "vecteur[i]->getLocMatchUri(): " << vecteur[i]->getLocMatchUri() << RESET << std::endl;
+		if (target == vecteur[i]->getLocMatchUri())
+			return (i);
 
+		if((target.find(vecteur[i]->getLocMatchUri()) == 0) && (vecteur[i]->getLocMatchUri().size() > maxCommonCharacters)) {
+			closestIndex = i;
+			maxCommonCharacters = vecteur[i]->getLocMatchUri().size();
+		}
+	}
+	std::cout << BLUE << "closesIndex: " << closestIndex << RESET << std::endl;
     return (closestIndex);
 }
-
 
 
 /////////// FONCTION TO GENERATE RESPONSE /////////////
 
 
-std::string loadFileContent3(const std::string& filePath) 
+std::string loadImageFileContent(const std::string& filePath) 
 {
-	std::ifstream fileStream(filePath.c_str());
+	std::cout << GREEN << "loadImageFileContent" << RESET << std::endl;
+	std::ifstream fileStream(filePath.c_str(), std::ios::binary);
 	std::string	content;
 
 	content.assign((std::istreambuf_iterator<char>(fileStream)), std::istreambuf_iterator<char>());
@@ -146,7 +137,7 @@ std::string loadFileContent3(const std::string& filePath)
 
 std::string loadFileContent(const std::string& filePath) 
 {
-	std::cout << GREEN << filePath << RESET << std::endl;
+	std::cout << GREEN << "loadFileContent" << RESET << std::endl;
     std::ifstream file(filePath.c_str(), std::ios::binary);
     if (!file) 
 	{
@@ -157,23 +148,6 @@ std::string loadFileContent(const std::string& filePath)
     std::stringstream buffer;
     buffer << file.rdbuf();
     return (buffer.str());
-}
-
-std::string generateCSSPart(std::string filePath) 
-{
-    std::string cssContent = loadFileContent(filePath);
-    if (cssContent.empty()) 
-	{
-		std::cerr << RED <<"CSS not find " << strerror(errno) << RESET << std::endl;
-        return "";
-    }
-
-    std::stringstream part;
-    part << "Content-Type: text/css" << "\r\n"
-		 << "Content-Length: " << cssContent.length()
-         << "\r\n\r\n"
-         << cssContent;
-    return (part.str());
 }
 
 std::string generateHTMLPart(std::string filePath) 
@@ -193,26 +167,41 @@ std::string generateHTMLPart(std::string filePath)
     return (part.str());
 }
 
+std::string generateCSSPart(std::string filePath) 
+{
+    std::string cssContent = loadFileContent(filePath);
+    if (cssContent.empty()) 
+	{
+		std::cerr << RED <<"CSS not find " << strerror(errno) << RESET << std::endl;
+        return "";
+    }
+
+    std::stringstream part;
+    part << "Content-Type: text/css" << "\r\n"
+		 << "Content-Length: " << cssContent.length()
+         << "\r\n\r\n"
+         << cssContent;
+    return (part.str());
+}
+
 std::string generateImagePart(std::string filePath) 
 {
-    std::string imageData = loadFileContent3(filePath);
+    std::string imageData = loadImageFileContent(filePath);
     if (imageData.empty()) {
         return "";
     }
 
-	std::cout << "imageData.length =  " << imageData.length() << std::endl;
     std::stringstream part;
     part << "Content-Type: image/jpeg" << "\r\n"
 		 << "Content-Length: " << imageData.length()
          << "\r\n\r\n"
          << imageData;
-	std::cout << "PART = " << part.str().size() << std::endl;
     return (part.str());
 }
 
 std::string generateFaviconPart(std::string filePath) 
 {
-    std::string imageData = loadFileContent3(filePath);
+    std::string imageData = loadImageFileContent(filePath);
     if (imageData.empty()) {
         return "";
     }
@@ -228,7 +217,6 @@ std::string generateFaviconPart(std::string filePath)
 
 int	lastElem(std::string str)
 {
-	//std::cout << RED << "WTFFFFFFFF LAST ELEM VAUT " << str[str.length() - 1] << RESET << std::endl;
 	if (str[str.length() - 1] == '/')
     	return (1);
 	else
@@ -246,33 +234,30 @@ std::string lastExt(const std::string &str)
     return "";
 }
 
-std::string generateResponse(std::string filePath, std::string relativ_path) 
+std::string generateResponse(std::string filePath) 
 {
     std::string response;
-	//std::cout << YELLOW;
-	/* std::cout << "Last ext vaut = " << lastExt(filePath) << std::endl;
-	std::cout << "Last elem vaut = " << lastElem(filePath) << RESET << std::endl; */
+	std::cout << "###### " << filePath << "######"<< std::endl;
 	if (lastElem(filePath) == 1)
 	{
-		std::cout << "html part done : " << RESET << std::endl;
+		std::cout << "html part done : " << std::endl;
     	return generateHTMLPart(filePath);
 	}
 	if (lastExt(filePath) == "css")
     {
-		std::cout << "CSS part done : " << RESET << std::endl;
+		std::cout << "CSS part done : " << std::endl;
 		return generateCSSPart(filePath);
 	} 
 	if (lastExt(filePath) == "jpg")
 	{
-		std::cout << "jpg part done : " << RESET << std::endl;
+		std::cout << "jpg part done : " << std::endl;
 		return generateImagePart(filePath);
 	}
 	if (lastExt(filePath) == "ico")
 	{
-		std::cout << "ico part done : " << RESET << std::endl;
+		std::cout << "ico part done : " << std::endl;
 		return generateFaviconPart(filePath);
 	}
-	std::cout << RESET << std::endl;
     return (NULL);
 }
 
@@ -284,4 +269,21 @@ std::string	createFilePath(std::string root_path, std::string relativ_path)
 	adjust(relativ_path);
 	std::string file_path = root_path + relativ_path;
 	return (file_path);
+}
+
+std::string toString(Method method) {
+    switch (method) {
+        case DEFAULT:
+			return "DEFAULT";
+        case GET:
+            return "GET";
+        case POST:
+            return "POST";
+        case DELETE:
+            return "DELETE";
+        case PUT:
+            return "PUT";
+        default:
+            return "UNKNOWN";
+    }
 }

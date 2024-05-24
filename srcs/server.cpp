@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/22 12:50:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/21 13:41:43 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "server.hpp"
 #include "server_manager.hpp"
 #include "request.hpp"
@@ -78,14 +66,6 @@ void	Server::addConnection(int client_fd, std::string client_ip, int client_port
 
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
-	//this->_manager->setFd(client_fd, "_write_set");
-
-	/*
-	std::cout << RED << "READ SET" << RESET << std::endl;
-	ft::displayFdSet(this->_manager->getFdReadSet());
-	std::cout << RED << "WRITE SET" << RESET << std::endl;
-	ft::displayFdSet(this->_manager->getFdWriteSet());
-	*/
 }
 
 bool	Server::hasNewConnection(int fd, fd_set &set) {

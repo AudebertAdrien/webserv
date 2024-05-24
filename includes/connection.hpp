@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/20 15:59:59 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 14:43:48 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,9 @@
 #include <map>
 #include <sys/socket.h>
 
-#include "webserv_macro.hpp"
 #include "libft.hpp"
 #include "utils.hpp"
+#include "webserv_macro.hpp"
 
 class Request;
 class Server;
@@ -40,11 +40,6 @@ class Connection
 		bool	parseHeader();
 		bool	parseBody();
 
-
-		/* == setter == */
-		void			setRequest(Request *new_request);
-		void			setRespons(Response *new_respons);
-
 		/* == getter == */
 		Request*		getRequest() const;
 		Response*		getRespons() const;
@@ -55,8 +50,8 @@ class Connection
 		int				getClientPort() const;
 		
 	private:
-		void	initiateResponse(Location &loc);
-		void	closestMatch();
+		void			initiateResponse(Location &loc);
+		void			closestMatch();
 
 		Server		*_server;
 		Request		*_request;

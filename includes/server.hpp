@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:16 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:44:43 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/22 14:17:34 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,8 @@
 #include "config.hpp"
 
 #include "libft.hpp"
-#include "webserv_macro.hpp"
 #include "utils.hpp"
+#include "webserv_macro.hpp"
 
 class ServerManager;
 class Request;
