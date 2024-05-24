@@ -22,6 +22,7 @@
 
 #include "location.hpp"
 #include "request.hpp"
+#include "webserv_macro.hpp"
 
 const std::string HTML_FILE_PATH = "index.html";
 
@@ -39,12 +40,11 @@ void        split(const std::string& str, char delimiter, std::vector<std::strin
 
 
 //FONCTION TO CHOOSE THE GOOD LOCATION
-int         countCommonCharacters(const std::string &s1, const std::string &s2);
 int         findClosestStringIndex(const std::string &target, const std::vector<Location *> &vecteur);
 
 
 //FONCTION TO GENERATE RESPONSE
-std::string loadFileContent3(const std::string& filePath);
+std::string loadImageFileContent(const std::string& filePath);
 std::string loadFileContent(const std::string& filePath);
 std::string generateCSSPart(std::string filePath);
 std::string generateHTMLPart(std::string filePath);
