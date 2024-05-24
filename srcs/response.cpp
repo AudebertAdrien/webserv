@@ -47,7 +47,7 @@ Response::Response(Connection &connection, Server &server)
 
         std::string for_method_env = "REQUEST_METHOD=" + method;
 
-        sprintf(method_env, for_method_env.c_str());
+        sprintf(method_env, "%s",for_method_env.c_str());
         sprintf(param_env, "QUERY_STRING=%s", param.c_str());
 
         putenv(method_env);

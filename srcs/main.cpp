@@ -23,7 +23,7 @@
 
 #include "webserv_macro.hpp"
 
-int main(int ac, char **av, char **env) 
+int main(int ac, char **av) 
 {
 	ServerManager	manager;
 
@@ -32,7 +32,7 @@ int main(int ac, char **av, char **env)
 	}
 
 	try {
-		manager.createServer(av[1], env);
+		manager.createServer(av[1]);
 		manager.runServer();
 
 	} catch (std::exception &e) {

@@ -115,7 +115,6 @@ void    Location::handleBody(std::string line)
         i++;
     }
     this->_body_file.insert(std::make_pair(key, value));
-    std::multimap<std::string , std::string>::iterator  it = this->_body_file.begin();
 }
 
 void    Location::fullFillLocation(std::vector<std::string> lines)

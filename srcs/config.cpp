@@ -12,7 +12,7 @@
 
 #include "config.hpp"
 
-Config::Config(std::string config_block, char **env) {
+Config::Config(std::string config_block) {
 	std::istringstream	iss(config_block);
 	std::string	line;
 

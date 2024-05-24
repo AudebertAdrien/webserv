@@ -74,10 +74,9 @@ int	lastWordaFile(std::string str)
 
 int	lastNotaBS(std::string str)
 {
-    if (str.empty())
-        return (0);
-	else if (str[str.length() - 1] != '/')
+	if (!str.empty() && str[str.length() - 1] != '/')
     	return (1);
+    return (0);
 }
 
 void	adjust(std::string& str)
@@ -100,7 +99,7 @@ int findClosestStringIndex(const std::string &target, const std::vector<Location
 		return -1;
 
     int closestIndex = 0;
-	int  maxCommonCharacters = 0;
+	long unsigned   maxCommonCharacters = 0;
 
 	std::cout << RED << "target: " << target << RESET << std::endl;
     for (size_t i = 0; i < vecteur.size(); ++i) 
@@ -219,8 +218,7 @@ int	lastElem(std::string str)
 {
 	if (str[str.length() - 1] == '/')
     	return (1);
-	else
-		return (0);
+	return (0);
 }
 
 std::string lastExt(const std::string &str)
