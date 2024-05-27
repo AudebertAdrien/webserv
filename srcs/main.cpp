@@ -18,14 +18,36 @@
 #include <arpa/inet.h>  // For htons() function
 #include <cerrno>
 #include <sstream>
+#include <csignal>		// For signal() functions
+#include <iostream>
 
 #include "server_manager.hpp"
 
 #include "webserv_macro.hpp"
 
+void signalHandler(int signum) 
+{
+    std::cout << std::endl <<"######################### " << GREEN << "THANK FOR USING OUR WEB SERVER " << RESET <<"########################" << std::endl;
+	std::cout << "######################### " << GREEN << "CLOSING SERVEURS " << std::flush;
+	for (int i = 0; i < 5; i++)
+	{
+		std::cout << ". " << std::flush;
+		sleep(1);
+	}
+	std::cout << RESET <<"########################" << std::endl;
+	//std::cout << "#########################" << GREEN <<  " 👋🏻👋🏻 BYE BYE 👋🏾👋🏾 " << RESET << "########################" << std::endl;
+    std::cout << "#########################" << GREEN <<  " 👋🏻👋 BYE BYE 👋🏾👋 " << RESET << "########################" << std::endl;
+	std::cout << "#########################" <<  " MOTOKO AND THEOUCHE " << RESET << "########################" << std::endl;
+	// clear tout ce qui doit etre clear
+    
+    exit(signum);
+}
+
 int main(int ac, char **av) 
 {
 	ServerManager	manager;
+
+	signal(SIGINT, signalHandler);
 
 	if (ac > 2) {
 		std::cout << "error : There are too many arguments!" << std::endl;

@@ -166,6 +166,23 @@ std::string generateHTMLPart(std::string filePath)
     return (part.str());
 }
 
+std::string generateHTMLPartWithExt(std::string filePath) 
+{
+    std::string htmlContent = loadFileContent(filePath);
+    if (htmlContent.empty()) 
+	{
+		std::cerr << RED <<"HTML not find " << strerror(errno) << RESET << std::endl;
+        return "";
+    }
+
+    std::stringstream part;
+    part << "Content-Type: text/html" << "\r\n"
+		 << "Content-Length: " << htmlContent.length()
+         << "\r\n\r\n"
+         << htmlContent;
+    return (part.str());
+}
+
 std::string generateCSSPart(std::string filePath) 
 {
     std::string cssContent = loadFileContent(filePath);
@@ -241,17 +258,21 @@ std::string generateResponse(std::string filePath)
 		std::cout << "html part done : " << std::endl;
     	return generateHTMLPart(filePath);
 	}
-	if (lastExt(filePath) == "css")
+    else if (lastExt(filePath) == "html")
+    {
+        return generateHTMLPartWithExt(filePath);
+    }
+	else if (lastExt(filePath) == "css")
     {
 		std::cout << "CSS part done : " << std::endl;
 		return generateCSSPart(filePath);
 	} 
-	if (lastExt(filePath) == "jpg")
+	else if (lastExt(filePath) == "jpg")
 	{
 		std::cout << "jpg part done : " << std::endl;
 		return generateImagePart(filePath);
 	}
-	if (lastExt(filePath) == "ico")
+	else if (lastExt(filePath) == "ico")
 	{
 		std::cout << "ico part done : " << std::endl;
 		return generateFaviconPart(filePath);

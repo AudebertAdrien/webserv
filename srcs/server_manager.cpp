@@ -65,10 +65,15 @@ void	ServerManager::setFd(int fd, std::string fd_type) {
 
 void	ServerManager::runServer()
 {
-	std::cout << "######################### RUN SERVERS ########################" << std::endl;
+	std::cout << "######################### WELCOME TO OUR WEB SERVERS ########################" << std::endl;
 
+	std::cout << "OUR WEB SERVERS IS ACCESSIBLE THROUGHT THE FOLLOWING PORT :" << std::endl;
+
+	for(std::vector<Server *>::iterator	it = this->_servers.begin(); it != this->_servers.end(); it++)
+	{
+		std::cout << (*it)->getPort() << std::endl;
+	}
 	std::vector<Server *>::iterator	it = this->_servers.begin();
-
 	FD_ZERO(&(this->_read_set));
 	FD_ZERO(&(this->_read_copy_set));
 	FD_ZERO(&(this->_write_set));

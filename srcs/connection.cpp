@@ -174,4 +174,22 @@ void	Connection::solveRequest() {
 		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
 			std::cerr << "Send failed: " << strerror(errno) << std::endl;
 	}
+	else if (this->_request->getMethod() == DELETE)
+	{
+		std::cout << GREEN <<"do something" << RESET << std::endl;
+	}
+	else
+	{
+		int met = this->_request->getMethod();
+		if (met == DEFAULT || met == HEAD || met == PUT || met == OPTIONS || met == TRACE)
+		{
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/501.html");
+			this->_response->sendResponse(this->_fd);
+		}
+		else
+		{
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/400.html");
+			this->_response->sendResponse(this->_fd);
+		}
+	}
 }
