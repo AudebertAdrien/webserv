@@ -29,7 +29,7 @@ void signalHandler(int signum)
 {
     std::cout << std::endl <<"######################### " << GREEN << "THANK FOR USING OUR WEB SERVER " << RESET <<"########################" << std::endl;
 	std::cout << "######################### " << GREEN << "CLOSING SERVEURS " << std::flush;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		std::cout << ". " << std::flush;
 		sleep(1);

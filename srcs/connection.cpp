@@ -66,7 +66,7 @@ bool	Connection::parseStartLine() {
 	std::getline(iss, first_line);
 
 	std::cout << RED << first_line << RESET << std::endl;
-	this->_request->addMethod(header);
+	this->_request->addMethod(first_line);
 	this->_request->setPhase(Request::ON_HEADER);
 	return true;
 }
@@ -159,10 +159,11 @@ void	Connection::solveRequest() {
 		//this->_response->createResponse(this->_server->getLocation()[index]->getLocMatchUri());
 		this->_response->createResponse(file_path);
 		this->_response->sendResponse(this->_fd);
+		return ;
 	}
 
 	/* == temporary method POST == */
-	if (this->_request->getMethod() == POST) {
+	else if (this->_request->getMethod() == POST) {
 		std::cout << "==POST==" << std::endl;
 
 		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
@@ -173,23 +174,29 @@ void	Connection::solveRequest() {
 		std::string response = oss.str();
 		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
 			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		return ;
 	}
+
 	else if (this->_request->getMethod() == DELETE)
 	{
 		std::cout << GREEN <<"do something" << RESET << std::endl;
+		return ;
 	}
 	else
 	{
 		int met = this->_request->getMethod();
+		std::cout << RED << "!!!!!!!!! Error, met vaut = " << met << "   rappel 1=GET, 2=HEAD, 3=POST, 4=PUT, 5=DELETE, 6=OPTION 7=TRACE" << RESET <<std::endl;
 		if (met == DEFAULT || met == HEAD || met == PUT || met == OPTIONS || met == TRACE)
 		{
 			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/501.html");
 			this->_response->sendResponse(this->_fd);
+			return ;
 		}
 		else
 		{
 			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/400.html");
 			this->_response->sendResponse(this->_fd);
+			return ;
 		}
 	}
 }
