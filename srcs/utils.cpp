@@ -223,7 +223,7 @@ std::string lastExt(const std::string &str)
 std::string generateResponse(std::string filePath) 
 {
     std::string response;
-	std::cout << "###### " << filePath << "######"<< std::endl;
+	std::cout << "######@ " << filePath << " @######"<< std::endl;
 	if (lastElem(filePath) == 1)
 	{
 		std::cout << "html part done : " << std::endl;

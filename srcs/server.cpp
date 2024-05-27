@@ -64,6 +64,8 @@ void	Server::setPort(std::string server_block)
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port, *this);
 
+	std::cout << "CLIENT ID: " << client_ip << " CLIENT PORT: " << client_port << std::endl;
+
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
 }
@@ -135,16 +137,16 @@ void	Server::run() {
 	std::map<int, Connection *>::iterator it = _connections.begin();
 	while (it != _connections.end())
 	{
-		std::map<int, Connection *>::iterator it2 = it;
+		std::map<int, Connection *>::iterator it2 = it++;
 		int fd = it2->first;
 
 		if (FD_ISSET(fd, &this->_manager->getFdReadSetCopy())) {
 			runRecvAndSolve(*(it2->second));
 			removeFromSet(fd);
 			close(fd);
-        	//this->_connections.erase(fd);
-		}
-		it++;
+        	this->_connections.erase(it2);
+
+		} 	
 	}
 }
 

@@ -140,7 +140,7 @@ void	Connection::solveRequest() {
 	if (this->_request->getMethod() == GET)	{
 		std::cout << "==GET==" << std::endl;
 
-		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath() , this->_request->getRelativPath());
+		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
 		std::cout << GREEN << file_path << RESET << std::endl;
 
 		this->_response->createResponse(file_path);
