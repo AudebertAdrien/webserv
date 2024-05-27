@@ -49,19 +49,15 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
         char *argv[] = {const_cast<char*>(path.c_str()), NULL};
 
         execv(path.c_str(), argv);
-        //execl(path.c_str(), path.c_str(), NULL);
         perror("execl");
         exit(1);
-    } else { // Parent process
+    } else {
         close(cgi_output[1]);
         close(cgi_input[0]);
 
-        // first, send status line
         const char *status_line = "HTTP/1.1 200 OK\r\n";
         send(client_fd, status_line, strlen(status_line), 0);
 
-
-        // second, read the script and send it
         char buffer[1024];
         int n;
 
@@ -119,9 +115,6 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
 
 	while (totalBytesSent < dataLength) {
 		ssize_t bytesSent = send(fd, dataPtr + totalBytesSent, dataLength - totalBytesSent, MSG_NOSIGNAL);
-		if (bytesSent == -1) {
-			std::cout << "bytesSent: " << std::endl;
-		}
 		totalBytesSent += bytesSent;
 	}
 }

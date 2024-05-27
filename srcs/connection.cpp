@@ -143,7 +143,6 @@ void	Connection::solveRequest() {
 		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath() , this->_request->getRelativPath());
 		std::cout << GREEN << file_path << RESET << std::endl;
 
-		//this->_response->createResponse(this->_server->getLocation()[index]->getLocMatchUri());
 		this->_response->createResponse(file_path);
 		this->_response->sendResponse(this->_fd);
 	}
