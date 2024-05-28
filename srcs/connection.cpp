@@ -53,14 +53,14 @@ bool	Connection::parseStartLine() {
 	std::string first_line;
 	std::getline(iss, first_line);
 
-	std::cout << RED << first_line << RESET << std::endl;
+	//std::cout << RED << first_line << RESET << std::endl;
 	this->_request->addMethod(header);
 	this->_request->setPhase(Request::ON_HEADER);
 	return true;
 }
 
 bool	Connection::parseHeader() {
-	//std::cout << "parseHeader" << std::endl;
+	std::cout << "parseHeader" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -88,7 +88,7 @@ bool	Connection::parseHeader() {
 }
 
 bool	Connection::parseBody() {
-	//std::cout << "parseBody" << std::endl;
+	std::cout << "parseBody" << std::endl;
 	std::string rest(_buffer);
 
 	_request->addContent(rest);
@@ -102,6 +102,7 @@ void	Connection::recvRequest() {
 	while (bytes_received > 0) {
 
 		bytes_received = recv(this->_fd, this->_buffer, sizeof(this->_buffer), 0);
+		std::cout << RED << _buffer << RESET << std::endl;
 		if (bytes_received == -1) {
 			break;
 		} else if (bytes_received == 0) {
@@ -125,6 +126,26 @@ void	Connection::recvRequest() {
 	}
 } 
 
+void	Connection::handleQuery(std::string &fp) {
+    std::string script_path = fp;
+    std::string param_string = "";
+
+    if (fp.find("?") != std::string::npos) {
+    	std::cout << GREEN << "fp.find" << RESET << std::endl;
+
+        param_string = fp.substr(fp.find("?") + 1);
+        script_path = fp.substr(0, script_path.find("?"));
+    }
+
+	std::string filename;
+    size_t pos = fp.find("filename=");
+    if (pos != std::string::npos) {
+		filename = fp.substr(pos + 9);
+	}
+
+    std::cout << RED << "filename: " << filename <<  RESET << std::endl;
+}
+
 void	Connection::solveRequest() {
 	ft::displayMap(this->_request->getHeader());
 	std::cout << this->_server->getPort() << std::endl;
@@ -137,11 +158,11 @@ void	Connection::solveRequest() {
 	std::cout << "getRelativePath: " << this->_request->getRelativPath() << std::endl;
 	std::cout << "this->_server->getLocation()[index]: " << this->_server->getLocation()[index]->getRootPath() << std::endl;
 
+	std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
+	std::cout << GREEN << file_path << RESET << std::endl;
+
 	if (this->_request->getMethod() == GET)	{
 		std::cout << "==GET==" << std::endl;
-
-		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
-		std::cout << GREEN << file_path << RESET << std::endl;
 
 		this->_response->createResponse(file_path);
 		this->_response->sendResponse(this->_fd);
@@ -151,6 +172,8 @@ void	Connection::solveRequest() {
 	if (this->_request->getMethod() == POST) {
 		std::cout << "==POST==" << std::endl;
 
+		handleQuery(file_path);
+		
 		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		std::string body = "Hello from server!!! Method POST processed !\n";

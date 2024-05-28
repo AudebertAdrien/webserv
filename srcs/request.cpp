@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:12 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/19 18:03:26 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/28 14:28:22 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,8 @@ void	Request::addHeader(std::string &line) {
 	if (pos != std::string::npos) {
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);
+
+		//std::cout << "key : " << key << " val : " << value << std::endl;
 
 		this->_headers.insert(std::make_pair(key, value));
 	}

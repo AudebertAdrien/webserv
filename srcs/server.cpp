@@ -145,7 +145,6 @@ void	Server::run() {
 			removeFromSet(fd);
 			close(fd);
         	this->_connections.erase(it2);
-
 		} 	
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:51:31 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 18:33:03 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/27 16:47:36 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class Response
 
 		void	createResponse(std::string fp);
 		void	sendResponse(int fd);
+
 		void	handleCGI(std::string fp, int client_fd);
 		void	execCGI(int client_fd, std::string method, std::string path, std::string param);
 

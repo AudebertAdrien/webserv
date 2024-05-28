@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 14:43:48 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/27 18:51:07 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ class Connection
 		bool	parseHeader();
 		bool	parseBody();
 
+		void	handleQuery(std::string &fp);
+
 		/* == getter == */
 		Request*		getRequest() const;
 		Response*		getRespons() const;
@@ -62,7 +64,7 @@ class Connection
         int			_client_port;
         timeval 	_last_request;
 
-		char		_buffer[1000];
+		char		_buffer[10000];
 };
 
 #endif
