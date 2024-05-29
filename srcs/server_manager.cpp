@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   server_manager.cpp                                 :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/24 17:31:26 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/22 16:34:57 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "server_manager.hpp"
 #include "server.hpp"
 
@@ -94,6 +82,7 @@ void	ServerManager::runServer()
 
 		this->_read_copy_set = this->_read_set;
 		this->_write_copy_set = this->_write_set;
+
 		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1){
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);

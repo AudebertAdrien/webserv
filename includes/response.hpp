@@ -33,7 +33,7 @@ class Response
 		Response(Connection &connection, Server &server);
         ~Response();
 
-		void	createResponse(std::string fp);
+		void	createResponse(std::string fp, std::string status);
 		void	sendResponse(int fd);
 		void	handleCGI(std::string fp, int client_fd);
 		void	execCGI(int client_fd, std::string method, std::string path, std::string param);

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:34 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 18:49:08 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/27 14:12:42 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,6 @@ class Location
         std::string									_loc_match_uri;
         std::vector<std::string>					_allow_method;
         std::multimap<std::string , std::string>	_body_file;
-
 };
 
 #endif

@@ -23,6 +23,36 @@ Request::Request(Connection &connection, Server &server) {
 Request::~Request() {
 }
 
+void	Request::writeFiles()
+{
+	for (std::map<std::string, FileData>::const_iterator it = _parsed_data.begin(); it != _parsed_data.end(); ++it) 
+	{
+        const FileData &file_data = it->second;
+        
+        // Déterminer le mode d'ouverture en fonction du type de contenu
+        std::ios_base::openmode mode = std::ios::out;												//Full CHATGPT 😬
+        if (file_data.content_type.find("text/") == std::string::npos) 								//Full CHATGPT 😬
+		{																							//Full CHATGPT 😬
+            mode |= std::ios::binary;																//Full CHATGPT 😬
+        }																							//Full CHATGPT 😬
+		
+		
+		std::string file_path = "/home/tlorne/Webserv/git_webserv/upload/" + file_data.filename;	//Full CHATGPT 😬
+																									//Full CHATGPT 😬
+        std::ofstream outfile(file_path.c_str(), mode);												//Full CHATGPT 😬
+        if (outfile.is_open()) {																	//Full CHATGPT 😬
+            outfile.write(file_data.content.c_str(), file_data.content.size());						//Full CHATGPT 😬
+            outfile.close();																		//Full CHATGPT 😬
+            std::cout << "Successfully wrote " << file_data.filename << std::endl;					//Full CHATGPT 😬
+        } 																							//Full CHATGPT 😬
+		else 																						//Full CHATGPT 😬
+		{																							//Full CHATGPT 😬
+            std::cerr << "Failed to write " << file_data.filename << std::endl;						//Full CHATGPT 😬
+        }																							//Full CHATGPT 😬
+	}
+}
+
+/* == setter == */
 void	Request::addHeader(std::string &line) {
 	std::string key, value;
 
@@ -32,6 +62,14 @@ void	Request::addHeader(std::string &line) {
 		std::string value = line.substr(pos + 1);
 
 		this->_headers.insert(std::make_pair(key, value));
+		if (value.find(";") != std::string::npos)
+		{
+			std::string key2, value2;
+			key2 = line.substr(value.find(";"), value.find("="));
+			value2 = line.substr(value.find("=") + 1);
+			this->_headers.insert(std::make_pair(key2, value2));
+			this->_upload = 1;
+		}
 	}
 }
 
@@ -44,6 +82,18 @@ void	Request::addMethod(std::string &line) {
 		this->_method = GET;
 	if (method == "POST")
 		this->_method = POST;
+	if (method == "DELETE")
+		this->_method = DELETE;
+	if (method == "HEAD")
+		this->_method = HEAD;
+	if (method == "PUT")
+		this->_method = PUT;
+	if (method == "OPTIONS")
+		this->_method = OPTIONS;
+	if (method == "TRACE")
+		this->_method = TRACE;
+	if (method == "DEFAULT")
+		this->_method = DEFAULT;
 	iss >> this->_relativ_path;
 }
 
@@ -55,7 +105,7 @@ void	Request::setPhase(Phase new_phase) {
 	this->_phase = new_phase;
 }
 
-/* == getter */
+/* == getter == */
 std::map<std::string, std::string>	Request::getHeader() const
 {
 	return (_headers);
@@ -109,4 +159,14 @@ Request::Phase	Request::getPhase() const
 std::string		Request::getRelativPath() const
 {
 	return (this->_relativ_path);
+}
+
+int	Request::getUpload() const
+{
+	return (this->_upload);
+}
+
+std::map<std::string, FileData>		Request::getParsedData()
+{
+	return (this->_parsed_data);
 }

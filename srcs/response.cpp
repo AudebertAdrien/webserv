@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   response.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/22 12:51:25 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 19:01:04 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "response.hpp"
 #include "server.hpp"
 #include "connection.hpp"
@@ -20,12 +8,11 @@ Response::Response(Connection &connection, Server &server)
 	this->_server = &server;
 }
 
- Response::~Response()
- {
+Response::~Response()
+{
+}
 
- }
-
- void   Response::execCGI(int client_fd, std::string method, std::string path, std::string param)
+void   Response::execCGI(int client_fd, std::string method, std::string path, std::string param)
  {
     int cgi_output[2];
     int cgi_input[2];
@@ -62,19 +49,15 @@ Response::Response(Connection &connection, Server &server)
         char *argv[] = {const_cast<char*>(path.c_str()), NULL};
 
         execv(path.c_str(), argv);
-        //execl(path.c_str(), path.c_str(), NULL);
         perror("execl");
         exit(1);
-    } else { // Parent process
+    } else {
         close(cgi_output[1]);
         close(cgi_input[0]);
 
-        // first, send status line
         const char *status_line = "HTTP/1.1 200 OK\r\n";
         send(client_fd, status_line, strlen(status_line), 0);
 
-
-        // second, read the script and send it
         char buffer[1024];
         int n;
 
@@ -108,9 +91,9 @@ Response::Response(Connection &connection, Server &server)
     execCGI(client_fd, toString(this->_connection->getRequest()->getMethod()), script_path, param_string);
  }
 
- void   Response::createResponse(std::string fp)
+ void   Response::createResponse(std::string fp, std::string status)
  {
-    this->_header = "HTTP/1.1 200 OK\r\n";
+    this->_header = "HTTP/1.1 " + status +"\r\n";
     if (fp.find("cgi") != std::string::npos)
     {
         std::cout << "cgi part has to be handle : " << RESET << std::endl;
@@ -122,7 +105,7 @@ Response::Response(Connection &connection, Server &server)
 	std::ostringstream oss;
 	oss << this->_header << this->_body;
 	this->_response = oss.str();
- }
+}
 
  void   Response::sendResponse(int fd)
  {
@@ -134,10 +117,10 @@ Response::Response(Connection &connection, Server &server)
 		ssize_t bytesSent = send(fd, dataPtr + totalBytesSent, dataLength - totalBytesSent, MSG_NOSIGNAL);
 		totalBytesSent += bytesSent;
 	}
- }
+}
 
- /* == getter == */
+/* == getter == */
 Connection*		Response::getConnection() const
 {
-    return (this->_connection);
+	return (this->_connection);
 }

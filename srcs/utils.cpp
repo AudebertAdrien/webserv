@@ -1,16 +1,20 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   utils.cpp                                          :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/05/17 19:10:06 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 18:56:33 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "utils.hpp"
+#include "libft.hpp"
+
+
+int checkAllowMethod(std::vector<std::string> vec, std::string tofind)
+{
+    ft::displayVector(vec);
+    ft::trimStr(tofind);
+    for (size_t i = 0; i < vec.size(); ++i)
+    {
+        ft::trimStr(vec[i]);
+        if (vec[i] == tofind)
+            return (1);
+        std::cout << RED << "NO MATCH vec[i] vaut #" << vec[i] <<"# alors que tofind vaut #" << tofind <<"#" << RESET << std::endl; 
+    }
+    return (0);
+}
 
 ////////// FONCTION TO CLEAN STRG /////////////
 
@@ -252,7 +256,7 @@ std::string lastExt(const std::string &str)
 std::string generateResponse(std::string filePath) 
 {
     std::string response;
-	std::cout << "###### " << filePath << "######"<< std::endl;
+	std::cout << "######@ " << filePath << " @######"<< std::endl;
 	if (lastElem(filePath) == 1)
 	{
 		std::cout << "html part done : " << std::endl;

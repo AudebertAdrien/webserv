@@ -26,6 +26,9 @@
 
 const std::string HTML_FILE_PATH = "index.html";
 
+// FONCTION TO CHECK A METHOD
+int checkAllowMethod(std::vector<std::string> vec, std::string tofind);
+
 // FONCTION TO CHANGE METHODE TO STRG
 std::string toString(Method method);
 

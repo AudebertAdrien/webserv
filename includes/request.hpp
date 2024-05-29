@@ -23,6 +23,12 @@ class Connection;
 
 #define MAX_BUFFER_SIZE 1024
 
+struct FileData {
+    std::string filename;
+    std::string content_type;
+    std::string content;
+	};
+
 class Request
 {
 	public:
@@ -31,19 +37,24 @@ class Request
 		Request(Connection &connection, Server &server);
         ~Request();
 
-		Connection		getConnection() const;
-		Server			getServer() const;
+		
+		void			writeFiles();
 
 		/* == getter == */
+		Connection							getConnection() const;
+		Server								getServer() const;
+
 		std::map<std::string, std::string>	getHeader() const;
-		Method			getMethod() const;
-		std::string		getContent() const;
-		std::string		getRelativPath() const;
-		Location		getLocation() const;
-		std::string		getUri() const;
-		URIType			getUriType() const;
-		TransferType	getTransferType() const;
-		Request::Phase	getPhase() const;
+		Method								getMethod() const;
+		std::string							getContent() const;
+		std::string							getRelativPath() const;
+		Location							getLocation() const;
+		std::string							getUri() const;
+		URIType								getUriType() const;
+		TransferType						getTransferType() const;
+		Request::Phase						getPhase() const;
+		int									getUpload() const;
+		std::map<std::string, FileData>		getParsedData();
 
 		/*== setter ==*/
 		void	addMethod(std::string &line);
@@ -68,6 +79,12 @@ class Request
 
 		std::string		_uri;
 		std::string		_origin;
+
+		/*== TEST ==*/
+		int				_upload;
+
+
+		std::map<std::string, FileData> _parsed_data;
 };
 
 #endif

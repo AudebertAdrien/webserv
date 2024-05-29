@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/25 14:04:02 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/20 14:16:55 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/20 18:14:28 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,15 @@ namespace ft {
 		file.close();
 		return (line);
 	}
+
+	template<typename I, typename C>
+		void	removeElementInMap(std::map<I, C>& connection, const I& keyToRemove) {
+			typename std::map<I, C>::iterator it = connection.find(keyToRemove);
+
+			if (it != connection.end()) {
+				connection.erase(it);
+			}
+		}
 
 	bool	findKeyInMap(const std::map<std::string, std::string>& myMap, const std::string& key) {
 		std::map<std::string, std::string>::const_iterator it = myMap.find(key);

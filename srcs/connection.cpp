@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   connection.cpp                                     :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/22 12:50:51 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 18:54:18 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "connection.hpp"
 #include "request.hpp"
 #include "server.hpp"
@@ -91,7 +79,6 @@ bool	Connection::parseHeader() {
 	}
 
 	if (ft::findKeyInMap(this->_request->getHeader(), "Content-Length")) {
-		std::cout << "!= npos : " << header_end << std::endl;
 		std::string body = http_request.substr(header_end + 4);
 		this->_request->addContent(body);
 		_buffer[0] = 0;
@@ -106,6 +93,80 @@ bool	Connection::parseBody() {
 
 	_request->addContent(rest);
 	return true;
+}
+
+void	Connection::parseBodyMultipart()
+{
+	std::string bondary;
+	std::map<std::string, std::string>::iterator it = this->_request->getHeader().find("boundary");
+
+	if (it == this->_request->getHeader().end()) {
+        std::cerr << "Boundary not found in headers" << std::endl;
+        return;
+    }
+	
+	bondary = "--" + it->second;
+
+	std::string::size_type boundary_len = bondary.length();
+	int	pos = 0;												// pour determiner d'ou repartir dans le find.
+
+	std::string::size_type header_end = this->_request->getContent().find(bondary, pos);
+	std::cout << "header end : " << header_end << std::endl;
+
+	while (header_end  != std::string::npos)
+	{
+		std::string part = this->_request->getContent().substr(pos, header_end - pos);// recupere la partie.
+
+		std::cout << "part = " << part << std::endl;
+		
+		pos = header_end + boundary_len + 2;				 //reinitialise la position (+2 pour sauter les \r\n d'apres chatgptouille)
+		if (part == bondary + "--" || part.empty()) {
+            break;
+        }
+
+		// separe le header du content sur la partie
+		std::string::size_type part_header_end = part.find("\r\n\r\n");
+        if (part_header_end == std::string::npos) continue; // Malformed part
+        std::string part_headers = part.substr(0, part_header_end);
+        std::string part_content = part.substr(part_header_end + 4);
+
+		//extrait infos interressante
+		std::istringstream headers_stream(part_headers);
+        std::string header;
+        std::string name, filename, content_type;
+        while (std::getline(headers_stream, header)) 
+		{
+            if (header.find("Content-Disposition:") != std::string::npos) 
+			{
+                std::string::size_type name_pos = header.find("name=\"");
+                if (name_pos != std::string::npos) {
+                    name_pos += 6; // Avancer de la longueur de 'name="'
+                    std::string::size_type name_end = header.find("\"", name_pos);
+                    name = header.substr(name_pos, name_end - name_pos);
+                }
+
+                std::string::size_type filename_pos = header.find("filename=\"");
+                if (filename_pos != std::string::npos) {
+                    filename_pos += 10; // Avancer de la longueur de 'filename="'
+                    std::string::size_type filename_end = header.find("\"", filename_pos);
+                    filename = header.substr(filename_pos, filename_end - filename_pos);
+                }
+            } 
+			else if (header.find("Content-Type:") != std::string::npos) {
+                content_type = header.substr(14);
+            }
+        }
+
+		// Stocker les informations du fichier
+        FileData file_data;
+        file_data.filename = filename;
+        file_data.content_type = content_type;
+        file_data.content = part_content;
+        this->_request->getParsedData()[name] = file_data;
+
+		header_end = this->_request->getContent().find(bondary, pos);
+	}
+	
 }
 
 void	Connection::recvRequest() {
@@ -128,11 +189,17 @@ void	Connection::recvRequest() {
 			}
 
 			if (this->_request->getPhase() == Request::ON_HEADER) {
- 				parseHeader();
+				parseHeader();
 			}
-
+			//ft::displayMap(this->_request->getHeader());
 			if (this->_request->getPhase() == Request::ON_BODY) {
 				parseBody();
+			}
+			if (this->_request->getMethod() == POST && this->_request->getUpload() == 1)
+			{
+				std::cout << " $$$$$$$$ ok $$$$$$$$$$$$$$" << std::endl;
+				parseBodyMultipart();
+				std::cout << " $$$$$$$$ ko $$$$$$$$$$$$$$" << std::endl;
 			}
 		}
 	}
@@ -152,28 +219,56 @@ void	Connection::solveRequest() {
 
 	if (this->_request->getMethod() == GET)	{
 		std::cout << "==GET==" << std::endl;
-
-		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath() , this->_request->getRelativPath());
+		std::cout << "check allow method" << std::endl;
+		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "GET") == 0)
+		{
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/405.html", "405 Method Not Allowed");
+			this->_response->sendResponse(this->_fd);
+			std::cout << RED <<"Wrong method" << RESET << std::endl;
+			return ;
+		}
+		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
 		std::cout << GREEN << file_path << RESET << std::endl;
 
-		//this->_response->createResponse(this->_server->getLocation()[index]->getLocMatchUri());
-		this->_response->createResponse(file_path);
+		this->_response->createResponse(file_path, "200 OK");
 		this->_response->sendResponse(this->_fd);
 		return ;
 	}
 
 	/* == temporary method POST == */
-	else if (this->_request->getMethod() == POST) {
+	else if (this->_request->getMethod() == POST) 
+	{
 		std::cout << "==POST==" << std::endl;
-
-		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
-		std::string header = "HTTP/1.1 200 OK\r\n";
-		std::string body = "Hello from server!!! Method POST processed !\n";
-		std::ostringstream oss;
-		oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
-		std::string response = oss.str();
-		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
-			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		std::cout << "check allow method" << std::endl;
+		/* if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "POST") == 0)
+		{
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/405.html", "405 Method Not Allowed");
+			this->_response->sendResponse(this->_fd);
+			std::cout << RED <<"Wrong method" << RESET << std::endl;
+		} */
+		if (this->_request->getUpload() == 1)
+		{
+			this->_request->writeFiles();
+			std::string response = 
+        		"HTTP/1.1 201 Created\r\n"
+        		"Content-Type: text/plain\r\n"
+        		"Content-Length: 23\r\n"
+        		"\r\n"
+        		"File uploaded successfully";
+			if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
+				std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		}
+		else
+		{
+			std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
+			std::string header = "HTTP/1.1 200 OK\r\n";
+			std::string body = "Hello from server!!! Method POST processed !\n";
+			std::ostringstream oss;
+			oss << header << "Content-Length: " << body.length() << "\r\n\r\n" << body;
+			std::string response = oss.str();
+			if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
+				std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		}
 		return ;
 	}
 
@@ -188,13 +283,13 @@ void	Connection::solveRequest() {
 		std::cout << RED << "!!!!!!!!! Error, met vaut = " << met << "   rappel 1=GET, 2=HEAD, 3=POST, 4=PUT, 5=DELETE, 6=OPTION 7=TRACE" << RESET <<std::endl;
 		if (met == DEFAULT || met == HEAD || met == PUT || met == OPTIONS || met == TRACE)
 		{
-			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/501.html");
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/501.html", "501 Not Implemented");
 			this->_response->sendResponse(this->_fd);
 			return ;
 		}
 		else
 		{
-			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/400.html");
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/400.html", "400 Bad Request");
 			this->_response->sendResponse(this->_fd);
 			return ;
 		}

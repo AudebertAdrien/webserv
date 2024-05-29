@@ -6,7 +6,7 @@
 /*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/09 13:07:35 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/27 15:21:03 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ void signalHandler(int signum)
 	for (int i = 0; i < 3; i++)
 	{
 		std::cout << ". " << std::flush;
-		sleep(1);
+		usleep(5000);
 	}
 	std::cout << RESET <<"########################" << std::endl;
 	//std::cout << "#########################" << GREEN <<  " 👋🏻👋🏻 BYE BYE 👋🏾👋🏾 " << RESET << "########################" << std::endl;
     std::cout << "#########################" << GREEN <<  " 👋🏻👋 BYE BYE 👋🏾👋 " << RESET << "########################" << std::endl;
-	std::cout << "#########################" <<  " MOTOKO AND THEOUCHE " << RESET << "########################" << std::endl;
+	std::cout << "#########################" <<  " MOTOKO   AND   THEOUCHE " << RESET << "########################" << std::endl;
 	// clear tout ce qui doit etre clear
     
     exit(signum);

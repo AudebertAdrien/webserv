@@ -20,6 +20,7 @@
 #include "libft.hpp"
 #include "utils.hpp"
 #include "webserv_macro.hpp"
+#include "request.hpp"
 
 class Request;
 class Server;
@@ -39,6 +40,7 @@ class Connection
 		bool	parseStartLine();
 		bool	parseHeader();
 		bool	parseBody();
+		void	parseBodyMultipart();
 
 		/* == getter == */
 		Request*		getRequest() const;
