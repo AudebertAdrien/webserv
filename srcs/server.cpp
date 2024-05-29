@@ -17,7 +17,7 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
 
-	setPort(server_block);
+	set(server_block);
 
 	memset(&_server_addr, '\0', sizeof(struct sockaddr_in));
 	_server_addr.sin_family          = AF_INET;
@@ -34,31 +34,37 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 		exit(EXIT_FAILURE);
 	}
  
-	fillVectorLocation(location_block);
-}
-
-Server::~Server() {
-}
-
-void    Server::fillVectorLocation(std::vector<std::string> location_block)
-{
     std::vector<std::string>::iterator it;
 	for (it = location_block.begin(); it != location_block.end(); it++) {
         this->_location.push_back(new Location(*it));
     }
 }
 
-void	Server::setPort(std::string server_block)
-{
-	std::istringstream iss(server_block);
-    std::string word;
+Server::~Server() {
+}
 
-	iss >> word;
-	while (word != "listen")
-		iss >> word;
-	iss >> word;
-	word.resize(word.size() - 1);
-	this->_port = atoi(word.c_str());
+void	Server::set(std::string server_block) {
+	std::istringstream stream(server_block);
+	std::string line;
+
+	while (std::getline(stream, line)) {
+		std::istringstream lineStream(line);
+		std::string directive;
+
+		lineStream >> directive;
+
+		if (directive == "listen") {
+			std::string portStr;
+			lineStream >> portStr;
+			portStr.resize(portStr.size() - 1);
+			this->_port = atoi(portStr.c_str());
+		} 
+		if (directive == "return") {
+			lineStream >> _redirect_status_code;
+			lineStream >> _redirect_link;
+
+		}
+	}
 }
 
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
@@ -68,10 +74,6 @@ void	Server::addConnection(int client_fd, std::string client_ip, int client_port
 
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
-}
-
-bool	Server::hasNewConnection(int fd, fd_set &set) {
-	return (FD_ISSET(fd, &set));
 }
 
 void	Server::acceptNewConnection() {
@@ -85,6 +87,7 @@ void	Server::acceptNewConnection() {
 		exit(EXIT_FAILURE);
 	}
 
+	/*
 	struct timeval timeout;
 	timeout.tv_sec = 3;
 	timeout.tv_usec = 0;
@@ -93,6 +96,7 @@ void	Server::acceptNewConnection() {
 		std::cerr << "Failed to set receive timeout" << std::endl;
 		exit(EXIT_FAILURE);
 	}
+	*/
 
 	int flags = fcntl(client_fd, F_GETFL, 0);
 	if (flags == -1) {
@@ -167,7 +171,15 @@ int	Server::getFd()
 	return (this->_fd);
 }
 
-std::vector<Location *>	&Server::getLocation()
+std::vector<Location *>&	Server::getLocation()
 {
 	return (this->_location);
+}
+
+std::string	Server::getRedirectLink() {
+	return (this->_redirect_link);
+}
+
+int	Server::getRedirectStatusCode() {
+	return (this->_redirect_status_code);
 }

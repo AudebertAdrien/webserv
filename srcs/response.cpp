@@ -78,9 +78,7 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
     std::string script_path = fp;
     std::string param_string = "";
 
-    if (fp.find("?") != std::string::npos) 
-    {
-
+    if (fp.find("?") != std::string::npos) {
     	std::cout << GREEN << "fp.find" << RESET << std::endl;
         param_string = fp.substr(fp.find("?") + 1);
         script_path = fp.substr(0, script_path.find("?"));

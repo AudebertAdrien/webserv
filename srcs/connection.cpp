@@ -39,7 +39,6 @@ int	Connection::getClientPort() const
 }
 
 bool	Connection::parseStartLine() {
-	//std::cout << "parseStartLine" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -53,14 +52,13 @@ bool	Connection::parseStartLine() {
 	std::string first_line;
 	std::getline(iss, first_line);
 
-	//std::cout << RED << first_line << RESET << std::endl;
+	std::cout << RED << first_line << RESET << std::endl;
 	this->_request->addMethod(header);
 	this->_request->setPhase(Request::ON_HEADER);
 	return true;
 }
 
 bool	Connection::parseHeader() {
-	std::cout << "parseHeader" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -82,13 +80,13 @@ bool	Connection::parseHeader() {
 		std::string body = http_request.substr(header_end + 4);
 		this->_request->addContent(body);
 		_buffer[0] = 0;
+
 		this->_request->setPhase(Request::ON_BODY);
 	}
 	return true;
 }
 
 bool	Connection::parseBody() {
-	std::cout << "parseBody" << std::endl;
 	std::string rest(_buffer);
 
 	_request->addContent(rest);
@@ -102,7 +100,6 @@ void	Connection::recvRequest() {
 	while (bytes_received > 0) {
 
 		bytes_received = recv(this->_fd, this->_buffer, sizeof(this->_buffer), 0);
-		std::cout << RED << _buffer << RESET << std::endl;
 		if (bytes_received == -1) {
 			break;
 		} else if (bytes_received == 0) {
@@ -116,7 +113,7 @@ void	Connection::recvRequest() {
 			}
 
 			if (this->_request->getPhase() == Request::ON_HEADER) {
- 				parseHeader();
+				parseHeader();
 			}
 
 			if (this->_request->getPhase() == Request::ON_BODY) {
@@ -126,26 +123,6 @@ void	Connection::recvRequest() {
 	}
 } 
 
-void	Connection::handleQuery(std::string &fp) {
-    std::string script_path = fp;
-    std::string param_string = "";
-
-    if (fp.find("?") != std::string::npos) {
-    	std::cout << GREEN << "fp.find" << RESET << std::endl;
-
-        param_string = fp.substr(fp.find("?") + 1);
-        script_path = fp.substr(0, script_path.find("?"));
-    }
-
-	std::string filename;
-    size_t pos = fp.find("filename=");
-    if (pos != std::string::npos) {
-		filename = fp.substr(pos + 9);
-	}
-
-    std::cout << RED << "filename: " << filename <<  RESET << std::endl;
-}
-
 void	Connection::solveRequest() {
 	ft::displayMap(this->_request->getHeader());
 	std::cout << this->_server->getPort() << std::endl;
@@ -154,9 +131,29 @@ void	Connection::solveRequest() {
 	this->_response = new Response(*this, *this->_server);
 
 	int	index = findClosestStringIndex(this->_request->getRelativPath(), this->_server->getLocation());
+	
+    std::string link = this->_server->getRedirectLink();
+	int status_code = this->_server->getRedirectStatusCode();
+	removeLastSemicolon(link);
 
-	std::cout << "getRelativePath: " << this->_request->getRelativPath() << std::endl;
-	std::cout << "this->_server->getLocation()[index]: " << this->_server->getLocation()[index]->getRootPath() << std::endl;
+	std::cout << GREEN << "link :" << link << ";" << "status_code :" << status_code << RESET << std::endl;
+   	if (!link.empty() && status_code) {
+		std::cout << GREEN <<"####### REDIRECT ######" << RESET << std::endl;
+
+		std::ostringstream header;
+		header << "HTTP/1.1 ";
+		header << status_code << " Moved Permanently\r\n";
+		header << "Location: " << link << "\r\n";
+		header << "Content-Length: 0\r\n";
+
+		std::string response = header.str();
+
+		std::cout << RED << response.c_str() << RESET << std::endl;
+
+		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		return ;
+	}
 
 	std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
 	std::cout << GREEN << file_path << RESET << std::endl;
@@ -172,8 +169,6 @@ void	Connection::solveRequest() {
 	if (this->_request->getMethod() == POST) {
 		std::cout << "==POST==" << std::endl;
 
-		handleQuery(file_path);
-		
 		std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
 		std::string header = "HTTP/1.1 200 OK\r\n";
 		std::string body = "Hello from server!!! Method POST processed !\n";

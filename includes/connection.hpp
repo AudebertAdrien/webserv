@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/27 18:51:07 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/29 13:19:48 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ class Connection
 		bool	parseStartLine();
 		bool	parseHeader();
 		bool	parseBody();
-
-		void	handleQuery(std::string &fp);
 
 		/* == getter == */
 		Request*		getRequest() const;
