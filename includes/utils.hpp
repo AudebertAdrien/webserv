@@ -19,6 +19,9 @@
 #include <iostream>
 #include <fstream>
 #include <cstring>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/stat.h>
 
 #include "location.hpp"
 #include "request.hpp"
@@ -35,11 +38,14 @@ std::string toString(Method method);
 // FONCTION TO CLEAN STRG
 void        trim(std::string& str);
 void        removeLastSemicolon(std::string& str);
+void        removeLastBS(std::string& str);
 bool        containsDot(const std::string& str);
 int         lastWordaFile(std::string str);
 int         lastNotaBS(std::string str);
 void        adjust(std::string& str);
 void        split(const std::string& str, char delimiter, std::vector<std::string>& tokens);
+bool        fileExists(const char* path);
+bool        hasAccess(const char* path, int mode);
 
 
 //FONCTION TO CHOOSE THE GOOD LOCATION
@@ -56,5 +62,6 @@ int	        lastElem(std::string str);
 std::string lastExt(const std::string &str);
 std::string generateResponse(std::string filePath);
 std::string	createFilePath(std::string root_path, std::string relativ_path);
+std::string generateDirectoryListing(const std::string& path);
 
 #endif

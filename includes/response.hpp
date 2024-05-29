@@ -37,6 +37,7 @@ class Response
 		void	sendResponse(int fd);
 		void	handleCGI(std::string fp, int client_fd);
 		void	execCGI(int client_fd, std::string method, std::string path, std::string param);
+		void	listOfDirectory(std::string fp);
 
 		/* == getter == */
 		Connection*		getConnection() const;

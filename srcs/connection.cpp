@@ -95,79 +95,6 @@ bool	Connection::parseBody() {
 	return true;
 }
 
-void	Connection::parseBodyMultipart()
-{
-	std::string bondary;
-	std::map<std::string, std::string>::iterator it = this->_request->getHeader().find("boundary");
-
-	if (it == this->_request->getHeader().end()) {
-        std::cerr << "Boundary not found in headers" << std::endl;
-        return;
-    }
-	
-	bondary = "--" + it->second;
-
-	std::string::size_type boundary_len = bondary.length();
-	int	pos = 0;												// pour determiner d'ou repartir dans le find.
-
-	std::string::size_type header_end = this->_request->getContent().find(bondary, pos);
-	std::cout << "header end : " << header_end << std::endl;
-
-	while (header_end  != std::string::npos)
-	{
-		std::string part = this->_request->getContent().substr(pos, header_end - pos);// recupere la partie.
-
-		std::cout << "part = " << part << std::endl;
-		
-		pos = header_end + boundary_len + 2;				 //reinitialise la position (+2 pour sauter les \r\n d'apres chatgptouille)
-		if (part == bondary + "--" || part.empty()) {
-            break;
-        }
-
-		// separe le header du content sur la partie
-		std::string::size_type part_header_end = part.find("\r\n\r\n");
-        if (part_header_end == std::string::npos) continue; // Malformed part
-        std::string part_headers = part.substr(0, part_header_end);
-        std::string part_content = part.substr(part_header_end + 4);
-
-		//extrait infos interressante
-		std::istringstream headers_stream(part_headers);
-        std::string header;
-        std::string name, filename, content_type;
-        while (std::getline(headers_stream, header)) 
-		{
-            if (header.find("Content-Disposition:") != std::string::npos) 
-			{
-                std::string::size_type name_pos = header.find("name=\"");
-                if (name_pos != std::string::npos) {
-                    name_pos += 6; // Avancer de la longueur de 'name="'
-                    std::string::size_type name_end = header.find("\"", name_pos);
-                    name = header.substr(name_pos, name_end - name_pos);
-                }
-
-                std::string::size_type filename_pos = header.find("filename=\"");
-                if (filename_pos != std::string::npos) {
-                    filename_pos += 10; // Avancer de la longueur de 'filename="'
-                    std::string::size_type filename_end = header.find("\"", filename_pos);
-                    filename = header.substr(filename_pos, filename_end - filename_pos);
-                }
-            } 
-			else if (header.find("Content-Type:") != std::string::npos) {
-                content_type = header.substr(14);
-            }
-        }
-
-		// Stocker les informations du fichier
-        FileData file_data;
-        file_data.filename = filename;
-        file_data.content_type = content_type;
-        file_data.content = part_content;
-        this->_request->getParsedData()[name] = file_data;
-
-		header_end = this->_request->getContent().find(bondary, pos);
-	}
-	
-}
 
 void	Connection::recvRequest() {
 	this->_request = new Request(*this, *this->_server);			
@@ -195,12 +122,6 @@ void	Connection::recvRequest() {
 			if (this->_request->getPhase() == Request::ON_BODY) {
 				parseBody();
 			}
-			if (this->_request->getMethod() == POST && this->_request->getUpload() == 1)
-			{
-				std::cout << " $$$$$$$$ ok $$$$$$$$$$$$$$" << std::endl;
-				parseBodyMultipart();
-				std::cout << " $$$$$$$$ ko $$$$$$$$$$$$$$" << std::endl;
-			}
 		}
 	}
 } 
@@ -227,9 +148,30 @@ void	Connection::solveRequest() {
 			std::cout << RED <<"Wrong method" << RESET << std::endl;
 			return ;
 		}
+		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("autoindex"), "on;") == 1)
+		{
+			std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
+			std::cout << GREEN << file_path << RESET << std::endl;
+			if (containsDot(this->_request->getRelativPath()) == 0)
+			{
+				std::cout << "###############################3est un repertoir" << std::endl;
+				this->_response->listOfDirectory(file_path);
+			}		
+			else													// c'est un fichier
+			{
+				removeLastBS(file_path);
+				if (fileExists(file_path.c_str()) == 0) // est ce que le fichier existe ?
+					this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/404.html", "404 Not Found");
+				if (fileExists(file_path.c_str()) == 1 && hasAccess(file_path.c_str(), R_OK) == 0) // est ce que le client peut y acceder ? 
+					this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/403.html", "403 Forbidden");
+				if (fileExists(file_path.c_str()) ==  1 && hasAccess(file_path.c_str(), R_OK) == 1)
+					this->_response->createResponse(file_path, "200 OK");
+			}
+			this->_response->sendResponse(this->_fd);
+			return ;
+		}
 		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
 		std::cout << GREEN << file_path << RESET << std::endl;
-
 		this->_response->createResponse(file_path, "200 OK");
 		this->_response->sendResponse(this->_fd);
 		return ;

@@ -119,6 +119,18 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
 	}
 }
 
+void    Response::listOfDirectory(std::string fp)
+{
+    std::cout << "doit faire apparaitre la liste" << std::endl;
+    this->_header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
+    removeLastBS(fp);
+    std::cout << GREEN << "dans list of directory, le bon path est : " << fp << RESET << std::endl;
+    this->_body = generateDirectoryListing(fp);
+	std::ostringstream oss;
+	oss << this->_header << this->_body;
+	this->_response = oss.str();
+}
+
 /* == getter == */
 Connection*		Response::getConnection() const
 {

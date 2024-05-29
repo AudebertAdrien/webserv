@@ -57,6 +57,13 @@ void removeLastSemicolon(std::string& str)
     }
 }
 
+void removeLastBS(std::string& str)
+{
+    if (!str.empty() && str[str.size() - 1] == '/') {
+        str.erase(str.size() - 1);
+    }
+}
+
 bool containsDot(const std::string& str) 
 {
 	if (str.find('.') != std::string::npos)
@@ -92,6 +99,17 @@ void	adjust(std::string& str)
 	else if (lastNotaBS(str) == 1 )
 		str += '/';
 	return ;
+}
+
+// Fonction pour vérifier si un fichier existe
+bool fileExists(const char* path) {
+    struct stat buffer;
+    return (stat(path, &buffer) == 0);
+}
+
+// Fonction pour vérifier les permissions d'accès
+bool hasAccess(const char* path, int mode) {
+    return (access(path, mode) == 0);
 }
 
 /////////// FONCTION TO CHOOSE THE BEST LOCATION ////////////////
@@ -310,3 +328,26 @@ std::string toString(Method method) {
             return "UNKNOWN";
     }
 }
+
+std::string generateDirectoryListing(const std::string& path) {
+    std::vector<std::string> files;
+    DIR* dirp = opendir(path.c_str());
+    struct dirent* dp;
+
+    while ((dp = readdir(dirp)) != NULL) {
+        files.push_back(dp->d_name);
+    }
+    closedir(dirp);
+
+    std::string html = "<html><head><title>Directory listing</title></head><body>";
+    html += "<h1>Index of " + path + "</h1><ul>";
+
+    for (size_t i = 0; i < files.size(); ++i) {
+        html += "<li><a href=\"" + files[i] + "\">" + files[i] + "</a></li>";
+    }
+    
+    html += "</ul></body></html>";
+    return html;
+}
+
+

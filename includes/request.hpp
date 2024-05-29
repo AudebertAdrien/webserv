@@ -38,7 +38,7 @@ class Request
         ~Request();
 
 		
-		void			writeFiles();
+		void	writeFiles();		
 
 		/* == getter == */
 		Connection							getConnection() const;
