@@ -52,8 +52,6 @@ class Connection
 		int				getClientPort() const;
 		
 	private:
-		void			initiateResponse(Location &loc);
-		void			closestMatch();
 
 		Server		*_server;
 		Request		*_request;
@@ -64,7 +62,7 @@ class Connection
         int			_client_port;
         timeval 	_last_request;
 
-		char		_buffer[10000];
+		char		_buffer[1024];
 };
 
 #endif

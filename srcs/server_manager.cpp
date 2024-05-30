@@ -1,7 +1,7 @@
 #include "server_manager.hpp"
 #include "server.hpp"
 
-// Déclarer une variable globale pour indiquer si le programme doit quitter la boucle
+
 volatile sig_atomic_t quit = 0;
 int pipe_fds[2];
 

@@ -39,7 +39,6 @@ int checkAllowMethod(std::vector<std::string> vec, std::string tofind);
 std::string toString(Method method);
 
 // FONCTION TO CLEAN STRG
-void        trim(std::string& str);
 void        removeLastSemicolon(std::string& str);
 void        removeLastBS(std::string& str);
 bool        containsDot(const std::string& str);

@@ -79,13 +79,9 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
     std::string param_string = "";
 
     if (fp.find("?") != std::string::npos) {
-    	std::cout << GREEN << "fp.find" << RESET << std::endl;
         param_string = fp.substr(fp.find("?") + 1);
         script_path = fp.substr(0, script_path.find("?"));
     }
-
-    std::cout << GREEN << "path : "<<script_path << RESET << std::endl;
-    std::cout << YELLOW <<"param : " << param_string << RESET << std::endl;
     execCGI(client_fd, toString(this->_connection->getRequest()->getMethod()), script_path, param_string);
  }
 
@@ -94,7 +90,6 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
     this->_header = "HTTP/1.1 " + status +"\r\n";
     if (fp.find("cgi") != std::string::npos)
     {
-        std::cout << "cgi part has to be handle : " << RESET << std::endl;
         handleCGI(fp, this->_connection->getFd());
 		return ;
     }
@@ -119,16 +114,36 @@ void   Response::execCGI(int client_fd, std::string method, std::string path, st
 
 void    Response::listOfDirectory(std::string fp)
 {
-    std::cout << "doit faire apparaitre la liste" << std::endl;
     this->_header = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n";
     removeLastBS(fp);
-    std::cout << GREEN << "dans list of directory, le bon path est : " << fp << RESET << std::endl;
     this->_body = generateDirectoryListing(fp);
 	std::ostringstream oss;
 	oss << this->_header << this->_body;
 	this->_response = oss.str();
 }
 
+
+int    Response::redirectResponse()
+{
+     std::string link = this->_server->getRedirectLink();
+	int status_code = this->_server->getRedirectStatusCode();
+	removeLastSemicolon(link);
+
+   	if (!link.empty() && status_code) {
+		std::ostringstream header;
+		header << "HTTP/1.1 ";
+		header << status_code << " Moved Permanently\r\n";
+		header << "Location: " << link << "\r\n";
+		header << "Content-Length: 0\r\n";
+
+		std::string response = header.str();
+
+		if (send(this->_server->getFd(), response.c_str(), response.length(), 0) == -1)
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+        return (1);
+	}
+    return (0);
+}
 /* == getter == */
 Connection*		Response::getConnection() const
 {

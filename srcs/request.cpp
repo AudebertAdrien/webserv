@@ -29,26 +29,25 @@ void	Request::writeFiles()
 	{
         const FileData &file_data = it->second;
         
-        // Déterminer le mode d'ouverture en fonction du type de contenu
-        std::ios_base::openmode mode = std::ios::out;												//Full CHATGPT 😬
-        if (file_data.content_type.find("text/") == std::string::npos) 								//Full CHATGPT 😬
-		{																							//Full CHATGPT 😬
-            mode |= std::ios::binary;																//Full CHATGPT 😬
-        }																							//Full CHATGPT 😬
+        std::ios_base::openmode mode = std::ios::out;												
+        if (file_data.content_type.find("text/") == std::string::npos) 							
+		{																						
+            mode |= std::ios::binary;															
+        }																						
 		
 		
-		std::string file_path = "/home/tlorne/Webserv/git_webserv/upload/" + file_data.filename;	//Full CHATGPT 😬
-																									//Full CHATGPT 😬
-        std::ofstream outfile(file_path.c_str(), mode);												//Full CHATGPT 😬
-        if (outfile.is_open()) {																	//Full CHATGPT 😬
-            outfile.write(file_data.content.c_str(), file_data.content.size());						//Full CHATGPT 😬
-            outfile.close();																		//Full CHATGPT 😬
-            std::cout << "Successfully wrote " << file_data.filename << std::endl;					//Full CHATGPT 😬
-        } 																							//Full CHATGPT 😬
-		else 																						//Full CHATGPT 😬
-		{																							//Full CHATGPT 😬
-            std::cerr << "Failed to write " << file_data.filename << std::endl;						//Full CHATGPT 😬
-        }																							//Full CHATGPT 😬
+		std::string file_path = "/home/tlorne/Webserv/git_webserv/upload/" + file_data.filename;
+																								
+        std::ofstream outfile(file_path.c_str(), mode);											
+        if (outfile.is_open()) {																
+            outfile.write(file_data.content.c_str(), file_data.content.size());					
+            outfile.close();																	
+            std::cout << "Successfully wrote " << file_data.filename << std::endl;				
+        } 																						
+		else 																					
+		{																						
+            std::cerr << "Failed to write " << file_data.filename << std::endl;					
+        }																						
 	}
 }
 
@@ -60,8 +59,6 @@ void	Request::addHeader(std::string &line) {
 	if (pos != std::string::npos) {
 		std::string key = line.substr(0, pos);
 		std::string value = line.substr(pos + 1);
-
-		//std::cout << "key : " << key << " val : " << value << std::endl;
 
 		this->_headers.insert(std::make_pair(key, value));
 		if (value.find(";") != std::string::npos)

@@ -12,31 +12,6 @@ Connection::Connection(int client_fd, std::string client_ip, int client_port, Se
 }
 
 Connection::~Connection() {
-	std::cout << "destructeur CONNECTION called" << std::endl;
-}
-
-/* == getter == */
-Request*	Connection::getRequest() const {
-	return (this->_request);
-}
-
-Response*	Connection::getRespons() const{
-	return (this->_response);
-}
-
-int Connection::getFd() const
-{
-    return (this->_fd);
-}
-
-std::string	Connection::getClientIp() const
-{
-	return (this->_client_ip);
-}
-
-int	Connection::getClientPort() const
-{
-	return (this->_client_port);
 }
 
 bool	Connection::parseStartLine() {
@@ -117,7 +92,6 @@ void	Connection::recvRequest() {
 			if (this->_request->getPhase() == Request::ON_HEADER) {
 				parseHeader();
 			}
-			//ft::displayMap(this->_request->getHeader());
 			if (this->_request->getPhase() == Request::ON_BODY) {
 				parseBody();
 			}
@@ -133,58 +107,29 @@ void	Connection::solveRequest() {
 	this->_response = new Response(*this, *this->_server);
 
 	int	index = findClosestStringIndex(this->_request->getRelativPath(), this->_server->getLocation());
-	
-    std::string link = this->_server->getRedirectLink();
-	int status_code = this->_server->getRedirectStatusCode();
-	removeLastSemicolon(link);
-
-	std::cout << GREEN << "link :" << link << ";" << "status_code :" << status_code << RESET << std::endl;
-   	if (!link.empty() && status_code) {
-		std::cout << GREEN <<"####### REDIRECT ######" << RESET << std::endl;
-
-		std::ostringstream header;
-		header << "HTTP/1.1 ";
-		header << status_code << " Moved Permanently\r\n";
-		header << "Location: " << link << "\r\n";
-		header << "Content-Length: 0\r\n";
-
-		std::string response = header.str();
-
-		std::cout << RED << response.c_str() << RESET << std::endl;
-
-		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
-			std::cerr << "Send failed: " << strerror(errno) << std::endl;
-		return ;
-	}
+	if (this->_response->redirectResponse())
+		return;
 
 	std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
-	std::cout << GREEN << file_path << RESET << std::endl;
 
 	if (this->_request->getMethod() == GET)	{
-		std::cout << "==GET==" << std::endl;
-		std::cout << "check allow method" << std::endl;
 		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "GET") == 0)
 		{
 			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/405.html", "405 Method Not Allowed");
 			this->_response->sendResponse(this->_fd);
-			std::cout << RED <<"Wrong method" << RESET << std::endl;
 			return ;
 		}
 		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("autoindex"), "on;") == 1)
 		{
-			std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
-			std::cout << GREEN << file_path << RESET << std::endl;
-			if (containsDot(this->_request->getRelativPath()) == 0)
-			{
-				std::cout << "###############################3est un repertoir" << std::endl;
+			if (containsDot(this->_request->getRelativPath()) == 0){
 				this->_response->listOfDirectory(file_path);
 			}		
-			else													// c'est un fichier
+			else
 			{
 				removeLastBS(file_path);
-				if (fileExists(file_path.c_str()) == 0) // est ce que le fichier existe ?
+				if (fileExists(file_path.c_str()) == 0)
 					this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/404.html", "404 Not Found");
-				if (fileExists(file_path.c_str()) == 1 && hasAccess(file_path.c_str(), R_OK) == 0) // est ce que le client peut y acceder ? 
+				if (fileExists(file_path.c_str()) == 1 && hasAccess(file_path.c_str(), R_OK) == 0)
 					this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/403.html", "403 Forbidden");
 				if (fileExists(file_path.c_str()) ==  1 && hasAccess(file_path.c_str(), R_OK) == 1)
 					this->_response->createResponse(file_path, "200 OK");
@@ -192,24 +137,20 @@ void	Connection::solveRequest() {
 			this->_response->sendResponse(this->_fd);
 			return ;
 		}
-		std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
-		std::cout << GREEN << file_path << RESET << std::endl;
 		this->_response->createResponse(file_path, "200 OK");
 		this->_response->sendResponse(this->_fd);
 		return ;
 	}
 
-	/* == temporary method POST == */
 	else if (this->_request->getMethod() == POST) 
 	{
 		std::cout << "==POST==" << std::endl;
 		std::cout << "check allow method" << std::endl;
-		/* if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "POST") == 0)
+		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "POST") == 0)
 		{
 			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/405.html", "405 Method Not Allowed");
 			this->_response->sendResponse(this->_fd);
-			std::cout << RED <<"Wrong method" << RESET << std::endl;
-		} */
+		}
 		if (this->_request->getUpload() == 1)
 		{
 			this->_request->writeFiles();
@@ -224,7 +165,6 @@ void	Connection::solveRequest() {
 		}
 		else
 		{
-			std::cout << GREEN <<"####### solveRequest ######" << RESET << std::endl;
 			std::string header = "HTTP/1.1 200 OK\r\n";
 			std::string body = "Hello from server!!! Method POST processed !\n";
 			std::ostringstream oss;
@@ -244,7 +184,6 @@ void	Connection::solveRequest() {
 	else
 	{
 		int met = this->_request->getMethod();
-		std::cout << RED << "!!!!!!!!! Error, met vaut = " << met << "   rappel 1=GET, 2=HEAD, 3=POST, 4=PUT, 5=DELETE, 6=OPTION 7=TRACE" << RESET <<std::endl;
 		if (met == DEFAULT || met == HEAD || met == PUT || met == OPTIONS || met == TRACE)
 		{
 			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/501.html", "501 Not Implemented");
@@ -258,4 +197,28 @@ void	Connection::solveRequest() {
 			return ;
 		}
 	}
+}
+
+/* == getter == */
+Request*	Connection::getRequest() const {
+	return (this->_request);
+}
+
+Response*	Connection::getRespons() const{
+	return (this->_response);
+}
+
+int Connection::getFd() const
+{
+    return (this->_fd);
+}
+
+std::string	Connection::getClientIp() const
+{
+	return (this->_client_ip);
+}
+
+int	Connection::getClientPort() const
+{
+	return (this->_client_port);
 }

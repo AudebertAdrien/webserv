@@ -28,8 +28,6 @@
 
 class Server;
 
-#define SELECT_TIMEOUT 5
-
 class ServerManager {
 	public:
 		ServerManager();
@@ -45,8 +43,6 @@ class ServerManager {
 		void	createServer(const std::string &configuration_file_path);
 		void	setFd(int fd, std::string fd_type);
 		
-		
-		//void    exitServer();
 
 	private:
 		bool	splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_string);
@@ -61,11 +57,6 @@ class ServerManager {
 		fd_set  _read_copy_set;
 		fd_set  _write_set;
 		fd_set  _write_copy_set;
-
-		/*
-		fd_set  _error_set;
-		fd_set  _error_copy_set;
-		*/
 };
 
 #endif

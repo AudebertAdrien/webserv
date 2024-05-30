@@ -79,8 +79,6 @@ class Request
 
 		std::string		_uri;
 		std::string		_origin;
-
-		/*== TEST ==*/
 		int				_upload;
 
 

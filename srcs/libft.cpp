@@ -18,7 +18,7 @@ namespace ft {
 		ss.str("");
 	}
 
-	void    trimStr(std::string &str)
+	void    trim(std::string &str)
 	{
 		static const char* spaces = " \t";
 		str.erase(0, str.find_first_not_of(spaces));

@@ -25,7 +25,7 @@
 
 namespace ft {
 	void 		clearStringStream(std::istringstream &ss);
-	void		trimStr(std::string &str);	
+	void		trim(std::string &str);	
 	std::string getStringFromFile(std::string file_path);
 	bool		findKeyInMap(const std::map<std::string, std::string>& myMap, const std::string& key);
     

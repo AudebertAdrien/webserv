@@ -3,14 +3,12 @@
 
 int checkAllowMethod(std::vector<std::string> vec, std::string tofind)
 {
-    ft::displayVector(vec);
-    ft::trimStr(tofind);
+    ft::trim(tofind);
     for (size_t i = 0; i < vec.size(); ++i)
     {
-        ft::trimStr(vec[i]);
+        ft::trim(vec[i]);
         if (vec[i] == tofind)
             return (1);
-        std::cout << RED << "NO MATCH vec[i] vaut #" << vec[i] <<"# alors que tofind vaut #" << tofind <<"#" << RESET << std::endl; 
     }
     return (0);
 }
@@ -28,25 +26,6 @@ void split(const std::string& str, char delimiter, std::vector<std::string>& tok
         end = str.find(delimiter, start);
     }
     tokens.push_back(str.substr(start));
-}
-
-void trim(std::string& str) 
-{
-    std::string::size_type start = str.find_first_not_of(" \t");
-    if (start != std::string::npos) {
-        str = str.substr(start);
-    } else {
-        str.clear();
-        return;
-    }
-
-    std::string::size_type end = str.find_last_not_of(" \t");
-    if (end != std::string::npos) {
-        str = str.substr(0, end + 1);
-    } else {
-        str.clear();
-    }
-    return ;
 }
 
 void removeLastSemicolon(std::string& str)
@@ -100,13 +79,11 @@ void	adjust(std::string& str)
 	return ;
 }
 
-// Fonction pour vérifier si un fichier existe
 bool fileExists(const char* path) {
     struct stat buffer;
     return (stat(path, &buffer) == 0);
 }
 
-// Fonction pour vérifier les permissions d'accès
 bool hasAccess(const char* path, int mode) {
     return (access(path, mode) == 0);
 }
@@ -122,11 +99,8 @@ int findClosestStringIndex(const std::string &target, const std::vector<Location
     int closestIndex = 0;
 	long unsigned   maxCommonCharacters = 0;
 
-	std::cout << RED << "target: " << target << RESET << std::endl;
     for (size_t i = 0; i < vecteur.size(); ++i) 
 	{
-		std::cout << YELLOW << "vecteur[i]->getRootPath(): " << vecteur[i]->getRootPath() << RESET << std::endl;
-		std::cout << YELLOW << "vecteur[i]->getLocMatchUri(): " << vecteur[i]->getLocMatchUri() << RESET << std::endl;
 		if (target == vecteur[i]->getLocMatchUri())
 			return (i);
 
@@ -135,7 +109,6 @@ int findClosestStringIndex(const std::string &target, const std::vector<Location
 			maxCommonCharacters = vecteur[i]->getLocMatchUri().size();
 		}
 	}
-	std::cout << BLUE << "closesIndex: " << closestIndex << RESET << std::endl;
     return (closestIndex);
 }
 
@@ -145,7 +118,6 @@ int findClosestStringIndex(const std::string &target, const std::vector<Location
 
 std::string loadImageFileContent(const std::string& filePath) 
 {
-	std::cout << GREEN << "loadImageFileContent" << RESET << std::endl;
 	std::ifstream fileStream(filePath.c_str(), std::ios::binary);
 	std::string	content;
 
@@ -157,7 +129,6 @@ std::string loadImageFileContent(const std::string& filePath)
 
 std::string loadFileContent(const std::string& filePath) 
 {
-	std::cout << GREEN << "loadFileContent" << RESET << std::endl;
     std::ifstream file(filePath.c_str(), std::ios::binary);
     if (!file) 
 	{
@@ -273,7 +244,6 @@ std::string lastExt(const std::string &str)
 std::string generateResponse(std::string filePath) 
 {
     std::string response;
-	std::cout << "######@ " << filePath << " @######"<< std::endl;
 	if (lastElem(filePath) == 1)
 	{
 		std::cout << "html part done : " << std::endl;
@@ -303,8 +273,8 @@ std::string generateResponse(std::string filePath)
 
 std::string	createFilePath(std::string root_path, std::string relativ_path)
 {
-	trim(root_path);
-	trim(relativ_path);
+	ft::trim(root_path);
+	ft::trim(relativ_path);
 	removeLastSemicolon(root_path);
 	adjust(relativ_path);
 	std::string file_path = root_path + relativ_path;

@@ -70,8 +70,6 @@ void	Server::set(std::string server_block) {
 void	Server::addConnection(int client_fd, std::string client_ip, int client_port) {
     Connection *client = new Connection(client_fd, client_ip, client_port, *this);
 
-	std::cout << "CLIENT ID: " << client_ip << " CLIENT PORT: " << client_port << std::endl;
-
     _connections.insert(std::make_pair(client_fd, client));
 	this->_manager->setFd(client_fd, "_read_set");
 }
@@ -86,17 +84,6 @@ void	Server::acceptNewConnection() {
 		std::cerr << "Accept failed: " << strerror(errno) << std::endl;
 		exit(EXIT_FAILURE);
 	}
-
-	/*
-	struct timeval timeout;
-	timeout.tv_sec = 3;
-	timeout.tv_usec = 0;
-
-	if (setsockopt(client_fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&timeout, sizeof(timeout)) == -1) {
-		std::cerr << "Failed to set receive timeout" << std::endl;
-		exit(EXIT_FAILURE);
-	}
-	*/
 
 	int flags = fcntl(client_fd, F_GETFL, 0);
 	if (flags == -1) {
@@ -128,12 +115,6 @@ void	Server::runRecvAndSolve(Connection &connection) {
 }
 
 void	Server::run() {
-	if (this->_connections.size() >= (1024 / this->_manager->getServer().size()))
-	{
-		std::cout << "too many connection, old connection must be closed" << std::endl;
-		return ;
-	}
-
 	if (FD_ISSET(this->_fd, &this->_manager->getFdReadSetCopy())) {
 		acceptNewConnection();
 	}

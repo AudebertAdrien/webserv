@@ -64,7 +64,6 @@ class Server {
 
 		std::vector<Location *>    _location;
 
-		/* == redirection */
 		int					_redirect_status_code;
 		std::string			_redirect_link;
 

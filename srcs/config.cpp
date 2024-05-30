@@ -42,7 +42,6 @@ Config::Config(std::string config_block) {
 }
 
 Config::~Config() {
-	std::cout << "destructeur Config CALLED" << std::endl;
 }
 
 std::string Config::getSoftwareName() const {
