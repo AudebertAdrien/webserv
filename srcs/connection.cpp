@@ -40,7 +40,6 @@ int	Connection::getClientPort() const
 }
 
 bool	Connection::parseStartLine() {
-	//std::cout << "parseStartLine" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -61,7 +60,6 @@ bool	Connection::parseStartLine() {
 }
 
 bool	Connection::parseHeader() {
-	//std::cout << "parseHeader" << std::endl;
 	std::string http_request = _buffer;
 
 	size_t header_end = http_request.find("\r\n\r\n");
@@ -83,13 +81,13 @@ bool	Connection::parseHeader() {
 		std::string body = http_request.substr(header_end + 4);
 		this->_request->addContent(body);
 		_buffer[0] = 0;
+
 		this->_request->setPhase(Request::ON_BODY);
 	}
 	return true;
 }
 
 bool	Connection::parseBody() {
-	//std::cout << "parseBody" << std::endl;
 	std::string rest(_buffer);
 
 	_request->addContent(rest);
@@ -135,9 +133,32 @@ void	Connection::solveRequest() {
 	this->_response = new Response(*this, *this->_server);
 
 	int	index = findClosestStringIndex(this->_request->getRelativPath(), this->_server->getLocation());
+	
+    std::string link = this->_server->getRedirectLink();
+	int status_code = this->_server->getRedirectStatusCode();
+	removeLastSemicolon(link);
 
-	std::cout << "getRelativePath: " << this->_request->getRelativPath() << std::endl;
-	std::cout << "this->_server->getLocation()[index]: " << this->_server->getLocation()[index]->getRootPath() << std::endl;
+	std::cout << GREEN << "link :" << link << ";" << "status_code :" << status_code << RESET << std::endl;
+   	if (!link.empty() && status_code) {
+		std::cout << GREEN <<"####### REDIRECT ######" << RESET << std::endl;
+
+		std::ostringstream header;
+		header << "HTTP/1.1 ";
+		header << status_code << " Moved Permanently\r\n";
+		header << "Location: " << link << "\r\n";
+		header << "Content-Length: 0\r\n";
+
+		std::string response = header.str();
+
+		std::cout << RED << response.c_str() << RESET << std::endl;
+
+		if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
+			std::cerr << "Send failed: " << strerror(errno) << std::endl;
+		return ;
+	}
+
+	std::string file_path = createFilePath(this->_server->getLocation()[index]->getRootPath(), this->_request->getRelativPath());
+	std::cout << GREEN << file_path << RESET << std::endl;
 
 	if (this->_request->getMethod() == GET)	{
 		std::cout << "==GET==" << std::endl;

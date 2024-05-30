@@ -26,11 +26,11 @@ ServerManager::~ServerManager() {
 }
 
 void	ServerManager::createServer(const std::string &configuration_file_path) {
-	std::string	config_string = ft::getStringFromFile(configuration_file_path);
+	std::string	config_file = ft::getStringFromFile(configuration_file_path);
 
 	std::string config_block;
 	std::vector<std::string> server_strings;
-	if (!splitConfigString(config_string, config_block, server_strings)) {
+	if (!splitConfigString(config_file, config_block, server_strings)) {
 		throw (std::invalid_argument("Failed to split configuration string"));
 	}
 	
@@ -162,8 +162,8 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 	return (true);
 }
 
-bool	ServerManager::splitConfigString(std::string &config_string, std::string &config_block, std::vector<std::string> &server_strings) {
-	std::istringstream	iss(config_string);
+bool	ServerManager::splitConfigString(std::string &config_file, std::string &config_block, std::vector<std::string> &server_strings) {
+	std::istringstream	iss(config_file);
 	std::stringstream	server_ss;
 
 	bool inside_server_block = false;
