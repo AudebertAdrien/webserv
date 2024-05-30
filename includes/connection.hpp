@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:58 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/22 14:43:48 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/29 13:19:48 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ class Connection
         int			_client_port;
         timeval 	_last_request;
 
-		char		_buffer[1000];
+		char		_buffer[10000];
 };
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: tlorne <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 12:50:34 by tlorne            #+#    #+#             */
-/*   Updated: 2024/05/27 14:12:42 by motoko           ###   ########.fr       */
+/*   Updated: 2024/05/29 15:25:21 by motoko           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@
 class Location
 {
 	public:
+		Location();
 		Location(std::string location);
         ~Location();
 
