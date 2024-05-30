@@ -65,17 +65,13 @@ void	ServerManager::setFd(int fd, std::string fd_type) {
 
 void	ServerManager::runServer()
 {
-	std::cout << "######################### WELCOME TO OUR WEB SERVERS ########################" << std::endl;
-
 	std::cout << "OUR WEB SERVERS IS ACCESSIBLE THROUGHT THE FOLLOWING PORT :" << std::endl;
 
-	// ###################### GESTION SIGNAL ###################### //
 	signal(SIGINT, signalHandler);
 	if (pipe(pipe_fds) == -1) {
         std::cerr << "Pipe creation failed: " << strerror(errno) << std::endl;
         exit(EXIT_FAILURE);
     }
-	// ###################### GESTION SIGNAL ###################### //
 
 	for(std::vector<Server *>::iterator	it = this->_servers.begin(); it != this->_servers.end(); it++)
 	{
@@ -91,8 +87,7 @@ void	ServerManager::runServer()
 		FD_SET((*it)->getFd(), &(this->_read_set));
 		it++;
 	}
-	FD_SET(pipe_fds[0], &(this->_read_set)); // AJOUT DU PIPE DU SIGNAL
-
+	FD_SET(pipe_fds[0], &(this->_read_set)); 
 	resetMaxFd();
 	int cnt;
 	struct timeval timeout;
@@ -107,7 +102,7 @@ void	ServerManager::runServer()
 		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1)
 		{
 			if (errno == EINTR) {
-                continue; // Relancer `select` si elle est interrompue par un signal
+                continue;
             }
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
@@ -116,16 +111,13 @@ void	ServerManager::runServer()
 			continue;
 		}
 
-		// ###################### GESTION SIGNAL ###################### //
 		if (FD_ISSET(pipe_fds[0], &this->_read_copy_set)) {
             char buf[1];
             read(pipe_fds[0], buf, 1);
             if (buf[0] == 'Q') {
-                std::cout << "Signal reçu, quitter la boucle" << std::endl;
                 break;
             }
         }
-		// ###################### GESTION SIGNAL ###################### //
 
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
@@ -147,7 +139,7 @@ bool	ServerManager::splitServerString(std::string &server_strings, std::string &
 		std::istringstream iss2(line);
     	std::string fw;
 		iss2 >> fw;
-		if (line == "	location {" || fw == "location") {
+		if (fw == "location") {
 			inside_location_block = true;
 			location_ss.str("");
 			location_ss.clear();

@@ -1,24 +1,12 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   main.cpp                                           :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: motoko <marvin@42.fr>                      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/04/09 16:28:39 by motoko            #+#    #+#             */
-/*   Updated: 2024/05/27 15:21:03 by motoko           ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include <iostream>     // For input/output
-#include <cstring>      // For string functions
-#include <cstdlib>      // For exit() function
-#include <unistd.h>     // For read(), write(), close() functions
-#include <netinet/in.h> // For sockaddr_in structure
-#include <arpa/inet.h>  // For htons() function
+#include <iostream>     
+#include <cstring>      
+#include <cstdlib>      
+#include <unistd.h>     
+#include <netinet/in.h> 
+#include <arpa/inet.h>  
 #include <cerrno>
 #include <sstream>
-#include <csignal>		// For signal() functions
+#include <csignal>		
 #include <iostream>
 
 #include "server_manager.hpp"
@@ -36,11 +24,8 @@ void clear_all()
 		usleep(5000);
 	}
 	std::cout << RESET <<"########################" << std::endl;
-	//std::cout << "#########################" << GREEN <<  " 👋🏻👋🏻 BYE BYE 👋🏾👋🏾 " << RESET << "########################" << std::endl;
     std::cout << "#########################" << GREEN <<  " 👋🏻👋 BYE BYE 👋🏾👋 " << RESET << "########################" << std::endl;
 	std::cout << "#########################" <<  " MOTOKO   AND   THEOUCHE " << RESET << "########################" << std::endl;
-	// clear tout ce qui doit etre clear
-    
 }
 
 int main(int ac, char **av) 

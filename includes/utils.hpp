@@ -22,12 +22,15 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <sys/stat.h>
+#include <csignal>
 
 #include "location.hpp"
 #include "request.hpp"
 #include "webserv_macro.hpp"
 
 const std::string HTML_FILE_PATH = "index.html";
+
+//void signalHandler(int signum);
 
 // FONCTION TO CHECK A METHOD
 int checkAllowMethod(std::vector<std::string> vec, std::string tofind);

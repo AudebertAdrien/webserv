@@ -1,7 +1,6 @@
 #include "utils.hpp"
 #include "libft.hpp"
 
-
 int checkAllowMethod(std::vector<std::string> vec, std::string tofind)
 {
     ft::displayVector(vec);
