@@ -38,6 +38,7 @@ Server::Server(ServerManager &manager, std::string server_block, std::vector<std
 }
 
 Server::~Server() {
+	std::cout << "destructeur SERVEUR CALLED" << std::endl;
 }
 
 void    Server::fillVectorLocation(std::vector<std::string> location_block)

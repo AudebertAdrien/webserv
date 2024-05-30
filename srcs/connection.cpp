@@ -12,6 +12,7 @@ Connection::Connection(int client_fd, std::string client_ip, int client_port, Se
 }
 
 Connection::~Connection() {
+	std::cout << "destructeur CONNECTION called" << std::endl;
 }
 
 /* == getter == */

@@ -17,7 +17,8 @@
 #include <vector>
 #include <sstream>
 #include <sys/select.h>
-#include <unistd.h> 
+#include <unistd.h>
+#include <csignal>
 
 #include "config.hpp"
 #include "location.hpp"

@@ -1,6 +1,18 @@
 #include "server_manager.hpp"
 #include "server.hpp"
 
+// Déclarer une variable globale pour indiquer si le programme doit quitter la boucle
+volatile sig_atomic_t quit = 0;
+int pipe_fds[2];
+
+void signalHandler(int signum) 
+{
+	if (signum == SIGINT) {
+        quit = 1;
+		write(pipe_fds[1], "Q", 1);
+    }
+}
+
 ServerManager::ServerManager() {
 	this->_max_fd = -1;
 }
@@ -57,6 +69,14 @@ void	ServerManager::runServer()
 
 	std::cout << "OUR WEB SERVERS IS ACCESSIBLE THROUGHT THE FOLLOWING PORT :" << std::endl;
 
+	// ###################### GESTION SIGNAL ###################### //
+	signal(SIGINT, signalHandler);
+	if (pipe(pipe_fds) == -1) {
+        std::cerr << "Pipe creation failed: " << strerror(errno) << std::endl;
+        exit(EXIT_FAILURE);
+    }
+	// ###################### GESTION SIGNAL ###################### //
+
 	for(std::vector<Server *>::iterator	it = this->_servers.begin(); it != this->_servers.end(); it++)
 	{
 		std::cout << (*it)->getPort() << std::endl;
@@ -71,25 +91,42 @@ void	ServerManager::runServer()
 		FD_SET((*it)->getFd(), &(this->_read_set));
 		it++;
 	}
+	FD_SET(pipe_fds[0], &(this->_read_set)); // AJOUT DU PIPE DU SIGNAL
 
 	resetMaxFd();
 	int cnt;
 	struct timeval timeout;
 	
-	while(true) {
+	while(!quit) {
 		timeout.tv_sec = 5;
 		timeout.tv_usec = 0;
 
 		this->_read_copy_set = this->_read_set;
 		this->_write_copy_set = this->_write_set;
 
-		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1){
+		if ((cnt = select(this->_max_fd + 1, &this->_read_copy_set, &this->_write_copy_set, NULL, &timeout)) == -1)
+		{
+			if (errno == EINTR) {
+                continue; // Relancer `select` si elle est interrompue par un signal
+            }
 			std::cerr << "Select failed: " << strerror(errno) << std::endl;
 			exit(EXIT_FAILURE);
 		}
 		else if (cnt == 0) {
 			continue;
 		}
+
+		// ###################### GESTION SIGNAL ###################### //
+		if (FD_ISSET(pipe_fds[0], &this->_read_copy_set)) {
+            char buf[1];
+            read(pipe_fds[0], buf, 1);
+            if (buf[0] == 'Q') {
+                std::cout << "Signal reçu, quitter la boucle" << std::endl;
+                break;
+            }
+        }
+		// ###################### GESTION SIGNAL ###################### //
+
 		std::vector<Server *>::iterator it;
 		for (it = _servers.begin() ; it != _servers.end() ; ++it) {
 			(*it)->run();
