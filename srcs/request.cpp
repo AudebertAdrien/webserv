@@ -145,11 +145,6 @@ URIType	Request::getUriType() const
 	return (_uri_type);
 }
 
-TransferType	Request::getTransferType() const
-{
-	return (_transfer_type);
-}
-
 Request::Phase	Request::getPhase() const
 {
 	return (_phase);

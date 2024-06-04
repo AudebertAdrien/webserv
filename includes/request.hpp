@@ -51,7 +51,6 @@ class Request
 		Location							getLocation() const;
 		std::string							getUri() const;
 		URIType								getUriType() const;
-		TransferType						getTransferType() const;
 		Request::Phase						getPhase() const;
 		int									getUpload() const;
 		std::map<std::string, FileData>		getParsedData();
@@ -70,7 +69,6 @@ class Request
 
 		Method			_method;
 		URIType			_uri_type;
-		TransferType	_transfer_type;
 		Phase			_phase;
 
 		std::map<std::string, std::string> _headers;
