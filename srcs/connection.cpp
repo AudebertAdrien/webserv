@@ -178,8 +178,34 @@ void	Connection::solveRequest() {
 
 	else if (this->_request->getMethod() == DELETE)
 	{
-		std::cout << GREEN <<"do something" << RESET << std::endl;
-		return ;
+		std::cout << GREEN << "==DELETE==" << RESET << std::endl;
+		if (checkAllowMethod(this->_server->getLocation()[index]->getInfo("allow_methods:"), "DELETE") == 0) {
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/405.html", "405 Method Not Allowed");
+			this->_response->sendResponse(this->_fd);
+			return;
+		}
+		removeLastBS(file_path);
+		if (fileExists(file_path.c_str()) == 0) {
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/404.html", "404 Not Found");
+		} else if (hasAccess(file_path.c_str(), W_OK) == 0) {
+			this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/403.html", "403 Forbidden");
+		} else {
+			if (remove(file_path.c_str()) == 0) 
+			{
+				std::string response = 
+                "HTTP/1.1 204 No Content\r\n"
+                "\r\n";
+            	if (send(this->_fd, response.c_str(), response.length(), 0) == -1)
+                	std::cerr << "Send failed: " << strerror(errno) << std::endl;
+				return ;
+			} 
+			else {
+				std::cerr << "Error deleting file: " << strerror(errno) << std::endl;
+				this->_response->createResponse("/home/tlorne/Webserv/git_webserv/default_error_pages/500.html", "500 Internal Server Error");
+			}
+		}
+		this->_response->sendResponse(this->_fd);
+		return;
 	}
 	else
 	{

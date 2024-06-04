@@ -125,7 +125,7 @@ void    Response::listOfDirectory(std::string fp)
 
 int    Response::redirectResponse()
 {
-     std::string link = this->_server->getRedirectLink();
+    std::string link = this->_server->getRedirectLink();
 	int status_code = this->_server->getRedirectStatusCode();
 	removeLastSemicolon(link);
 
@@ -144,6 +144,7 @@ int    Response::redirectResponse()
 	}
     return (0);
 }
+
 /* == getter == */
 Connection*		Response::getConnection() const
 {
